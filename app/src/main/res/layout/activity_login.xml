@@ -95,7 +95,7 @@
         android:backgroundTint="#A3642888"
         android:fontFamily="@font/allerta_stencil"
         android:text="Login"
-        android:onClick="btnCustomerLogin"
+        android:onClick="btnUserLogin"
         android:textColor="#FFFFFF"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
