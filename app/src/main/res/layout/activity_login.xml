@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00121212"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginEnd="44dp"
+        android:fontFamily="@font/allerta_stencil"
+        android:shadowColor="#333232"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="10"
+        android:text="FreshMind"
+        android:textColor="#642888"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:typeface="sans"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.44"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <EditText
+        android:id="@+id/txtCustomer_Username"
+        android:layout_width="378dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="64dp"
+        android:background="#00DDC7C7"
+        android:backgroundTint="#A3642888"
+        android:backgroundTintMode="src_over"
+        android:hint="Username"
+        android:minHeight="60dp"
+        android:textAlignment="center"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.515"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
+
+    <EditText
+        android:id="@+id/txtCustomer_Password"
+        android:layout_width="378dp"
+        android:layout_height="68dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="17dp"
+        android:background="#00DDC7C7"
+        android:backgroundTint="#A3642888"
+        android:backgroundTintMode="src_over"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:textAlignment="center"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtCustomer_Username" />
+
+
+    <TextView
+        android:id="@+id/txtRole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="136dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="137dp"
+        android:backgroundTint="#A3642888"
+        android:fontFamily="@font/allerta_stencil"
+        android:text="Login"
+        android:textAlignment="textStart"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="#39020202"
+        android:textSize="24sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
+
+    <Button
+        android:id="@+id/btnCustomer_Login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="92dp"
+        android:backgroundTint="#A3642888"
+        android:fontFamily="@font/allerta_stencil"
+        android:text="Login"
+        android:onClick="btnCustomerLogin"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.942"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnCustomer_Register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="96dp"
+        android:backgroundTint="#A3642888"
+        android:fontFamily="@font/allerta_stencil"
+        android:text="Register"
+        android:onClick="btnUserRegister"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.061"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

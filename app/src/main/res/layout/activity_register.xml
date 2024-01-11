@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00121212"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="44dp"
+        android:fontFamily="@font/allerta_stencil"
+        android:shadowColor="#333232"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="10"
+        android:text="FreshMind"
+        android:textColor="#642888"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:typeface="sans"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.44"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/txtRole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="136dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="137dp"
+        android:backgroundTint="#00FFFFFF"
+        android:fontFamily="@font/allerta_stencil"
+        android:text="Register"
+        android:textAlignment="textStart"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="#79000000"
+        android:textSize="24sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
+
+    <EditText
+        android:id="@+id/txtFullName"
+        android:layout_width="378dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="152dp"
+        android:background="#00DDC7C7"
+        android:backgroundTint="#A3642888"
+        android:backgroundTintMode="src_over"
+        android:hint="Full Name"
+        android:minHeight="48dp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.484"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/txtEmail"
+        android:layout_width="378dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="#00DDC7C7"
+        android:backgroundTint="#A3642888"
+        android:backgroundTintMode="src_over"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:minHeight="48dp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.484"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtFullName" />
+
+    <EditText
+        android:id="@+id/txtPhoneNumber"
+        android:layout_width="378dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="#00DDC7C7"
+        android:backgroundTint="#A3642888"
+        android:backgroundTintMode="src_over"
+        android:hint="Phone Number"
+        android:inputType="phone"
+        android:minHeight="48dp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.484"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtEmail" />
+
+    <EditText
+        android:id="@+id/txtUsername"
+        android:layout_width="378dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="#00DDC7C7"
+        android:backgroundTint="#A3642888"
+        android:backgroundTintMode="src_over"
+        android:hint="Username"
+        android:minHeight="48dp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.484"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtPhoneNumber" />
+
+    <EditText
+        android:id="@+id/txtPassword"
+        android:layout_width="378dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="#00DDC7C7"
+        android:backgroundTint="#A3642888"
+        android:backgroundTintMode="src_over"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:minHeight="48dp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.484"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtUsername" />
+
+    <Button
+        android:id="@+id/btnRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:backgroundTint="#A3642888"
+        android:fontFamily="@font/allerta_stencil"
+
+        android:onClick="btnUserRegister"
+        android:text="Register"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.886"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtPassword" />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:backgroundTint="#A3642888"
+        android:fontFamily="@font/allerta_stencil"
+        android:text="Go Back"
+        android:onClick="btnGoBack"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.104"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtPassword" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
