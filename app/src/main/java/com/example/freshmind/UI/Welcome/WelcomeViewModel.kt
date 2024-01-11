@@ -1,4 +1,4 @@
-package com.example.freshmind.ui.welcome
+package com.example.freshmind.UI.Welcome
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

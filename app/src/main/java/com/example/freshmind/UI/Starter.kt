@@ -1,4 +1,4 @@
-package com.example.freshmind.ui
+package com.example.freshmind.UI
 
 import android.os.Bundle
 import android.view.Menu
@@ -38,7 +38,7 @@ class Starter : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_welcome
+                R.id.nav_welcome, R.id.nav_tasks, R.id.nav_calendar, R.id.nav_notes, R.id.nav_settings
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
