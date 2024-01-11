@@ -21,8 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".Authentication.User_Login"/>
         <activity android:name=".Authentication.User_Register"/>
+        <activity android:name=".ui.Starter"
+            android:theme="@style/Theme.FreshMind.NoActionBar"/>
 
     </application>
 
