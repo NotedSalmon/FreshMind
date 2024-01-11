@@ -7,8 +7,30 @@
 
     <fragment
         android:id="@+id/nav_welcome"
-        android:name="com.example.freshmind.ui.welcome.WelcomeFragment"
+        android:name="com.example.freshmind.UI.Welcome.WelcomeFragment"
         android:label="Welcome Page"
         tools:layout="@layout/fragment_welcome" />
+
+    <fragment
+        android:id="@+id/nav_tasks"
+        android:name="com.example.freshmind.UI.Task.TaskListFragment"
+        android:label="Tasks Page"
+        tools:layout="@layout/fragment_tasks" />
+
+    <fragment
+        android:id="@+id/nav_calendar"
+        android:name="com.example.freshmind.UI.Calendar.CalendarFragment"
+        android:label="Calendar Page"
+        tools:layout="@layout/fragment_calendar" />
+    <fragment
+        android:id="@+id/nav_notes"
+        android:name="com.example.freshmind.UI.Notes.NotesFragment"
+        android:label="Notes Page"
+        tools:layout="@layout/fragment_notes" />
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.example.freshmind.UI.Settings.SettingsFragment"
+        android:label="Settings Page"
+        tools:layout="@layout/fragment_settings" />
 
 </navigation>

@@ -1,4 +1,4 @@
-package com.example.freshmind.ui.welcome
+package com.example.freshmind.UI.Welcome
 
 import android.os.Bundle
 import android.view.LayoutInflater

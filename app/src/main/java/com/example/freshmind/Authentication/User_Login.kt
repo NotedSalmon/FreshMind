@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.freshmind.R
-import com.example.freshmind.ui.Starter
+import com.example.freshmind.UI.Starter
 
 class User_Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

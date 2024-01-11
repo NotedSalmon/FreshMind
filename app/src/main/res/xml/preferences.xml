@@ -1,0 +1,32 @@
+<!-- preferences.xml -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Theme Settings">
+
+        <ListPreference
+            android:key="key_theme"
+            android:title="App Theme"
+            android:summary="Select your preferred app theme"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_values"
+            android:defaultValue="light" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Account Settings">
+
+        <EditTextPreference
+            android:key="key_username"
+            android:title="Username"
+            android:summary="Enter your username"
+            android:inputType="text"
+            android:defaultValue=""
+            android:singleLine="true" />
+
+        <!-- Add more preferences as needed -->
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

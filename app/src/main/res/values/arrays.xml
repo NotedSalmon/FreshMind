@@ -1,4 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- arrays.xml -->
 <resources>
+    <string-array name="theme_entries">
+        <item>Light Theme</item>
+        <item>Dark Theme</item>
+        <!-- Add more theme options as needed -->
+    </string-array>
+
+    <string-array name="theme_values">
+        <item>light</item>
+        <item>dark</item>
+        <!-- Use corresponding values for theme options -->
+    </string-array>
     <string-array name="com_google_android_gms_fonts_certs" />
 </resources>
