@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.freshmind.R
-import com.example.freshmind.Database.Note
+import com.example.freshmind.Database.Notes_DataFiles
 
-class NoteAdapter(private val notes: List<Note>) :
+class NoteAdapter(private val notes: List<Notes_DataFiles>) :
     RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
     class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -24,8 +24,8 @@ class NoteAdapter(private val notes: List<Note>) :
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val note = notes[position]
-        holder.titleTextView.text = note.title
-        holder.contentTextView.text = note.content
+        holder.titleTextView.text = note.noteTitle
+        holder.contentTextView.text = note.noteContent
     }
 
     override fun getItemCount(): Int {

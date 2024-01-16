@@ -9,7 +9,7 @@
 
     <Button
         android:id="@+id/btnGo"
-        android:onClick="btnGo"
+        android:onClick="btnTest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="132dp"

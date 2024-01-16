@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.freshmind.databinding.FragmentNotesBinding
-import com.example.freshmind.Database.Note
+import com.example.freshmind.Database.Notes_DataFiles
 
 class NotesFragment : Fragment() {
 
@@ -33,12 +33,12 @@ class NotesFragment : Fragment() {
         binding.recyclerViewNotes.adapter = noteAdapter
     }
 
-    private fun generateDummyNotes(): List<Note> {
+    private fun generateDummyNotes(): List<Notes_DataFiles> {
         // Replace this with your actual data retrieval logic
         return listOf(
-            Note(1, "Note 1", "Content for Note 1"),
-            Note(2, "Note 2", "Content for Note 2"),
-            Note(3, "Note 3", "Content for Note 3")
+            Notes_DataFiles(1, "Note 1", "Content for Note 1", null, null),
+            Notes_DataFiles(2, "Note 2", "Content for Note 2", null, null),
+            Notes_DataFiles(3, "Note 3", "Content for Note 3", null, null)
             // Add more notes as needed
         )
     }

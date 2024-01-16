@@ -5,10 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.freshmind.Database.Task
+import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.R
 
-class TaskAdapter(private val tasks: List<Task>) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
+class TaskAdapter(private val tasks: List<Task_DataFiles>) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
@@ -22,8 +22,8 @@ class TaskAdapter(private val tasks: List<Task>) : RecyclerView.Adapter<TaskAdap
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position]
-        holder.titleTextView.text = task.title
-        holder.descriptionTextView.text = task.description
+        holder.titleTextView.text = task.taskTitle
+        holder.descriptionTextView.text = task.taskDescription
     }
 
     override fun getItemCount(): Int {

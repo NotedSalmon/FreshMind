@@ -1,4 +1,16 @@
 package com.example.freshmind.Database
 
-data class Task(val id: Int, val title: String, val description: String)
+import java.time.LocalDateTime
+
+data class Task_DataFiles(
+    val taskID: Int,
+    val taskTitle: String,
+    val taskDescription: String,
+    val startTime: LocalDateTime?,
+    val endTime: LocalDateTime?,
+    val dateModified: LocalDateTime?
+)
+{
+
+}
 

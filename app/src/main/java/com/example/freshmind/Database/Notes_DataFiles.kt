@@ -1,4 +1,14 @@
 package com.example.freshmind.Database
 
-data class Note(val id: Int, val title: String, val content: String)
+import java.time.LocalDateTime
+
+data class Notes_DataFiles(
+    val noteID: Int,
+    val noteTitle: String,
+    val noteContent: String,
+    val dateCreated: LocalDateTime?,
+    val dateModified: LocalDateTime?)
+{
+
+}
 
