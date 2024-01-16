@@ -2,6 +2,8 @@ package com.example.freshmind.UI
 
 import android.os.Bundle
 import android.view.Menu
+import android.widget.Button
+import android.widget.EditText
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -13,6 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.example.freshmind.R
 import com.example.freshmind.databinding.ActivityWelcomeBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class Starter : AppCompatActivity() {
 
@@ -55,4 +58,7 @@ class Starter : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+
+
 }
