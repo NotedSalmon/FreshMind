@@ -9,7 +9,7 @@ data class User_DataFiles(
     val PhoneNo: String,
     val Username: String,
     val Password: String,
-    val IsActive: Boolean,
+    val IsActive: Int,
     val DateCreated: LocalDateTime,
     val DateModified: LocalDateTime?)
 {

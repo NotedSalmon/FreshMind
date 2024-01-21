@@ -25,7 +25,8 @@ class MainActivity : AppCompatActivity() {
 
     fun btnTest(view: View)
     {
-        showCreateTaskDialog()
+        val intent = Intent(this, User_Login::class.java)
+        startActivity(intent)
     }
 
     fun showCreateTaskDialog() {
