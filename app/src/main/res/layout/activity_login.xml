@@ -31,7 +31,7 @@
 
 
     <EditText
-        android:id="@+id/txtCustomer_Username"
+        android:id="@+id/txtUser_Login_Username"
         android:layout_width="378dp"
         android:layout_height="68dp"
         android:layout_marginTop="64dp"
@@ -48,7 +48,7 @@
         app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
 
     <EditText
-        android:id="@+id/txtCustomer_Password"
+        android:id="@+id/txtUser_Login_Password"
         android:layout_width="378dp"
         android:layout_height="68dp"
         android:layout_marginStart="16dp"
@@ -64,7 +64,7 @@
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtCustomer_Username" />
+        app:layout_constraintTop_toBottomOf="@+id/txtUser_Login_Username" />
 
 
     <TextView
@@ -88,7 +88,7 @@
         app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
 
     <Button
-        android:id="@+id/btnCustomer_Login"
+        android:id="@+id/btnUser_Login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="92dp"
@@ -104,7 +104,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btnCustomer_Register"
+        android:id="@+id/btnUser_Register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="96dp"
