@@ -24,12 +24,50 @@ class User_Register: AppCompatActivity() {
 
     fun btnUserRegister(view: View)
     {
-        val userName = findViewById<EditText>(R.id.txtFullName).text.toString()
-        val userEmail = findViewById<EditText>(R.id.txtEmail).text.toString()
-        val userPhone = findViewById<EditText>(R.id.txtPhoneNumber).text.toString()
-        val userUsername = findViewById<EditText>(R.id.txtUsername).text.toString()
-        val userPassword = shaEncrypt(findViewById<EditText>(R.id.txtPassword).text.toString()) //Encryption used for password only
+        val fullNameEditText = findViewById<EditText>(R.id.txtFullName)
+        val emailEditText = findViewById<EditText>(R.id.txtEmail)
+        val phoneNumberEditText = findViewById<EditText>(R.id.txtPhoneNumber)
+        val usernameEditText = findViewById<EditText>(R.id.txtUsername)
+        val passwordEditText = findViewById<EditText>(R.id.txtPassword)
+
+        val userName = fullNameEditText.text.toString()
+        val userEmail = emailEditText.text.toString()
+        val userPhone = phoneNumberEditText.text.toString()
+        val userUsername = usernameEditText.text.toString()
+        val validateUserPassword = passwordEditText.text.toString()
+        val userPassword = shaEncrypt(passwordEditText.text.toString()) // Encryption used for password only
         val userIsActive = 1
+
+        if (userName.isEmpty()) {
+            fullNameEditText.error = "Full Name is required"
+            fullNameEditText.requestFocus()
+            return
+        }
+
+        if (userEmail.isEmpty()){
+            emailEditText.error = "Invalid Email Used"
+            emailEditText.requestFocus()
+            return
+        }
+
+        if (userPhone.isEmpty()) {
+            phoneNumberEditText.error = "Phone Number is required"
+            phoneNumberEditText.requestFocus()
+            return
+        }
+
+        if (userUsername.isEmpty() || dbHelper.checkUsername(userUsername)) {
+            usernameEditText.error = "Username Invalid or Already Taken"
+            usernameEditText.requestFocus()
+            return
+        }
+
+        if (validateUserPassword.isEmpty() || validateUserPassword.length < 8) {
+            passwordEditText.error = "Password must be at least 8 characters"
+            passwordEditText.requestFocus()
+            return
+        }
+
 
         val localTime = LocalDateTime.now()
             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))

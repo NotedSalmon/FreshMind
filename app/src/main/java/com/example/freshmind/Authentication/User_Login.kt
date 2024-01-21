@@ -26,8 +26,22 @@ class User_Login : AppCompatActivity() {
 
     fun btnUserLogin(view: View)
     {
+        val usernameEditText = findViewById<EditText>(R.id.txtUser_Login_Username)
+        val passwordEditText = findViewById<EditText>(R.id.txtUser_Login_Password)
+
         val username = findViewById<EditText>(R.id.txtUser_Login_Username).text.toString()
         val password = shaEncrypt(findViewById<EditText>(R.id.txtUser_Login_Password).text.toString())
+
+        if (username.isEmpty()) {
+            usernameEditText.error = "Username is required"
+            usernameEditText.requestFocus()
+            return
+        }
+        if (password.isEmpty()) {
+            passwordEditText.error = "Password is required"
+            passwordEditText.requestFocus()
+            return
+        }
 
         if (dbHelper.validateUser(username,password)) {
             // Credentials are valid so should go to Menu Activity
@@ -35,7 +49,7 @@ class User_Login : AppCompatActivity() {
             globalUser = username //Sets the Global Customer as the Username
 
             val intent = Intent(this@User_Login, Starter::class.java)
-            intent.putExtra("customer", globalUser) //This extra is how the global customer will be sent between activities
+            intent.putExtra("user", globalUser) //This extra is how the global customer will be sent between activities
             startActivity(intent)
         } else {
             Toast.makeText(this, "Username or Password Incorrect", Toast.LENGTH_SHORT).show()

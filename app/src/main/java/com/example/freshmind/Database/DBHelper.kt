@@ -146,5 +146,16 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         cursor.close()
         return count > 0
     }
+    fun checkUsername(username: String): Boolean {
+        val db = this.readableDatabase
+        val columns = arrayOf(User_Column_Username)
+        val selection = "$User_Column_Username = ?"
+        val selectionArgs = arrayOf(username)
+        val cursor: Cursor = db.query(UserTableName, columns, selection, selectionArgs, null, null, null)
+        val count = cursor.count
+
+        cursor.close()
+        return count > 0
+    }
 
 }
