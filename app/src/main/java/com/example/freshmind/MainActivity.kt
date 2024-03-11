@@ -29,22 +29,6 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun showCreateTaskDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_create_task, null)
-        val dialog = BottomSheetDialog(this)
-        dialog.setContentView(dialogView)
-
-        val saveButton = dialogView.findViewById<Button>(R.id.buttonSaveTask)
-        saveButton.setOnClickListener {
-            // Handle saving the task when the Save button is clicked
-            // Extract data from EditText views and perform the save operation
-            // For simplicity, you can create a function to handle the save logic
-            saveTask()
-            dialog.dismiss()
-        }
-
-        dialog.show()
-    }
 
     private fun saveTask() {
         // Extract data from EditText views

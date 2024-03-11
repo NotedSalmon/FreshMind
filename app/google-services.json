@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "506217254250",
+    "project_id": "freshmind-fa1cc",
+    "storage_bucket": "freshmind-fa1cc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:506217254250:android:7185a7555cf2951e05a913",
+        "android_client_info": {
+          "package_name": "com.example.freshmind"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRS0qsj7-pgL9aWpdVuKsFlTV806csKE4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

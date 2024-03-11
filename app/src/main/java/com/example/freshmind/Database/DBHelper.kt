@@ -9,8 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper
 private val DataBaseName = "FreshMindDB.db"
 private val ver : Int = 1
 
-class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null, ver)
-{
+class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null, ver) {
 
     /**
      * User Table
@@ -117,7 +116,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     /**
      * User Table Functions
      */
-    fun addUser(user: User_DataFiles) : Boolean {
+    fun addUser(user: User_DataFiles): Boolean {
         //WriteableDatabase for insert actions
         val db: SQLiteDatabase = this.writableDatabase
         val cv: ContentValues = ContentValues()
@@ -135,16 +134,115 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         db.close()
         return success != -1L
     }
+
     fun validateUser(username: String, password: String): Boolean {
         val db = this.readableDatabase
         val columns = arrayOf(User_Column_Username, User_Column_Password)
         val selection = "$User_Column_Username = ? AND $User_Column_Password = ?"
         val selectionArgs = arrayOf(username, password)
-        val cursor: Cursor = db.query(UserTableName, columns, selection, selectionArgs, null, null, null)
+        val cursor: Cursor =
+            db.query(UserTableName, columns, selection, selectionArgs, null, null, null)
         val count = cursor.count
 
         cursor.close()
         return count > 0
     }
 
+    fun checkUsername(username: String): Boolean {
+        val db = this.readableDatabase
+        val columns = arrayOf(User_Column_Username)
+        val selection = "$User_Column_Username = ?"
+        val selectionArgs = arrayOf(username)
+        val cursor: Cursor =
+            db.query(UserTableName, columns, selection, selectionArgs, null, null, null)
+        val count = cursor.count
+
+        cursor.close()
+        return count > 0
+    }
+
+    fun deleteUser(username: String): Boolean {
+        val db = this.writableDatabase
+        val selection = "$User_Column_Username = ?"
+        val selectionArgs = arrayOf(username)
+        val success = db.delete(UserTableName, selection, selectionArgs)
+        db.close()
+        return success != -1
+    }
+
+    fun changePassword(oldPassword: String, newPassword: String): Boolean {
+        val db = this.writableDatabase
+        val cv = ContentValues()
+        cv.put(User_Column_Password, newPassword)
+        val selection = "$User_Column_Password = ?"
+        val selectionArgs = arrayOf(oldPassword)
+        val success = db.update(UserTableName, cv, selection, selectionArgs)
+        db.close()
+        return success != -1
+    }
+
+    /**
+     * Task Table Functions
+     */
+
+    fun addTask(task: Task_DataFiles): Boolean {
+        val db: SQLiteDatabase = this.writableDatabase
+        val cv: ContentValues = ContentValues()
+
+        cv.put(Task_Column_userID, task.userID)
+        cv.put(Task_Column_TaskTitle, task.taskTitle)
+        cv.put(Task_Column_TaskDescription, task.taskDescription)
+        cv.put(Task_Column_StartTime, task.startTime.toString())
+        cv.put(Task_Column_EndTime, task.endTime.toString())
+        cv.put(Task_Column_DateModified, task.dateModified.toString())
+
+        val success = db.insert(TaskTableName, null, cv)
+        db.close()
+        return success != -1L
+    }
+
+    fun deleteTask(taskID: Int): Boolean {
+        val db = this.writableDatabase
+        val selection = "$Task_Column_ID = ?"
+        val selectionArgs = arrayOf(taskID.toString())
+        val success = db.delete(TaskTableName, selection, selectionArgs)
+        db.close()
+        return success != -1
+    }
+
+    fun updateTask(task: Task_DataFiles): Boolean {
+        val db = this.writableDatabase
+        val cv = ContentValues()
+        cv.put(Task_Column_TaskTitle, task.taskTitle)
+        cv.put(Task_Column_TaskDescription, task.taskDescription)
+        cv.put(Task_Column_StartTime, task.startTime.toString())
+        cv.put(Task_Column_EndTime, task.endTime.toString())
+        cv.put(Task_Column_DateModified, task.dateModified.toString())
+        val selection = "$Task_Column_ID = ?"
+        val selectionArgs = arrayOf(task.taskID.toString())
+        val success = db.update(TaskTableName, cv, selection, selectionArgs)
+        db.close()
+        return success != -1
+    }
+    /**
+    fun getTask(taskID: Int): Task_DataFiles {
+        val db = this.readableDatabase
+        val columns = arrayOf(Task_Column_ID, Task_Column_userID, Task_Column_TaskTitle, Task_Column_TaskDescription, Task_Column_StartTime, Task_Column_EndTime, Task_Column_DateModified)
+        val selection = "$Task_Column_ID = ?"
+        val selectionArgs = arrayOf(taskID.toString())
+        val cursor: Cursor = db.query(TaskTableName, columns, selection, selectionArgs, null, null, null)
+        cursor.moveToFirst()
+        val task = Task_DataFiles(
+            cursor.getInt(cursor.getColumnIndex(Task_Column_ID)),
+            cursor.getInt(cursor.getColumnIndex(Task_Column_userID)),
+            cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle)),
+            cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)),
+            cursor.getString(cursor.getColumnIndex(Task_Column_StartTime)).toString(),
+            cursor.getString(cursor.getColumnIndex(Task_Column_EndTime)).toString(),
+            cursor.getString(cursor.getColumnIndex(Task_Column_DateModified)).toString()
+        )
+        cursor.close()
+        return task
+    }
+    */
 }

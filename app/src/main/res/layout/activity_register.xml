@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#00121212"
-    tools:context=".MainActivity">
+    tools:context=".Authentication.User_Register">
 
     <TextView
         android:id="@+id/txtTitle"
@@ -140,7 +140,6 @@
         android:layout_marginTop="44dp"
         android:backgroundTint="#A3642888"
         android:fontFamily="@font/allerta_stencil"
-
         android:onClick="btnUserRegister"
         android:text="Register"
         android:textColor="#FFFFFF"

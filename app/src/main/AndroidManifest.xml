@@ -26,7 +26,13 @@
         <activity android:name=".Authentication.User_Register"/>
         <activity android:name=".UI.Starter"
             android:theme="@style/Theme.FreshMind.NoActionBar"/>
+        <activity android:name="com.example.freshmind.UI.Task.TaskList_AddTaskFragment" />
+
 
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
 
 </manifest>
