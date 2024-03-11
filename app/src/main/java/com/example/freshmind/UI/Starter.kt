@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -21,22 +22,24 @@ class Starter : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityWelcomeBinding
+    var globalUser: String = "" // Global variable to store the username
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setSupportActionBar(binding.appBarWelcome.toolbar)
+        globalUser = intent.getStringExtra("user").toString() //This extra is how the global customer will be sent between activities
 
         binding.appBarWelcome.fab.setOnClickListener { view ->
             Snackbar.make(view, "Will Send Feedback", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
+
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -46,6 +49,16 @@ class Starter : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        // Update the navigation header when globalUser changes
+        updateNavigationHeader()
+    }
+
+    // Function to update the navigation header with the current globalUser
+    private fun updateNavigationHeader() {
+        val headerView = binding.navView.getHeaderView(0)
+        val txtUserUsername: TextView = headerView.findViewById(R.id.txtUserUsername)
+        txtUserUsername.text = globalUser
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -58,7 +71,4 @@ class Starter : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
-
-
-
 }

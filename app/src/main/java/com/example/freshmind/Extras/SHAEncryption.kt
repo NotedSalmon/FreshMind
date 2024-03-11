@@ -11,5 +11,4 @@ object SHAEncryption {
 
         return digest.fold("") { str, it -> str + "%02x".format(it) }
     }
-
 }

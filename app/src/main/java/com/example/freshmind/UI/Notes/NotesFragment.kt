@@ -1,41 +1,43 @@
 package com.example.freshmind.UI.Notes
 
 // NotesFragment.kt
+import TaskAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.freshmind.databinding.FragmentNotesBinding
 import com.example.freshmind.Database.Notes_DataFiles
+import com.example.freshmind.Database.Task_DataFiles
+import com.example.freshmind.R
 
 class NotesFragment : Fragment() {
 
-    private lateinit var binding: FragmentNotesBinding
+    private lateinit var recyclerView: RecyclerView
     private lateinit var noteAdapter: NoteAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentNotesBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+        val view = inflater.inflate(R.layout.fragment_tasks, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        recyclerView = view.findViewById(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Set up RecyclerView
-        binding.recyclerViewNotes.layoutManager = LinearLayoutManager(requireContext())
         val notes = generateDummyNotes()
         noteAdapter = NoteAdapter(notes)
-        binding.recyclerViewNotes.adapter = noteAdapter
+        recyclerView.adapter = noteAdapter
+
+        return view
     }
 
-    private fun generateDummyNotes(): List<Notes_DataFiles> {
+    private fun generateDummyNotes(): MutableList<Notes_DataFiles> {
         // Replace this with your actual data retrieval logic
-        return listOf(
+        return mutableListOf(
             Notes_DataFiles(1, "Note 1", "Content for Note 1", null, null),
             Notes_DataFiles(2, "Note 2", "Content for Note 2", null, null),
             Notes_DataFiles(3, "Note 3", "Content for Note 3", null, null)

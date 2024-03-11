@@ -1,7 +1,9 @@
 package com.example.freshmind.Authentication
 
 import android.content.Intent
+import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -13,22 +15,27 @@ import com.example.freshmind.R
 import com.example.wagonersexperts.extra.SHAEncryption.shaEncrypt
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import com.google.firebase.*
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 
+private const val TAG = "User_Register"
 
 class User_Register: AppCompatActivity() {
+
     val dbHelper: DBHelper = DBHelper(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
+        setContentView(com.example.freshmind.R.layout.activity_register)
     }
 
     fun btnUserRegister(view: View)
     {
-        val fullNameEditText = findViewById<EditText>(R.id.txtFullName)
-        val emailEditText = findViewById<EditText>(R.id.txtEmail)
-        val phoneNumberEditText = findViewById<EditText>(R.id.txtPhoneNumber)
-        val usernameEditText = findViewById<EditText>(R.id.txtUsername)
-        val passwordEditText = findViewById<EditText>(R.id.txtPassword)
+        val fullNameEditText = findViewById<EditText>(com.example.freshmind.R.id.txtFullName)
+        val emailEditText = findViewById<EditText>(com.example.freshmind.R.id.txtEmail)
+        val phoneNumberEditText = findViewById<EditText>(com.example.freshmind.R.id.txtPhoneNumber)
+        val usernameEditText = findViewById<EditText>(com.example.freshmind.R.id.txtUsername)
+        val passwordEditText = findViewById<EditText>(com.example.freshmind.R.id.txtPassword)
 
         val userName = fullNameEditText.text.toString()
         val userEmail = emailEditText.text.toString()
@@ -44,7 +51,7 @@ class User_Register: AppCompatActivity() {
             return
         }
 
-        if (userEmail.isEmpty()){
+        if (userEmail.isEmpty() || !userEmail.contains("@") || !userEmail.contains(".")){
             emailEditText.error = "Invalid Email Used"
             emailEditText.requestFocus()
             return
@@ -56,7 +63,7 @@ class User_Register: AppCompatActivity() {
             return
         }
 
-        if (userUsername.isEmpty() || dbHelper.checkUsername(userUsername)) {
+        if (userUsername.isEmpty() || dbHelper.checkUsername(userUsername)){
             usernameEditText.error = "Username Invalid or Already Taken"
             usernameEditText.requestFocus()
             return
@@ -75,7 +82,6 @@ class User_Register: AppCompatActivity() {
         val dateCreated: LocalDateTime = LocalDateTime.parse(localTime, DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
 
 
-
         val customer = User_DataFiles(0,userName,userEmail,userPhone,userUsername, userPassword, userIsActive, dateCreated, dateCreated)
         if(dbHelper.addUser(customer)){ //Calls function addCustomer within the dbHelper
             Toast.makeText(this, "Account created successfully", Toast.LENGTH_SHORT).show()
@@ -83,11 +89,18 @@ class User_Register: AppCompatActivity() {
             startActivity(intent)
         }
         else Toast.makeText(this, "Error: Account not created", Toast.LENGTH_SHORT).show() //Error message
+
     }
 
     fun btnGoBack(view: View)
     {
         val intent = Intent(this, User_Login::class.java)
         startActivity(intent)
+    }
+
+    fun btnTestFirebase(view: View)
+    {
+
+
     }
 }

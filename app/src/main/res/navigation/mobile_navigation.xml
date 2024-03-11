@@ -32,5 +32,11 @@
         android:name="com.example.freshmind.UI.Settings.SettingsFragment"
         android:label="Settings Page"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/nav_create_task"
+        android:name="com.example.freshmind.UI.Task.TaskList_AddTaskFragment"
+        android:label="Create Task Page"
+        tools:layout="@layout/fragment_create_task" />
+
 
 </navigation>
