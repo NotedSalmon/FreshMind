@@ -1,26 +1,32 @@
+
+import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.freshmind.Authentication.User_Login
+import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.R
+import com.example.freshmind.UI.Task.TaskListFragment
+import com.example.freshmind.UI.Task.TaskList_EditTask
 
 class TaskAdapter(private val tasks: MutableList<Task_DataFiles>) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     private var selectedItemPosition = RecyclerView.NO_POSITION
+    private lateinit var dbHelper: DBHelper
+
 
     inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
         val descriptionTextView: TextView = itemView.findViewById(R.id.descriptionTextView)
         val deleteIcon: ImageView = itemView.findViewById(R.id.icon_DeleteTask)
         val editIcon: ImageView = itemView.findViewById(R.id.icon_EditTask)
+        var currentTaskID: Int = -1
         init {
+            dbHelper = DBHelper(itemView.context)
             // Set item click listener
             itemView.setOnClickListener {
                 val position = adapterPosition
@@ -38,12 +44,13 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>) : RecyclerView
                 }
             }
 
-            editIcon.setOnClickListener{
+            editIcon.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    iconEditTask(position)
+                    iconEditTask(position, itemView.context)
                 }
             }
+
         }
     }
 
@@ -57,6 +64,7 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>) : RecyclerView
         val task = tasks[position]
         holder.titleTextView.text = task.taskTitle
         holder.descriptionTextView.text = task.taskDescription
+        holder.currentTaskID = task.taskID
 
         // Highlight selected item
         holder.itemView.isSelected = position == selectedItemPosition
@@ -77,12 +85,20 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>) : RecyclerView
     }
 
     fun iconDeleteTask(position: Int) {
+        val deletedTaskID = tasks[position].taskID
         tasks.removeAt(position)
         notifyItemRemoved(position)
+        dbHelper.deleteTask(deletedTaskID)
     }
 
-    fun iconEditTask(position: Int) {
-
+    fun iconEditTask(position: Int, context: Context) {
+        val task = tasks[position]
+        val intent = Intent(context, TaskList_EditTask::class.java).apply {
+            putExtra("taskID", task.taskID)
+            putExtra("taskTitle", task.taskTitle)
+            putExtra("taskDescription", task.taskDescription)
+        }
+        context.startActivity(intent)
     }
 
 }

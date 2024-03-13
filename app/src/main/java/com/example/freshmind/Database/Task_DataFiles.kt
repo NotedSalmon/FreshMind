@@ -7,8 +7,8 @@ data class Task_DataFiles(
     val userID: Int,
     val taskTitle: String,
     val taskDescription: String,
-    val startTime: LocalDateTime?,
-    val endTime: LocalDateTime?,
+    val startTime: String,
+    val endTime: String,
     val dateModified: LocalDateTime?
 )
 {

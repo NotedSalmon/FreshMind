@@ -13,7 +13,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.freshmind.Authentication.globalUser
+import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.R
 
@@ -23,6 +25,13 @@ class TaskListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var taskAdapter: TaskAdapter
     private val tasks: MutableList<Task_DataFiles> = mutableListOf() // Initialize an empty list
+    private lateinit var dbHelper: DBHelper
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        dbHelper = DBHelper(requireContext()) // Initialize DBHelper in onCreate()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,17 +39,33 @@ class TaskListFragment : Fragment() {
     ): View? {
         setHasOptionsMenu(true)
         val view = inflater.inflate(R.layout.fragment_tasks, container, false)
-
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
 
 
-        tasks.addAll(generateDummyTasks())
+        tasks.addAll(getAllTasks())
 
         taskAdapter = TaskAdapter(tasks)
         recyclerView.adapter = taskAdapter
 
+        swipeRefreshLayout.setOnRefreshListener {
+            refreshData()
+        }
+
+        loadData()
         return view
+    }
+    private fun loadData() {
+        val updatedTasks = dbHelper.showAllTasks(globalUser)
+        tasks.clear()
+        tasks.addAll(updatedTasks)
+        taskAdapter.notifyDataSetChanged()
+        swipeRefreshLayout.isRefreshing = false
+    }
+
+    private fun refreshData() {
+        loadData()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -48,30 +73,37 @@ class TaskListFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-
-    private fun generateDummyTasks(): MutableList<Task_DataFiles> {
-        // Replace this with your actual data retrieval logic
-        val dummyTasks = mutableListOf<Task_DataFiles>()
-        dummyTasks.addAll(
-            listOf(
-                Task_DataFiles(1, 1, "Task 1", "Description for Task 1", null, null, null),
-                Task_DataFiles(2, 1, "Task 2", "Description for Task 2", null, null, null),
-                Task_DataFiles(3, 1, "Task 3", "Description for Task 3", null, null, null)
-                // Add more tasks as needed
-            )
-        )
-        return dummyTasks
+    private fun getAllTasks() : MutableList<Task_DataFiles> {
+        val allTasks = mutableListOf<Task_DataFiles>()
+        dbHelper.showAllTasks(globalUser).forEach {
+            allTasks.add(it)
+        }
+        return allTasks
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_add_task -> {
-                val i = Intent(activity, TaskList_AddTaskFragment::class.java)
+                val i = Intent(activity, TaskList_AddTask::class.java)
                 i.putExtra("user", globalUser)
                 startActivity(i)
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ADD_TASK_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // Task added successfully, refresh the task list
+            tasks.clear()
+            tasks.addAll(getAllTasks())
+            taskAdapter.notifyDataSetChanged()
+        }
+    }
+
+    companion object {
+        private const val ADD_TASK_REQUEST_CODE = 1001
     }
 }
