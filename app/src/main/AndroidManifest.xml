@@ -26,7 +26,8 @@
         <activity android:name=".Authentication.User_Register"/>
         <activity android:name=".UI.Starter"
             android:theme="@style/Theme.FreshMind.NoActionBar"/>
-        <activity android:name="com.example.freshmind.UI.Task.TaskList_AddTaskFragment" />
+        <activity android:name="com.example.freshmind.UI.Task.TaskList_AddTask" />
+        <activity android:name="com.example.freshmind.UI.Task.TaskList_EditTask" />
 
 
     </application>

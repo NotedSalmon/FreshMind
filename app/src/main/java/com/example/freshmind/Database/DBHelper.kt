@@ -4,7 +4,10 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 private val DataBaseName = "FreshMindDB.db"
 private val ver : Int = 1
@@ -181,6 +184,23 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1
     }
 
+    fun returnUserID(username: String): Int {
+        val db = this.readableDatabase
+        val columns = arrayOf(User_Column_ID)
+        val selection = "$User_Column_Username = ?"
+        val selectionArgs = arrayOf(username)
+        val cursor: Cursor =
+            db.query(UserTableName, columns, selection, selectionArgs, null, null, null)
+        var userID = 0
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                userID = cursor.getInt(cursor.getColumnIndex(User_Column_ID))
+            }
+            cursor.close()
+        }
+        return userID
+    }
+
     /**
      * Task Table Functions
      */
@@ -224,25 +244,41 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         db.close()
         return success != -1
     }
-    /**
-    fun getTask(taskID: Int): Task_DataFiles {
+    fun showAllTasks(userID: String): MutableList<Task_DataFiles> {
+        val userId = returnUserID(userID)
+        val taskList = mutableListOf<Task_DataFiles>()
         val db = this.readableDatabase
-        val columns = arrayOf(Task_Column_ID, Task_Column_userID, Task_Column_TaskTitle, Task_Column_TaskDescription, Task_Column_StartTime, Task_Column_EndTime, Task_Column_DateModified)
-        val selection = "$Task_Column_ID = ?"
-        val selectionArgs = arrayOf(taskID.toString())
-        val cursor: Cursor = db.query(TaskTableName, columns, selection, selectionArgs, null, null, null)
-        cursor.moveToFirst()
-        val task = Task_DataFiles(
-            cursor.getInt(cursor.getColumnIndex(Task_Column_ID)),
-            cursor.getInt(cursor.getColumnIndex(Task_Column_userID)),
-            cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle)),
-            cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)),
-            cursor.getString(cursor.getColumnIndex(Task_Column_StartTime)).toString(),
-            cursor.getString(cursor.getColumnIndex(Task_Column_EndTime)).toString(),
-            cursor.getString(cursor.getColumnIndex(Task_Column_DateModified)).toString()
-        )
-        cursor.close()
-        return task
+        val cursor: Cursor?
+        try {
+            // Query tasks associated with the given userID
+            cursor = db.rawQuery("SELECT * FROM $TaskTableName WHERE $Task_Column_userID = $userId", null)
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        // Extract task details from cursor
+                        val taskID = cursor.getInt(cursor.getColumnIndex(Task_Column_ID))
+                        val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle))
+                        val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription))
+                        val startTime = cursor.getString(cursor.getColumnIndex(Task_Column_StartTime))
+                        val endTime = cursor.getString(cursor.getColumnIndex(Task_Column_EndTime))
+
+                        val localTime = LocalDateTime.now()
+                            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
+
+                        val dateCreated: LocalDateTime = LocalDateTime.parse(localTime, DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
+
+                        // Create TaskDetails object and add to list
+                        val taskDetails = Task_DataFiles(taskID,userId,taskTitle, taskDescription, startTime, endTime,dateCreated)
+                        taskList.add(taskDetails)
+                    } while (cursor.moveToNext())
+                }
+                cursor.close()
+            }
+        } catch (e: SQLiteException) {
+            return mutableListOf()
+        } finally {
+            db.close()
+        }
+        return taskList
     }
-    */
 }

@@ -34,7 +34,7 @@
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/nav_create_task"
-        android:name="com.example.freshmind.UI.Task.TaskList_AddTaskFragment"
+        android:name="com.example.freshmind.UI.Task.TaskList_AddTask"
         android:label="Create Task Page"
         tools:layout="@layout/fragment_create_task" />
 
