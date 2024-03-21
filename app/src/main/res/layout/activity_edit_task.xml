@@ -4,25 +4,47 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/editTextTitle"
+        android:id="@+id/txtEditTask_Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Task Title"
         android:padding="16dp"/>
 
     <EditText
-        android:id="@+id/editTextDescription"
+        android:id="@+id/txtEditTask_Description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTextTitle"
+        android:layout_below="@id/txtEditTask_Title"
         android:hint="Task Description"
         android:padding="16dp"/>
+
+    <TextView
+        android:id="@+id/txtEditTask_StartDate"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/txtEditTask_Description"
+        android:hint="Start Date"
+        android:minHeight="24dp"
+        android:textSize="16sp"
+         />
+
+    <TextView
+        android:id="@+id/txtEditTask_EndDate"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="End Date"
+        android:minHeight="24dp"
+        android:textSize="16sp"
+        android:layout_below="@id/txtEditTask_StartDate"
+         />
 
     <Button
         android:id="@+id/buttonSaveTask"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTextDescription"
+        android:layout_below="@id/txtEditTask_EndDate"
         android:layout_centerHorizontal="true"
         android:text="Save Task"/>
 
