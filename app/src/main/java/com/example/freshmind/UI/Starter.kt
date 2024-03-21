@@ -5,6 +5,7 @@ import android.view.Menu
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.LayoutRes
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -14,14 +15,19 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import com.example.freshmind.R
+import com.example.freshmind.UI.Calendar.Utils.makeGone
+import com.example.freshmind.UI.Calendar.Utils.makeVisible
 import com.example.freshmind.databinding.ActivityWelcomeBinding
+import com.example.freshmind.databinding.ContentWelcomeBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class Starter : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityWelcomeBinding
+    public lateinit var binding: ActivityWelcomeBinding
     var globalUser: String = "" // Global variable to store the username
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,5 +76,48 @@ class Starter : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+}
+
+interface HasToolbar {
+    val toolbar: Toolbar? // Return null to hide the toolbar
+}
+
+interface HasBackButton
+
+abstract class BaseFragment(@LayoutRes layoutRes: Int) : Fragment(layoutRes) {
+    abstract val titleRes: Int?
+
+    val activityToolbar: Toolbar
+        get() = (requireActivity() as Starter).binding.appBarWelcome.toolbar
+
+    override fun onStart() {
+        super.onStart()
+        if (this is HasToolbar) {
+            activityToolbar.makeGone()
+            (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
+        }
+
+        val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
+        if (this is HasBackButton) {
+            actionBar?.title = if (titleRes != null) context?.getString(titleRes!!) else ""
+            actionBar?.setDisplayHomeAsUpEnabled(true)
+        } else {
+            actionBar?.setDisplayHomeAsUpEnabled(false)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (this is HasToolbar) {
+            activityToolbar.makeVisible()
+            (requireActivity() as AppCompatActivity).setSupportActionBar(activityToolbar)
+        }
+
+        val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
+        if (this is HasBackButton) {
+            actionBar?.title = context?.getString(R.string.activity_title_view)
+        }
+        actionBar?.setDisplayHomeAsUpEnabled(true)
     }
 }

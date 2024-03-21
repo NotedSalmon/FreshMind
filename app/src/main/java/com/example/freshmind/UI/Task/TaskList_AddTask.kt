@@ -24,7 +24,7 @@ class TaskList_AddTask : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.example.freshmind.R.layout.activity_create_task)
+        setContentView(R.layout.activity_create_task)
 
         val btnAddTask = findViewById<View>(R.id.buttonSaveTask)
         val startDateCalendar = Calendar.getInstance()
@@ -34,8 +34,12 @@ class TaskList_AddTask : AppCompatActivity() {
 
         txtStartDate.setOnClickListener { showDateTimePicker(startDateCalendar, txtStartDate) }
         txtEndDate.setOnClickListener { showDateTimePicker(endDateCalendar, txtEndDate) }
-        btnAddTask.setOnClickListener { btnAddTask() }
 
+        btnAddTask.setOnClickListener {
+            if (startDateCalendar.timeInMillis > endDateCalendar.timeInMillis) {
+                Toast.makeText(this, "End date cannot be before start date", Toast.LENGTH_SHORT).show()
+                txtEndDate.error
+            } else { btnAddTask() } }
     }
 
     private fun btnAddTask() {
