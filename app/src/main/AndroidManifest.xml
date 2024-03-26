@@ -13,7 +13,7 @@
         android:theme="@style/Theme.FreshMind"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".Authentication.User_Login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,12 +22,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Authentication.User_Login"/>
+
         <activity android:name=".Authentication.User_Register"/>
         <activity android:name=".UI.Starter"
             android:theme="@style/Theme.FreshMind.NoActionBar"/>
-        <activity android:name="com.example.freshmind.UI.Task.TaskList_AddTask" />
-        <activity android:name="com.example.freshmind.UI.Task.TaskList_EditTask" />
+        <activity android:name=".UI.Task.TaskList_AddTask" />
+        <activity android:name=".UI.Task.TaskList_EditTask" />
+        <activity android:name=".UI.Notes.Notes_AddNote" />
+        <activity android:name=".UI.Notes.Notes_EditNote" />
 
 
     </application>

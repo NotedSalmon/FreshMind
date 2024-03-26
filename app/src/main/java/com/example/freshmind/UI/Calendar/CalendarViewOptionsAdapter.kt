@@ -9,6 +9,7 @@ import com.example.freshmind.UI.BaseFragment
 import com.example.freshmind.UI.Calendar.Utils.layoutInflater
 import com.example.freshmind.databinding.CalendarViewOptionsItemViewBinding
 
+
 data class ExampleItem(
     @StringRes val titleRes: Int,
     @StringRes val subtitleRes: Int,
@@ -37,14 +38,14 @@ val horizontal = Animation(
     popExit = com.example.freshmind.R.anim.slide_out_right,
 )
 
-class CalendarViewOptionsAdapter(val onClick: (ExampleItem) -> Unit) :
+class CalendarViewOptionsAdapter(val onClick: (ExampleItem) -> BaseFragment) :
     RecyclerView.Adapter<CalendarViewOptionsAdapter.HomeOptionsViewHolder>() {
     val examples = listOf(
         ExampleItem(
             com.example.freshmind.R.string.example_3_title,
             com.example.freshmind.R.string.example_3_subtitle,
             horizontal,
-        ) { CalendarFragment() }
+        )  {CalendarFragment()}
     )
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeOptionsViewHolder {

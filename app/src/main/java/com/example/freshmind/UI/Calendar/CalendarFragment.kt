@@ -1,4 +1,5 @@
 package com.example.freshmind.UI.Calendar
+//https://github.com/kizitonwose/Calendar
 
 import android.os.Bundle
 import android.view.View
@@ -8,15 +9,25 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatEditText
+import com.example.freshmind.UI.Calendar.Utils.dpToPx
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.R
+import com.example.freshmind.UI.BaseFragment
+import com.example.freshmind.UI.Calendar.Utils.addStatusBarColorUpdate
+import com.example.freshmind.UI.Calendar.Utils.getColorCompat
+import com.example.freshmind.UI.Calendar.Utils.inputMethodManager
+import com.example.freshmind.UI.Calendar.Utils.layoutInflater
+import com.example.freshmind.UI.Calendar.Utils.makeInVisible
+import com.example.freshmind.UI.Calendar.Utils.makeVisible
+import com.example.freshmind.UI.Calendar.Utils.setTextColorRes
+import com.example.freshmind.UI.HasBackButton
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
@@ -33,35 +44,27 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.UUID
-import com.example.freshmind.UI.BaseFragment
-import com.example.freshmind.UI.Calendar.Utils.addStatusBarColorUpdate
-import com.example.freshmind.UI.Calendar.Utils.getColorCompat
-import com.example.freshmind.UI.Calendar.Utils.inputMethodManager
-import com.example.freshmind.UI.Calendar.Utils.makeInVisible
-import com.example.freshmind.UI.Calendar.Utils.makeVisible
-import com.example.freshmind.UI.Calendar.Utils.setTextColorRes
-import com.example.freshmind.UI.Calendar.Utils.*
-import com.example.freshmind.UI.Starter
+import com.example.freshmind.UI.Task.TaskAdapter
 
-data class Event(val id: String, val text: String, val date: LocalDate)
+//data class Event(val id: String, val text: String, val date: LocalDate)
 
-class Example3EventsAdapter(val onClick: (Event) -> Unit) :
-    RecyclerView.Adapter<Example3EventsAdapter.CalendarEventItemViewHolder>() {
-    val events = mutableListOf<Event>()
+class CalendarAdapter(val onClick: (Task_DataFiles) -> Unit) :
+    RecyclerView.Adapter<CalendarAdapter.Example3EventsViewHolder>() {
+    val events = mutableListOf<Task_DataFiles>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarEventItemViewHolder {
-        return CalendarEventItemViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Example3EventsViewHolder {
+        return Example3EventsViewHolder(
             CalendarEventItemViewBinding.inflate(parent.context.layoutInflater, parent, false),
         )
     }
 
-    override fun onBindViewHolder(viewHolder: CalendarEventItemViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: Example3EventsViewHolder, position: Int) {
         viewHolder.bind(events[position])
     }
 
     override fun getItemCount(): Int = events.size
 
-    inner class CalendarEventItemViewHolder(private val binding: CalendarEventItemViewBinding) :
+    inner class Example3EventsViewHolder(private val binding: CalendarEventItemViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
             itemView.setOnClickListener {
@@ -69,18 +72,18 @@ class Example3EventsAdapter(val onClick: (Event) -> Unit) :
             }
         }
 
-        fun bind(event: Event) {
-            binding.itemEventText.text = event.text
+        fun bind(event: Task_DataFiles) {
+            binding.itemEventText.text = event.taskTitle
         }
     }
 }
 
-class CalendarFragment : BaseFragment(R.layout.fragment_calendar) {
-    private val eventsAdapter = Example3EventsAdapter {
+class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton {
+    private val eventsAdapter = CalendarAdapter {
         AlertDialog.Builder(requireContext())
             .setMessage(R.string.example_3_dialog_delete_confirmation)
             .setPositiveButton(R.string.delete) { _, _ ->
-                deleteEvent(it)
+                //deleteEvent(it)
             }
             .setNegativeButton(R.string.close, null)
             .show()
@@ -99,7 +102,7 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar) {
             .setTitle(getString(R.string.example_3_input_dialog_title))
             .setView(layout)
             .setPositiveButton(R.string.save) { _, _ ->
-                saveEvent(editText.text.toString())
+               // saveEvent(editText.text.toString())
                 // Prepare EditText for reuse.
                 editText.setText("")
             }
@@ -128,7 +131,7 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar) {
     private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM")
     private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy")
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
-    private val events = mutableMapOf<LocalDate, List<Event>>()
+    private val events = mutableMapOf<LocalDate, List<Task_DataFiles>>()
 
     private lateinit var binding: FragmentCalendarBinding
 
@@ -136,13 +139,13 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar) {
         super.onViewCreated(view, savedInstanceState)
         addStatusBarColorUpdate(R.color.example_3_statusbar_color)
         binding = FragmentCalendarBinding.bind(view)
-        binding.exThreeRv.apply {
+        binding.calendarView.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             adapter = eventsAdapter
             addItemDecoration(DividerItemDecoration(requireContext(), RecyclerView.VERTICAL))
         }
 
-        binding.exThreeCalendar.monthScrollListener = {
+        binding.calendarView.monthScrollListener = {
             activityToolbar.title = if (it.yearMonth.year == today.year) {
                 titleSameYearFormatter.format(it.yearMonth)
             } else {
@@ -157,28 +160,28 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar) {
         val startMonth = currentMonth.minusMonths(50)
         val endMonth = currentMonth.plusMonths(50)
         configureBinders(daysOfWeek)
-        binding.exThreeCalendar.apply {
+        binding.calendarView.apply {
             setup(startMonth, endMonth, daysOfWeek.first())
             scrollToMonth(currentMonth)
         }
 
         if (savedInstanceState == null) {
             // Show today's events initially.
-            binding.exThreeCalendar.post { selectDate(today) }
+            binding.calendarView.post { selectDate(today) }
         }
-        binding.exThreeAddButton.setOnClickListener { inputDialog.show() }
+        binding.btnCalendarAddButton.setOnClickListener { inputDialog.show() }
     }
 
     private fun selectDate(date: LocalDate) {
         if (selectedDate != date) {
             val oldDate = selectedDate
             selectedDate = date
-            oldDate?.let { binding.exThreeCalendar.notifyDateChanged(it) }
-            binding.exThreeCalendar.notifyDateChanged(date)
+            oldDate?.let { binding.calendarView.notifyDateChanged(it) }
+            binding.calendarView.notifyDateChanged(date)
             updateAdapterForDate(date)
         }
     }
-
+/**
     private fun saveEvent(text: String) {
         if (text.isBlank()) {
             Toast.makeText(requireContext(), R.string.example_3_empty_input_text, Toast.LENGTH_LONG)
@@ -186,25 +189,25 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar) {
         } else {
             selectedDate?.let {
                 events[it] =
-                    events[it].orEmpty().plus(Event(UUID.randomUUID().toString(), text, it))
+                    events[it].orEmpty().plus(Task_DataFiles(UUID.randomUUID().toString(), text, it))
                 updateAdapterForDate(it)
             }
         }
     }
 
-    private fun deleteEvent(event: Event) {
-        val date = event.date
+    private fun deleteEvent(event: Task_DataFiles) {
+        val date = event.startTime
         events[date] = events[date].orEmpty().minus(event)
         updateAdapterForDate(date)
     }
-
+*/
     private fun updateAdapterForDate(date: LocalDate) {
         eventsAdapter.apply {
             events.clear()
             events.addAll(this@CalendarFragment.events[date].orEmpty())
             notifyDataSetChanged()
         }
-        binding.exThreeSelectedDateText.text = selectionFormatter.format(date)
+        binding.txtCalendarSelectedDate.text = selectionFormatter.format(date)
     }
 
     override fun onStart() {
@@ -234,12 +237,12 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar) {
                 }
             }
         }
-        binding.exThreeCalendar.dayBinder = object : MonthDayBinder<DayViewContainer> {
+        binding.calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun create(view: View) = DayViewContainer(view)
             override fun bind(container: DayViewContainer, data: CalendarDay) {
                 container.day = data
-                val textView = container.binding.exThreeDayText
-                val dotView = container.binding.exThreeDotView
+                val textView = container.binding.txtCalendarDay
+                val dotView = container.binding.txtCalendarDotView
 
                 textView.text = data.date.dayOfMonth.toString()
 
@@ -272,7 +275,7 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar) {
         class MonthViewContainer(view: View) : ViewContainer(view) {
             val legendLayout = CalendarHeaderLayoutBinding.bind(view).legendLayout.root
         }
-        binding.exThreeCalendar.monthHeaderBinder =
+        binding.calendarView.monthHeaderBinder =
             object : MonthHeaderFooterBinder<MonthViewContainer> {
                 override fun create(view: View) = MonthViewContainer(view)
                 override fun bind(container: MonthViewContainer, data: CalendarMonth) {
