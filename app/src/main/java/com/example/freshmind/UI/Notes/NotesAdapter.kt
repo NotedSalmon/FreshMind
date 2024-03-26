@@ -1,22 +1,39 @@
 package com.example.freshmind.UI.Notes
 
+import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.freshmind.R
+import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Notes_DataFiles
+import com.example.freshmind.R
+import com.example.freshmind.UI.Task.TaskAdapter
+import com.example.freshmind.UI.Task.TaskList_EditTask
 
-class NoteAdapter(private val notes: MutableList<Notes_DataFiles>) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
+
+class NotesAdapter(private val notes: MutableList<Notes_DataFiles>) : RecyclerView.Adapter<NotesAdapter.NotesViewHolder>() {
 
     private var selectedItemPosition = RecyclerView.NO_POSITION
+    private lateinit var dbHelper: DBHelper
 
-    inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
-        val contentTextView: TextView = itemView.findViewById(R.id.contentTextView)
+    /**
+     * This class is the view holder for the RecyclerView
+     * It holds the views for the item_task layout
+     * It also sets the click listeners for the delete and edit icons
+     */
 
+    inner class NotesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val titleTextView: TextView = itemView.findViewById(R.id.txtNotes_Title)
+        val descriptionTextView: TextView = itemView.findViewById(R.id.txtNotes_Content)
+        val deleteIcon: ImageView = itemView.findViewById(R.id.icon_DeleteNotes)
+        val editIcon: ImageView = itemView.findViewById(R.id.icon_EditNotes)
+        var currentNoteID: Int = -1
         init {
+            dbHelper = DBHelper(itemView.context)
             // Set item click listener
             itemView.setOnClickListener {
                 val position = adapterPosition
@@ -27,42 +44,51 @@ class NoteAdapter(private val notes: MutableList<Notes_DataFiles>) : RecyclerVie
                 }
             }
 
-            // Set item long click listener for deletion
-            itemView.setOnLongClickListener {
+            deleteIcon.setOnClickListener{
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    deleteNote(position)
+                    iconDeleteNote(position)
                 }
-                true // Consume the long click event
             }
+
+            editIcon.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    iconEditNote(position, itemView.context)
+                }
+            }
+
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_notes, parent, false)
-        return NoteViewHolder(view)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_notes, parent, false)
+        return NotesViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
+    /**
+     * This function is called when the RecyclerView needs to display an item
+     * It binds the data to the view holder
+     */
+
+    override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
         val note = notes[position]
         holder.titleTextView.text = note.noteTitle
-        holder.contentTextView.text = note.noteContent
+        holder.descriptionTextView.text = note.noteContent
+        holder.currentNoteID = note.noteID
 
+        // Highlight selected item
         holder.itemView.isSelected = position == selectedItemPosition
 
-        holder.itemView.setOnClickListener {
-            val previousPosition = selectedItemPosition
-            selectedItemPosition = holder.adapterPosition
-
-            notifyItemChanged(previousPosition)
-            notifyItemChanged(selectedItemPosition)
-        }
-
         if (selectedItemPosition == position) {
-            holder.itemView.setBackgroundResource(R.color.teal_200)
+            holder.itemView.setBackgroundResource(R.color.purple_200)
+            holder.deleteIcon.visibility = View.VISIBLE
+            holder.editIcon.visibility = View.VISIBLE
         } else {
             holder.itemView.setBackgroundResource(R.color.white)
+            holder.deleteIcon.visibility = View.GONE
+            holder.editIcon.visibility = View.GONE
         }
     }
 
@@ -70,11 +96,26 @@ class NoteAdapter(private val notes: MutableList<Notes_DataFiles>) : RecyclerVie
         return notes.size
     }
 
-    private fun deleteNote(position: Int) {
+    fun iconDeleteNote(position: Int) {
+        val deletedNoteID = notes[position].noteID
         notes.removeAt(position)
         notifyItemRemoved(position)
-        if (selectedItemPosition == position) {
-            selectedItemPosition = RecyclerView.NO_POSITION
-        }
+        dbHelper.deleteNotes(deletedNoteID)
     }
+
+    /**
+     * This function is called when the edit icon is clicked
+     * It opens the TaskList_EditTask activity with the task details
+     */
+    fun iconEditNote(position: Int, context: Context) {
+        val note = notes[position]
+        val intent = Intent(context, Notes_EditNote::class.java).apply {
+            putExtra("noteID", note.noteID)
+            putExtra("noteTitle", note.noteTitle)
+            putExtra("noteContent", note.noteContent)
+            putExtra("dateCreated", note.dateCreated)
+        }
+        context.startActivity(intent)
+    }
+
 }

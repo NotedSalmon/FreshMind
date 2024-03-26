@@ -1,6 +1,5 @@
 package com.example.freshmind.UI.Task
 
-import TaskAdapter
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle

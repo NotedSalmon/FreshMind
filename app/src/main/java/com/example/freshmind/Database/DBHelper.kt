@@ -235,8 +235,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         val cv = ContentValues()
         cv.put(Task_Column_TaskTitle, task.taskTitle)
         cv.put(Task_Column_TaskDescription, task.taskDescription)
-        cv.put(Task_Column_StartTime, task.startTime.toString())
-        cv.put(Task_Column_EndTime, task.endTime.toString())
+        cv.put(Task_Column_StartTime, task.startTime)
+        cv.put(Task_Column_EndTime, task.endTime)
         cv.put(Task_Column_DateModified, task.dateModified.toString())
         val selection = "$Task_Column_ID = ?"
         val selectionArgs = arrayOf(task.taskID.toString())
@@ -281,4 +281,83 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         }
         return taskList
     }
+
+    /**
+     * Notes Table Functions
+     */
+
+    fun showAllNotes(userID: String): MutableList<Notes_DataFiles> {
+        val userId = returnUserID(userID)
+        val notesList = mutableListOf<Notes_DataFiles>()
+        val db = this.readableDatabase
+        val cursor: Cursor?
+        try {
+            // Query tasks associated with the given userID
+            cursor = db.rawQuery("SELECT * FROM $NoteTableName WHERE $Note_Column_userID = $userId", null)
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        // Extract task details from cursor
+                        val noteID = cursor.getInt(cursor.getColumnIndex(Note_Column_ID))
+                        val noteTitle = cursor.getString(cursor.getColumnIndex(Note_Column_NoteTitle))
+                        val noteContent = cursor.getString(cursor.getColumnIndex(Note_Column_NoteContent))
+                        val dateCreated = cursor.getString(cursor.getColumnIndex(Note_Column_DateCreated))
+
+                        val localTime = LocalDateTime.now()
+                            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
+
+                        val dateModified: LocalDateTime = LocalDateTime.parse(localTime, DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
+
+                        // Create TaskDetails object and add to list
+                        val noteDetails = Notes_DataFiles(noteID,userId,noteTitle, noteContent, dateCreated,dateModified)
+                        notesList.add(noteDetails)
+                    } while (cursor.moveToNext())
+                }
+                cursor.close()
+            }
+        } catch (e: SQLiteException) {
+            return mutableListOf()
+        } finally {
+            db.close()
+        }
+        return notesList
+    }
+
+    fun addNote(note: Notes_DataFiles): Boolean {
+        val db: SQLiteDatabase = this.writableDatabase
+        val cv: ContentValues = ContentValues()
+
+        cv.put(Note_Column_userID, note.userID)
+        cv.put(Note_Column_NoteTitle, note.noteTitle)
+        cv.put(Note_Column_NoteContent, note.noteContent)
+        cv.put(Note_Column_DateCreated, note.dateCreated)
+        cv.put(Note_Column_DateModified, note.dateModified.toString())
+
+        val success = db.insert(NoteTableName, null, cv)
+        db.close()
+        return success != -1L
+    }
+
+    fun deleteNotes(noteID: Int): Boolean {
+        val db = this.writableDatabase
+        val selection = "$Note_Column_ID = ?"
+        val selectionArgs = arrayOf(noteID.toString())
+        val success = db.delete(NoteTableName, selection, selectionArgs)
+        db.close()
+        return success != -1
+    }
+
+    fun updateNotes(note: Notes_DataFiles): Boolean {
+        val db = this.writableDatabase
+        val cv = ContentValues()
+        cv.put(Note_Column_NoteTitle, note.noteTitle)
+        cv.put(Note_Column_NoteContent, note.noteContent)
+        cv.put(Task_Column_DateModified, note.dateModified.toString())
+        val selection = "$Task_Column_ID = ?"
+        val selectionArgs = arrayOf(note.noteID.toString())
+        val success = db.update(NoteTableName, cv, selection, selectionArgs)
+        db.close()
+        return success != -1
+    }
+
 }
