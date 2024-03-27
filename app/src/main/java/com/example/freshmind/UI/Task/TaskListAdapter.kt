@@ -14,7 +14,7 @@ import com.example.freshmind.R
 import com.example.freshmind.UI.Task.TaskListFragment
 import com.example.freshmind.UI.Task.TaskList_EditTask
 
-class TaskAdapter(private val tasks: MutableList<Task_DataFiles>) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
+class TaskAdapter(private val tasks: MutableList<Task_DataFiles>, private val editTaskClickListener: EditTaskClickListener) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     private var selectedItemPosition = RecyclerView.NO_POSITION
     private lateinit var dbHelper: DBHelper
@@ -55,7 +55,7 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>) : RecyclerView
             editIcon.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    iconEditTask(position, itemView.context)
+                    editTaskClickListener.iconEditTask(position, itemView.context)
                 }
             }
 
@@ -106,20 +106,8 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>) : RecyclerView
         dbHelper.deleteTask(deletedTaskID)
     }
 
-    /**
-     * This function is called when the edit icon is clicked
-     * It opens the TaskList_EditTask activity with the task details
-     */
-    fun iconEditTask(position: Int, context: Context) {
-        val task = tasks[position]
-        val intent = Intent(context, TaskList_EditTask::class.java).apply {
-            putExtra("taskID", task.taskID)
-            putExtra("taskTitle", task.taskTitle)
-            putExtra("taskDescription", task.taskDescription)
-            putExtra("startTime", task.startTime)
-            putExtra("endTime", task.endTime)
-        }
-        context.startActivity(intent)
+    interface EditTaskClickListener {
+        fun iconEditTask(position: Int, context: Context)
     }
 
 }

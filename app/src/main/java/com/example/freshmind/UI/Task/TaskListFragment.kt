@@ -1,6 +1,7 @@
 package com.example.freshmind.UI.Task
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,7 +20,7 @@ import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.R
 
 
-class TaskListFragment : Fragment() {
+class TaskListFragment : Fragment(), TaskAdapter.EditTaskClickListener {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var taskAdapter: TaskAdapter
@@ -45,7 +46,7 @@ class TaskListFragment : Fragment() {
 
         tasks.addAll(getAllTasks())
 
-        taskAdapter = TaskAdapter(tasks)
+        taskAdapter = TaskAdapter(tasks, this)
         recyclerView.adapter = taskAdapter
 
         swipeRefreshLayout.setOnRefreshListener {
@@ -85,7 +86,7 @@ class TaskListFragment : Fragment() {
             R.id.action_add_task -> {
                 val i = Intent(activity, TaskList_AddTask::class.java)
                 i.putExtra("user", globalUser)
-                startActivity(i)
+                startActivityForResult(i, ADD_TASK_REQUEST_CODE)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -96,13 +97,28 @@ class TaskListFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ADD_TASK_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             // Task added successfully, refresh the task list
-            tasks.clear()
-            tasks.addAll(getAllTasks())
-            taskAdapter.notifyDataSetChanged()
+            refreshData()
         }
+        if (requestCode == EDIT_TASK_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // Task edited successfully, refresh the task list
+            refreshData()
+        }
+    }
+
+    override fun iconEditTask(position: Int, context: Context) {
+        val task = tasks[position]
+        val intent = Intent(context, TaskList_EditTask::class.java).apply {
+            putExtra("taskID", task.taskID)
+            putExtra("taskTitle", task.taskTitle)
+            putExtra("taskDescription", task.taskDescription)
+            putExtra("startTime", task.startTime)
+            putExtra("endTime", task.endTime)
+        }
+        startActivityForResult(intent, EDIT_TASK_REQUEST_CODE)
     }
 
     companion object {
         private const val ADD_TASK_REQUEST_CODE = 1001
+        private const val EDIT_TASK_REQUEST_CODE = 1002
     }
 }

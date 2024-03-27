@@ -87,7 +87,7 @@ class TaskList_EditTask : AppCompatActivity() {
             // Update task in the database
             dbHelper.updateTask(updatedTask)
 
-            // Close the activity and return to TaskListFragment
+            setResult(RESULT_OK)
             finish()
         }
     }

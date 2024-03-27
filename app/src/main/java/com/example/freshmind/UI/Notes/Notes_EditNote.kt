@@ -1,9 +1,11 @@
 package com.example.freshmind.UI.Notes
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -23,6 +25,7 @@ class Notes_EditNote : AppCompatActivity() {
     private lateinit var dbHelper: DBHelper
     private lateinit var editTextTitle: EditText
     private lateinit var editTextContent: EditText
+    private lateinit var checkboxIsPinned: CheckBox
     private lateinit var buttonSaveTask: Button
     private lateinit var noteDateCreated: String
     private var noteID: Int = -1
@@ -34,6 +37,7 @@ class Notes_EditNote : AppCompatActivity() {
         dbHelper = DBHelper(this)
         editTextTitle = findViewById(R.id.txtEditNote_Title)
         editTextContent = findViewById(R.id.txtEditNote_Content)
+        checkboxIsPinned = findViewById(R.id.checkIsPinned)
         buttonSaveTask = findViewById(R.id.buttonSaveNote)
 
         // Retrieve task details passed from NoteFragment
@@ -41,11 +45,15 @@ class Notes_EditNote : AppCompatActivity() {
         noteID = intent.getIntExtra("noteID", -1)
         val noteTitle = intent.getStringExtra("noteTitle")
         val noteContent = intent.getStringExtra("noteContent")
-        val noteDateCreated = intent.getStringExtra("startTime")
+        noteDateCreated = intent.getStringExtra("noteDateCreated").toString()
+        val noteIsPinned = intent.getBooleanExtra("checkPin", false)
+
+
 
         // Set the retrieved task details to EditText fields
         editTextTitle.setText(noteTitle)
         editTextContent.setText(noteContent)
+        checkboxIsPinned.isChecked = noteIsPinned
 
         // Set click listener for the Save Task button
         buttonSaveTask.setOnClickListener {
@@ -56,19 +64,19 @@ class Notes_EditNote : AppCompatActivity() {
     private fun updateTask() {
         val newTitle = editTextTitle.text.toString()
         val newContent = editTextContent.text.toString()
-        // Validate the dates
-
+        val checkPin: CheckBox = findViewById(R.id.checkIsPinned)
+        var isPinned: Boolean = checkPin.isChecked
         val localTime =
             LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
         val dateUpdated: LocalDateTime =
             LocalDateTime.parse(localTime, DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
 
-            // Create a new Task_DataFiles object with updated information
-        val updatedNote = Notes_DataFiles(noteID, -1, newTitle, newContent, noteDateCreated, dateUpdated)
-            // Update task in the database
+            // Create a new Note_DataFiles object with updated information
+        val updatedNote = Notes_DataFiles(noteID, -1, newTitle, newContent, noteDateCreated, dateUpdated, isPinned)
+            // Update note in the database
         dbHelper.updateNotes(updatedNote)
 
-            // Close the activity and return to TaskListFragment
+        setResult(Activity.RESULT_OK)
         finish()
 
     }

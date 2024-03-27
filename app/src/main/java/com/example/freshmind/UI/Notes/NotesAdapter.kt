@@ -1,5 +1,6 @@
 package com.example.freshmind.UI.Notes
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -7,15 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Notes_DataFiles
 import com.example.freshmind.R
-import com.example.freshmind.UI.Task.TaskAdapter
-import com.example.freshmind.UI.Task.TaskList_EditTask
 
 
-class NotesAdapter(private val notes: MutableList<Notes_DataFiles>) : RecyclerView.Adapter<NotesAdapter.NotesViewHolder>() {
+class NotesAdapter(private val notes: MutableList<Notes_DataFiles>, private val editNoteClickListener: EditNoteClickListener) : RecyclerView.Adapter<NotesAdapter.NotesViewHolder>() {
 
     private var selectedItemPosition = RecyclerView.NO_POSITION
     private lateinit var dbHelper: DBHelper
@@ -54,7 +54,7 @@ class NotesAdapter(private val notes: MutableList<Notes_DataFiles>) : RecyclerVi
             editIcon.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    iconEditNote(position, itemView.context)
+                    editNoteClickListener.iconEditNote(adapterPosition, itemView.context)
                 }
             }
 
@@ -104,18 +104,15 @@ class NotesAdapter(private val notes: MutableList<Notes_DataFiles>) : RecyclerVi
     }
 
     /**
-     * This function is called when the edit icon is clicked
-     * It opens the TaskList_EditTask activity with the task details
+     * When the Edit icon is clicked, the EditNoteClickListener interface is called
+     * This will callback to NotesFragment to handle the edit note action
+     * When the function finishes, the list will refresh
      */
-    fun iconEditNote(position: Int, context: Context) {
-        val note = notes[position]
-        val intent = Intent(context, Notes_EditNote::class.java).apply {
-            putExtra("noteID", note.noteID)
-            putExtra("noteTitle", note.noteTitle)
-            putExtra("noteContent", note.noteContent)
-            putExtra("dateCreated", note.dateCreated)
-        }
-        context.startActivity(intent)
+    interface EditNoteClickListener {
+        fun iconEditNote(position: Int, context: Context)
     }
+
+
+
 
 }
