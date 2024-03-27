@@ -18,12 +18,19 @@
         android:hint="Note Description"
         android:padding="16dp"/>
 
+    <CheckBox
+        android:id="@+id/checkIsPinned"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtEditNote_Content"
+        android:text="Pin to Dashboard"/>
+
 
     <Button
         android:id="@+id/buttonSaveNote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtEditNote_Content"
+        android:layout_below="@id/checkIsPinned"
         android:layout_centerHorizontal="true"
         android:text="Save Note"/>
 

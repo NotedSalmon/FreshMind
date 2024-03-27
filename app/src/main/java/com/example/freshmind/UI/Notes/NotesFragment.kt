@@ -1,8 +1,8 @@
 package com.example.freshmind.UI.Notes
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
-import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -17,10 +17,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Notes_DataFiles
-import com.example.freshmind.UI.Task.TaskList_AddTask
 
 
-class NotesFragment : Fragment() {
+
+class NotesFragment : Fragment(), NotesAdapter.EditNoteClickListener {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var notesAdapter: NotesAdapter
@@ -46,7 +46,7 @@ class NotesFragment : Fragment() {
 
         notes.addAll(getAllNotes())
 
-        notesAdapter = NotesAdapter(notes)
+        notesAdapter = NotesAdapter(notes,this)
         recyclerView.adapter = notesAdapter
 
         swipeRefreshLayout.setOnRefreshListener {
@@ -86,7 +86,7 @@ class NotesFragment : Fragment() {
             com.example.freshmind.R.id.action_add_note -> {
                 val i = Intent(activity, Notes_AddNote::class.java)
                 i.putExtra("user", globalUser)
-                startActivity(i)
+                startActivityForResult(i, ADD_NOTE_REQUEST_CODE)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -95,15 +95,40 @@ class NotesFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == ADD_TASK_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == ADD_NOTE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             // Notes added successfully, refresh the Notes list
-            notes.clear()
-            notes.addAll(getAllNotes())
-            notesAdapter.notifyDataSetChanged()
+            refreshData()
+        }
+        if(requestCode == EDIT_NOTE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // Notes edited successfully, refresh the Notes list
+            refreshData()
         }
     }
 
+    /**
+     * This function is called when the edit icon is clicked,
+     * it opens the EditNote activity and sends the note details to it
+     * It also sends the request code so that when the activity is finished, the onActivityResult
+     * will be called and the data will be refreshed automatically
+     */
+    override fun iconEditNote(position: Int, context: Context) {
+        val note = notes[position]
+        val intent = Intent(context, Notes_EditNote::class.java).apply {
+            putExtra("noteID", note.noteID)
+            putExtra("noteTitle", note.noteTitle)
+            putExtra("noteContent", note.noteContent)
+            putExtra("noteDateCreated", note.dateCreated)
+            putExtra("checkPin", note.isPinned)
+        }
+        startActivityForResult(intent, EDIT_NOTE_REQUEST_CODE)
+    }
+
+    /**
+     * Constants for the request codes, these are used to identify the request
+     * when the activity returns a result
+     */
     companion object {
-        private const val ADD_TASK_REQUEST_CODE = 1001
+        private const val ADD_NOTE_REQUEST_CODE = 1001
+        private const val EDIT_NOTE_REQUEST_CODE = 1002
     }
 }

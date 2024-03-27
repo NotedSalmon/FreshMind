@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.View
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -37,23 +38,27 @@ class Notes_AddNote : AppCompatActivity() {
     private fun btnAddNotes() {
         val noteTitleEditText: EditText = findViewById(R.id.txtCreateNote_Title)
         val noteContentEditText: EditText = findViewById(R.id.txtCreateNote_Content)
+        val checkPin: CheckBox = findViewById(R.id.checkIsPinned)
+        val userId = dbHelper.returnUserID(globalUser)
 
         val noteTitle = noteTitleEditText.text.toString()
         val noteContent = noteContentEditText.text.toString()
-
         val localTime = LocalDateTime.now()
             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
-
         val dateCreated: LocalDateTime = LocalDateTime.parse(localTime, DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
 
-        val userId = dbHelper.returnUserID(globalUser)
+        var isPinned: Boolean = checkPin.isChecked
 
-        val note = Notes_DataFiles(0,userId,noteTitle,noteContent, localTime, dateCreated)
-        if(dbHelper.addNote(note)){
+
+
+        val note = Notes_DataFiles(0,userId,noteTitle,noteContent, localTime, dateCreated, isPinned)
+        if (dbHelper.addNote(note)) {
             Toast.makeText(this, "Note created successfully", Toast.LENGTH_LONG).show()
-            finish()
+            setResult(RESULT_OK) // Set the result to indicate success
+        } else {
+            Toast.makeText(this, "Error: Note not created", Toast.LENGTH_SHORT).show()
         }
-        else Toast.makeText(this, "Error: Note not created", Toast.LENGTH_SHORT).show() //Error message
+        finish() // Finish the activity
 
     }
 

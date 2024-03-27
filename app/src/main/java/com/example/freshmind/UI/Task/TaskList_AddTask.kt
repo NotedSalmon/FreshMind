@@ -63,6 +63,7 @@ class TaskList_AddTask : AppCompatActivity() {
         val task = Task_DataFiles(0,userId,taskTitle,taskDescription,startDate,endDate, dateCreated)
         if(dbHelper.addTask(task)){
             Toast.makeText(this, "Task created successfully", Toast.LENGTH_LONG).show()
+            setResult(RESULT_OK)
             finish()
         }
         else Toast.makeText(this, "Error: Task not created", Toast.LENGTH_SHORT).show() //Error message

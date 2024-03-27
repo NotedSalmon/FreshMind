@@ -1,5 +1,6 @@
 package com.example.freshmind.Database
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -50,6 +51,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     private val Note_Column_NoteContent = "NoteContent"
     private val Note_Column_DateCreated = "DateCreated"
     private val Note_Column_DateModified = "DateModified"
+    private val Note_Column_isPinned = "isPinned"
 
     /**
      *  Calendar Table
@@ -91,7 +93,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         //-------------SQL Query for Note Table--------------------------------
         sqlCreateStatement = "CREATE TABLE " + NoteTableName + " ( " + Note_Column_ID +
                 " INTEGER PRIMARY KEY AUTOINCREMENT," + Note_Column_userID + " INTEGER, " + Note_Column_NoteTitle + " TEXT, " +
-                Note_Column_NoteContent + " TEXT, " + Note_Column_DateModified + " TEXT, " + Note_Column_DateCreated + " TEXT, " + "FOREIGN KEY(" + Note_Column_userID + ") REFERENCES " + UserTableName + "(" + User_Column_ID + "))"
+                Note_Column_NoteContent + " TEXT, " + Note_Column_DateModified + " TEXT, " + Note_Column_DateCreated + " TEXT, " + Note_Column_isPinned + " BIT, " + "FOREIGN KEY(" + Note_Column_userID + ") REFERENCES " + UserTableName + "(" + User_Column_ID + "))"
         db?.execSQL(sqlCreateStatement)
         //-------------SQL Query for Calendar Table----------------------------
         sqlCreateStatement = "CREATE TABLE " + CalendarTableName + " ( " + Calendar_Column_ID +
@@ -286,6 +288,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
      * Notes Table Functions
      */
 
+    @SuppressLint("Range")
     fun showAllNotes(userID: String): MutableList<Notes_DataFiles> {
         val userId = returnUserID(userID)
         val notesList = mutableListOf<Notes_DataFiles>()
@@ -302,14 +305,15 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
                         val noteTitle = cursor.getString(cursor.getColumnIndex(Note_Column_NoteTitle))
                         val noteContent = cursor.getString(cursor.getColumnIndex(Note_Column_NoteContent))
                         val dateCreated = cursor.getString(cursor.getColumnIndex(Note_Column_DateCreated))
+                        val isPinned = cursor.getInt(cursor.getColumnIndex(Note_Column_isPinned))
 
                         val localTime = LocalDateTime.now()
                             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
 
                         val dateModified: LocalDateTime = LocalDateTime.parse(localTime, DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
 
-                        // Create TaskDetails object and add to list
-                        val noteDetails = Notes_DataFiles(noteID,userId,noteTitle, noteContent, dateCreated,dateModified)
+                        // Create NoteDetails object and add to list
+                        val noteDetails = Notes_DataFiles(noteID,userId,noteTitle, noteContent, dateCreated,dateModified, isPinned == 1)
                         notesList.add(noteDetails)
                     } while (cursor.moveToNext())
                 }
@@ -332,6 +336,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         cv.put(Note_Column_NoteContent, note.noteContent)
         cv.put(Note_Column_DateCreated, note.dateCreated)
         cv.put(Note_Column_DateModified, note.dateModified.toString())
+        cv.put(Note_Column_isPinned, note.isPinned)
 
         val success = db.insert(NoteTableName, null, cv)
         db.close()
@@ -352,8 +357,9 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         val cv = ContentValues()
         cv.put(Note_Column_NoteTitle, note.noteTitle)
         cv.put(Note_Column_NoteContent, note.noteContent)
-        cv.put(Task_Column_DateModified, note.dateModified.toString())
-        val selection = "$Task_Column_ID = ?"
+        cv.put(Note_Column_isPinned, note.isPinned)
+        cv.put(Note_Column_DateModified, note.dateModified.toString())
+        val selection = "$Note_Column_ID = ?"
         val selectionArgs = arrayOf(note.noteID.toString())
         val success = db.update(NoteTableName, cv, selection, selectionArgs)
         db.close()

@@ -8,8 +8,10 @@ data class Notes_DataFiles(
     val noteTitle: String,
     val noteContent: String,
     val dateCreated: String,
-    val dateModified: LocalDateTime?)
+    val dateModified: LocalDateTime?,
+    val isPinned: Boolean)
 {
+
 
 }
 

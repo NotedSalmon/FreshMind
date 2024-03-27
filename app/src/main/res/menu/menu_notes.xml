@@ -4,4 +4,6 @@
         android:id="@+id/action_add_note"
         android:title="New Note"
         app:showAsAction="ifRoom" />
+
+
 </menu>
