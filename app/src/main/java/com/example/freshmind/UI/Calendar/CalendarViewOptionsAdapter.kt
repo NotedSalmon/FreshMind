@@ -1,3 +1,4 @@
+/**
 package com.example.freshmind.UI.Calendar
 
 import com.example.freshmind.R
@@ -79,3 +80,4 @@ class CalendarViewOptionsAdapter(val onClick: (ExampleItem) -> BaseFragment) :
         }
     }
 }
+*/

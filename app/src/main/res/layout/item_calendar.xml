@@ -1,0 +1,65 @@
+<!-- item_task.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/txtCalendarTask_Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="@tools:sample/full_names" />
+
+    <TextView
+        android:id="@+id/txtCalendarTask_Description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtCalendarTask_Title"
+        android:layout_alignParentStart="true"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        tools:text="@tools:sample/lorem" />
+
+    <TextView
+        android:id="@+id/txtCalendarTask_StartDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtCalendarTask_Description"
+        android:layout_alignParentStart="true"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        tools:text="@tools:sample/date/mmddyy" />
+
+    <TextView
+        android:id="@+id/txtCalendarTask_EndDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtCalendarTask_Description"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@id/txtCalendarTask_StartDate"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        tools:text="@tools:sample/date/mmddyy" />
+
+    <TextView
+        android:id="@+id/txtTask_Seperator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtCalendarTask_Description"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@id/txtCalendarTask_StartDate"
+        android:text="seperator"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp" />
+
+
+</RelativeLayout>

@@ -7,6 +7,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -186,6 +187,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1
     }
 
+    @SuppressLint("Range")
     fun returnUserID(username: String): Int {
         val db = this.readableDatabase
         val columns = arrayOf(User_Column_ID)
@@ -246,6 +248,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         db.close()
         return success != -1
     }
+    @SuppressLint("Range")
     fun showAllTasks(userID: String): MutableList<Task_DataFiles> {
         val userId = returnUserID(userID)
         val taskList = mutableListOf<Task_DataFiles>()
@@ -283,6 +286,46 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         }
         return taskList
     }
+
+    @SuppressLint("Range")
+    fun showTasksForDate(userID: String, selectedDate: LocalDate): List<Task_DataFiles> {
+        val userId = returnUserID(userID)
+        val taskList = mutableListOf<Task_DataFiles>()
+        val db = this.readableDatabase
+
+        return try {
+            val cursor = db.rawQuery(
+                "SELECT * FROM $TaskTableName WHERE $Task_Column_userID = ? AND $Task_Column_StartTime = ?",
+                arrayOf(userId.toString(), selectedDate.toString())  // Assuming the date format in the database matches LocalDate.toString()
+            )
+
+            cursor.use {
+                while (cursor.moveToNext()) {
+                    val taskID = cursor.getInt(cursor.getColumnIndex(Task_Column_ID))
+                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle))
+                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription))
+                    val startTime = cursor.getString(cursor.getColumnIndex(Task_Column_StartTime))
+                    val endTime = cursor.getString(cursor.getColumnIndex(Task_Column_EndTime))
+                    val localTime = LocalDateTime.now()
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
+
+                    val dateCreated: LocalDateTime = LocalDateTime.parse(localTime, DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
+
+
+
+                    val taskDetails = Task_DataFiles(taskID, userId, taskTitle, taskDescription, startTime, endTime, dateCreated)
+                    taskList.add(taskDetails)
+                }
+            }
+
+            taskList
+        } catch (e: SQLiteException) {
+            emptyList()
+        } finally {
+            db.close()
+        }
+    }
+
 
     /**
      * Notes Table Functions
