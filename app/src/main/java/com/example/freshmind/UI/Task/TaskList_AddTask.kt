@@ -14,6 +14,7 @@ import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.R
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -50,17 +51,17 @@ class TaskList_AddTask : AppCompatActivity() {
 
         val taskTitle = taskTitleEditText.text.toString()
         val taskDescription = taskDescriptionEditText.text.toString()
-        val startDate = startDateTextView.text.toString()
-        val endDate = endDateTextView.text.toString()
+        val startDateString = startDateTextView.text.toString()
+        val endDateString = endDateTextView.text.toString()
 
-        val localTime = LocalDateTime.now()
-            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
-
-        val dateCreated: LocalDateTime = LocalDateTime.parse(localTime, DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
+        val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val startDate = LocalDate.parse(startDateString, dateFormat)
+        val endDate = LocalDate.parse(endDateString, dateFormat)
+        val localTime = LocalDate.now()
 
         val userId = dbHelper.returnUserID(globalUser)
 
-        val task = Task_DataFiles(0,userId,taskTitle,taskDescription,startDate,endDate, dateCreated)
+        val task = Task_DataFiles(0,userId,taskTitle,taskDescription,startDate,endDate, localTime)
         if(dbHelper.addTask(task)){
             Toast.makeText(this, "Task created successfully", Toast.LENGTH_LONG).show()
             setResult(RESULT_OK)
@@ -76,8 +77,8 @@ class TaskList_AddTask : AppCompatActivity() {
             { _, year, monthOfYear, dayOfMonth ->
                 // Set selected date to calendar
                 calendar.set(year, monthOfYear, dayOfMonth)
-                // Show time picker after selecting date
-                showTimePicker(calendar, textView)
+                // Display selected date on TextView
+                displayDate(calendar, textView)
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
@@ -87,28 +88,11 @@ class TaskList_AddTask : AppCompatActivity() {
         datePicker.show()
     }
 
-    // Method to show time picker dialog
-    private fun showTimePicker(calendar: Calendar, textView: TextView) {
-        val timePicker = TimePickerDialog(
-            this,
-            { _, hourOfDay, minute ->
-                // Set selected time to calendar
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                calendar.set(Calendar.MINUTE, minute)
-                // Display selected date and time on TextView
-                displayDateTime(calendar, textView)
-            },
-            calendar.get(Calendar.HOUR_OF_DAY),
-            calendar.get(Calendar.MINUTE),
-            false
-        )
-        timePicker.show()
-    }
 
     // Method to display selected date and time on TextView
-    private fun displayDateTime(calendar: Calendar, textView: TextView) {
+    private fun displayDate(calendar: Calendar, textView: TextView) {
         // Format date and time as per your requirement
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val dateTimeString = dateFormat.format(calendar.time)
         // Update TextView with selected date and time
         textView.text = dateTimeString
