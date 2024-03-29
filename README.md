@@ -3,12 +3,12 @@ Intro:
 A productivity mobile application that allows users to create/edit/delete tasks and notes. The tasks get inserted into a calendar from which the user can see which tasks/events they have in each day.
 
 Tech:
-Android Studio IDE
-Kotlin - Fragments + ViewActivities
-Calendar Package - https://github.com/kizitonwose/Calendar
-SQLite
-FireBase
-Using FreshMind_Web
+- Android Studio IDE
+- Kotlin - Fragments + ViewActivities
+- Calendar Package - https://github.com/kizitonwose/Calendar
+- SQLite
+- FireBase
+- Using FreshMind_Web
 
 Features:
 - Task create/read/update/delete.
