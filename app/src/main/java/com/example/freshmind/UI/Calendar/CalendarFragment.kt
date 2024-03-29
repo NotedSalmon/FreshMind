@@ -3,17 +3,8 @@ package com.example.freshmind.UI.Calendar
 
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.view.inputmethod.InputMethodManager
-import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatEditText
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.children
-import com.example.freshmind.UI.Calendar.Utils.dpToPx
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,13 +16,10 @@ import com.example.freshmind.R
 import com.example.freshmind.UI.BaseFragment
 import com.example.freshmind.UI.Calendar.Utils.addStatusBarColorUpdate
 import com.example.freshmind.UI.Calendar.Utils.getColorCompat
-import com.example.freshmind.UI.Calendar.Utils.inputMethodManager
-import com.example.freshmind.UI.Calendar.Utils.layoutInflater
 import com.example.freshmind.UI.Calendar.Utils.makeInVisible
 import com.example.freshmind.UI.Calendar.Utils.makeVisible
 import com.example.freshmind.UI.Calendar.Utils.setTextColorRes
 import com.example.freshmind.UI.HasBackButton
-import com.example.freshmind.UI.Task.TaskAdapter
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -66,7 +54,8 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
     private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy")
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
 
-    private val calendarTasks: MutableMap<LocalDate, List<Task_DataFiles>> = mutableMapOf()
+    private val calendarTasks: MutableList<Pair<LocalDate, Task_DataFiles>> = mutableListOf()
+
 
     private lateinit var binding: FragmentCalendarBinding
 
@@ -86,9 +75,13 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
 
         // Call getAllTasks to retrieve tasks from the database
         val allTasks = getAllTasks()
+        recyclerView = view.findViewById(R.id.recycleView_Calendar)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        recyclerView.adapter = calendarTaskAdapter
 
         // Populate the calendarTasks map with tasks
-        calendarTasks.putAll(populateCalendarFromTaskList(allTasks))
+        calendarTasks.addAll(populateCalendarFromTaskList(allTasks))
 
         binding.calendarView.monthScrollListener = {
             activityToolbar.title = if (it.yearMonth.year == today.year) {
@@ -99,12 +92,6 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
             // Select the first day of the visible month.
             selectDate(it.yearMonth.atDay(1))
         }
-
-        recyclerView = view.findViewById(R.id.recycleView_Calendar)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-        recyclerView.adapter = calendarTaskAdapter
-
         val daysOfWeek = daysOfWeek()
         val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusMonths(50)
@@ -132,28 +119,23 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
             oldDate?.let { binding.calendarView.notifyDateChanged(it) }
             binding.calendarView.notifyDateChanged(date)
 
-            // Update adapter with tasks for the selected date
             val tasksForSelectedDate = dbHelper.showTasksForDate(globalUser, date)
-            val updatedTasksMap = mutableMapOf(date to tasksForSelectedDate)
-            calendarTaskAdapter.updateTasks(updatedTasksMap)
+            val updatedTasksList = tasksForSelectedDate.map { date to it } // Convert to list of pairs
+            calendarTaskAdapter.updateTasks(updatedTasksList)
+
 
             binding.txtCalendarSelectedDate.text = selectionFormatter.format(date)
         }
     }
 
-    private fun populateCalendarFromTaskList(tasks: List<Task_DataFiles>): Map<LocalDate, List<Task_DataFiles>> {
-        val taskMap = mutableMapOf<LocalDate, List<Task_DataFiles>>()
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm") // Define the DateTimeFormatter
-
-        tasks.forEach { task ->
-            // Parse the start date-time string using the formatter
-            val startDate = LocalDateTime.parse(task.startTime, formatter).toLocalDate()
-            val existingTasks = taskMap[startDate].orEmpty()
-            taskMap[startDate] = existingTasks + task
-        }
-        return taskMap
+    private fun populateCalendarFromTaskList(tasks: List<Task_DataFiles>): Collection<Pair<LocalDate, Task_DataFiles>> {
+        return tasks.map { it.startTime to it }
     }
 
+
+
+
+    /**
     private fun updateAdapterForDate(date: LocalDate) {
         // Filter tasks for the selected date
         val tasksForSelectedDate = calendarTasks[date].orEmpty()
@@ -161,7 +143,7 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
         calendarTaskAdapter.updateTasks(updatedTasksMap)
         binding.txtCalendarSelectedDate.text = selectionFormatter.format(date)
     }
-
+*/
     override fun onStart() {
         super.onStart()
         activityToolbar.setBackgroundColor(
@@ -214,7 +196,7 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
                         else -> {
                             textView.setTextColorRes(R.color.example_3_black)
                             textView.background = null
-                            dotView.isVisible = calendarTasks[data.date].orEmpty().isNotEmpty()
+                            //dotView.isVisible = calendarTasks[data.date].orEmpty().isNotEmpty()
                         }
                     }
                 } else {

@@ -13,6 +13,7 @@ import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.R
 import com.example.freshmind.UI.Task.TaskListFragment
 import com.example.freshmind.UI.Task.TaskList_EditTask
+import java.time.format.DateTimeFormatter
 
 class TaskAdapter(private val tasks: MutableList<Task_DataFiles>, private val editTaskClickListener: EditTaskClickListener) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
@@ -77,8 +78,14 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>, private val ed
         val task = tasks[position]
         holder.titleTextView.text = task.taskTitle
         holder.descriptionTextView.text = task.taskDescription
-        holder.startDate.text = task.startTime
-        holder.endDate.text = task.endTime
+
+        // Format start and end dates
+        val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val formattedStartDate = task.startTime.format(dateFormatter)
+        val formattedEndDate = task.endTime.format(dateFormatter)
+        holder.startDate.text = formattedStartDate
+        holder.endDate.text = formattedEndDate
+
         holder.currentTaskID = task.taskID
 
         // Highlight selected item
@@ -94,6 +101,7 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>, private val ed
             holder.editIcon.visibility = View.GONE
         }
     }
+
 
     override fun getItemCount(): Int {
         return tasks.size

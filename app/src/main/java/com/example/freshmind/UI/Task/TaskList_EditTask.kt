@@ -12,6 +12,7 @@ import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.R
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -68,23 +69,19 @@ class TaskList_EditTask : AppCompatActivity() {
         val newDescription = editTextDescription.text.toString()
         val newStartDate = editTextStartDate.text.toString()
         val newEndDate = editTextEndDate.text.toString()
-        val startDateCalendar = Calendar.getInstance().apply { time = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).parse(newStartDate)!! }
-        val endDateCalendar = Calendar.getInstance().apply { time = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).parse(newEndDate)!! }
+
+        // Parse new start and end dates as LocalDate objects
+        val startDate = LocalDate.parse(newStartDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        val endDate = LocalDate.parse(newEndDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
 
         // Validate the dates
-        if (startDateCalendar.timeInMillis > endDateCalendar.timeInMillis) {
+        if (startDate.isAfter(endDate)) {
             Toast.makeText(this, "End date cannot be before start date", Toast.LENGTH_SHORT).show()
             editTextEndDate.error = "Invalid Date"
         } else {
-            // Continue with updating the task
-            val localTime =
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
-            val dateUpdated: LocalDateTime =
-                LocalDateTime.parse(localTime, DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
+            val localTime = LocalDate.now()
 
-            // Create a new Task_DataFiles object with updated information
-            val updatedTask = Task_DataFiles(taskID, -1, newTitle, newDescription, newStartDate, newEndDate, dateUpdated)
-            // Update task in the database
+            val updatedTask = Task_DataFiles(taskID, -1, newTitle, newDescription, startDate, endDate, localTime)
             dbHelper.updateTask(updatedTask)
 
             setResult(RESULT_OK)
@@ -92,14 +89,15 @@ class TaskList_EditTask : AppCompatActivity() {
         }
     }
 
+
     private fun showDateTimePicker(calendar: Calendar, textView: TextView) {
         val datePicker = DatePickerDialog(
             this,
             { _, year, monthOfYear, dayOfMonth ->
                 // Set selected date to calendar
                 calendar.set(year, monthOfYear, dayOfMonth)
-                // Show time picker after selecting date
-                showTimePicker(calendar, textView)
+                // Display selected date on TextView
+                displayDate(calendar, textView)
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
@@ -109,28 +107,10 @@ class TaskList_EditTask : AppCompatActivity() {
         datePicker.show()
     }
 
-    // Method to show time picker dialog
-    private fun showTimePicker(calendar: Calendar, textView: TextView) {
-        val timePicker = TimePickerDialog(
-            this,
-            { _, hourOfDay, minute ->
-                // Set selected time to calendar
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                calendar.set(Calendar.MINUTE, minute)
-                // Display selected date and time on TextView
-                displayDateTime(calendar, textView)
-            },
-            calendar.get(Calendar.HOUR_OF_DAY),
-            calendar.get(Calendar.MINUTE),
-            false
-        )
-        timePicker.show()
-    }
-
     // Method to display selected date and time on TextView
-    private fun displayDateTime(calendar: Calendar, textView: TextView) {
+    private fun displayDate(calendar: Calendar, textView: TextView) {
         // Format date and time as per your requirement
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val dateTimeString = dateFormat.format(calendar.time)
         // Update TextView with selected date and time
         textView.text = dateTimeString
