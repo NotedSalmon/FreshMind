@@ -11,7 +11,7 @@ import com.example.freshmind.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class CalendarAdapter(private val calendarTasks: MutableList<Pair<LocalDate, Task_DataFiles>>, private val selectedDate: LocalDate?) : RecyclerView.Adapter<CalendarAdapter.CalendarTaskViewHolder>() {
+class CalendarAdapter(private val calendarTasksView: MutableList<Pair<LocalDate, Task_DataFiles>>) : RecyclerView.Adapter<CalendarAdapter.CalendarTaskViewHolder>() {
 
     private var selectedItemPosition = RecyclerView.NO_POSITION
     private lateinit var dbHelper: DBHelper
@@ -32,7 +32,7 @@ class CalendarAdapter(private val calendarTasks: MutableList<Pair<LocalDate, Tas
     }
 
     override fun onBindViewHolder(holder: CalendarTaskViewHolder, position: Int) {
-        val (date, task) = calendarTasks[position]
+        val (date, task) = calendarTasksView[position]
 
         // Bind task details to the corresponding TextViews
         holder.titleTextView.text = task.taskTitle
@@ -47,12 +47,12 @@ class CalendarAdapter(private val calendarTasks: MutableList<Pair<LocalDate, Tas
     }
 
     override fun getItemCount(): Int {
-        return calendarTasks.size
+        return calendarTasksView.size
     }
 
     fun updateTasks(newTasks: List<Pair<LocalDate, Task_DataFiles>>) {
-        calendarTasks.clear()
-        calendarTasks.addAll(newTasks)
+        calendarTasksView.clear()
+        calendarTasksView.addAll(newTasks)
         notifyDataSetChanged() // Notify the adapter that the data set has changed
     }
 }
