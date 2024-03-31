@@ -7,6 +7,8 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -409,6 +411,44 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         val success = db.update(NoteTableName, cv, selection, selectionArgs)
         db.close()
         return success != -1
+    }
+
+    fun showAllPinnedNotes(userID: String): MutableList<Notes_DataFiles> {
+        val userId = returnUserID(userID)
+        val notesList = mutableListOf<Notes_DataFiles>()
+        val db = this.readableDatabase
+        val cursor: Cursor?
+        try {
+            // Query tasks associated with the given userID
+            cursor = db.rawQuery("SELECT * FROM $NoteTableName WHERE $Note_Column_userID = $userId AND $Note_Column_isPinned = 1", null)
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        // Extract task details from cursor
+                        val noteID = cursor.getInt(cursor.getColumnIndex(Note_Column_ID))
+                        val noteTitle = cursor.getString(cursor.getColumnIndex(Note_Column_NoteTitle))
+                        val noteContent = cursor.getString(cursor.getColumnIndex(Note_Column_NoteContent))
+                        val dateCreated = cursor.getString(cursor.getColumnIndex(Note_Column_DateCreated))
+                        val isPinned = cursor.getInt(cursor.getColumnIndex(Note_Column_isPinned))
+
+                        val localTime = LocalDateTime.now()
+                            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
+
+                        val dateModified: LocalDateTime = LocalDateTime.parse(localTime, DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
+
+                        // Create NoteDetails object and add to list
+                        val noteDetails = Notes_DataFiles(noteID,userId,noteTitle, noteContent, dateCreated,dateModified, isPinned == 1)
+                        notesList.add(noteDetails)
+                    } while (cursor.moveToNext())
+                }
+                cursor.close()
+            }
+        } catch (e: SQLiteException) {
+            return mutableListOf()
+        } finally {
+            db.close()
+        }
+        return notesList
     }
 
 }
