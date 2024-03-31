@@ -329,6 +329,45 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         }
     }
 
+    @SuppressLint("Range")
+    fun closesTasks(userID: String): MutableList<Task_DataFiles> {
+        val userId = returnUserID(userID)
+        val localDate = LocalDate.now()
+        val taskList = mutableListOf<Task_DataFiles>()
+        val db = this.readableDatabase
+        val cursor: Cursor? = db.rawQuery(
+            "SELECT * FROM $TaskTableName WHERE $Task_Column_userID = ? AND $Task_Column_EndTime >= ? ORDER BY $Task_Column_EndTime ASC LIMIT 2",
+            arrayOf(userId.toString(), localDate.toString())
+        )
+
+        try {
+            cursor?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    val taskID = cursor.getInt(cursor.getColumnIndex(Task_Column_ID))
+                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle))
+                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription))
+                    val startTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_StartTime))
+                    val endTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_EndTime))
+                    val dateModifiedString = cursor.getString(cursor.getColumnIndex(Task_Column_DateModified))
+
+                    val startTime = LocalDate.parse(startTimeString)
+                    val endTime = LocalDate.parse(endTimeString)
+                    val dateModified = LocalDate.parse(dateModifiedString)
+
+                    val taskDetails = Task_DataFiles(taskID, userId, taskTitle, taskDescription, startTime, endTime, dateModified)
+                    taskList.add(taskDetails)
+                }
+            }
+        } catch (e: SQLiteException) {
+            // Handle the exception appropriately, e.g., log or display an error message
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
+            db.close()
+        }
+        return taskList
+    }
+
 
 
     /**
@@ -413,6 +452,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1
     }
 
+    @SuppressLint("Range")
     fun showAllPinnedNotes(userID: String): MutableList<Notes_DataFiles> {
         val userId = returnUserID(userID)
         val notesList = mutableListOf<Notes_DataFiles>()
