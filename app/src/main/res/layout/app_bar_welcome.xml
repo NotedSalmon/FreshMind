@@ -9,7 +9,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.FreshMind.AppBarOverlay">
+        android:theme="@style/Theme.Default_FreshMind.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -17,7 +17,7 @@
             app:title="FreshMind"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Theme.FreshMind.PopupOverlay" />
+            app:popupTheme="@style/Theme.Default_FreshMind.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

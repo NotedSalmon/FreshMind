@@ -1,26 +1,231 @@
-<!-- fragment_settings.xml -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="0dp">
 
-    <TextView
-        android:id="@+id/textViewUsername"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Username:"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"/>
+        android:padding="8dp">
 
-    <TextView
-        android:id="@+id/textViewUsernameValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Test"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="120dp"/>
+        <TextView
+            android:id="@+id/txtChangeUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="60dp"
+            android:fontFamily="@font/allerta_stencil"
+            android:text="Change Username"
+            android:textColor="#3E2723"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Add more TextViews for additional user settings -->
+        <TextView
+            android:id="@+id/txtChangeEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="164dp"
+            android:fontFamily="@font/allerta_stencil"
+            android:text="Change Email"
+            android:textColor="#3E2723"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/titleAccountSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/allerta_stencil"
+            android:text="Account Settings"
+            android:textColor="#A5D6A7"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtUserDetails_PhoneNumber"
+            android:layout_width="300dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="16dp"
+            android:background="#00DDC7C7"
+            android:backgroundTint="#8E9679"
+            android:backgroundTintMode="src_over"
+            android:text="Phone Number"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtUserDetails_Email" />
+
+        <TextView
+            android:id="@+id/txtUserDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/allerta_stencil"
+            android:text="User Details"
+            android:textColor="#3E2723"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnChangeDetails" />
+
+        <TextView
+            android:id="@+id/txtUserDetails_Email"
+            android:layout_width="300dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="16dp"
+            android:background="#00DDC7C7"
+            android:backgroundTint="#8E9679"
+            android:backgroundTintMode="src_over"
+            android:text="Email"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtUserDetails_FullName" />
+
+        <TextView
+            android:id="@+id/txtUserDetails_FullName"
+            android:layout_width="300dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="16dp"
+            android:background="#00DDC7C7"
+            android:backgroundTint="#8E9679"
+            android:backgroundTintMode="src_over"
+            android:text="Full Name"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtUserDetails" />
+
+        <EditText
+            android:id="@+id/txtNewPassword"
+            android:layout_width="300dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="24dp"
+            android:background="#00DDC7C7"
+            android:backgroundTint="#8E9679"
+            android:backgroundTintMode="src_over"
+            android:ems="10"
+            android:hint="New Password"
+            android:inputType="textPassword"
+            android:textAlignment="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtOldPassword" />
+
+        <TextView
+            android:id="@+id/txtChangePassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="284dp"
+            android:fontFamily="@font/allerta_stencil"
+            android:text="Change Password"
+            android:textColor="#3E2723"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/txtOldPassword"
+            android:layout_width="300dp"
+            android:layout_height="49dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="24dp"
+            android:background="#00DDC7C7"
+            android:backgroundTint="#8E9679"
+            android:backgroundTintMode="src_over"
+            android:ems="10"
+            android:hint="Old Password"
+            android:inputType="textPassword"
+            android:textAlignment="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtChangePassword" />
+
+        <EditText
+            android:id="@+id/txtNewUsername"
+            android:layout_width="300dp"
+            android:layout_height="49dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="12dp"
+            android:background="#00DDC7C7"
+            android:backgroundTint="#8E9679"
+            android:backgroundTintMode="src_over"
+            android:ems="10"
+            android:hint="New Username"
+            android:inputType="text"
+            android:textAlignment="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtChangeUsername" />
+
+        <EditText
+            android:id="@+id/txtNewEmail"
+            android:layout_width="300dp"
+            android:layout_height="49dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="120dp"
+            android:background="#00DDC7C7"
+            android:backgroundTint="#8E9679"
+            android:backgroundTintMode="src_over"
+            android:ems="10"
+            android:hint="New Email"
+            android:inputType="text"
+            android:textAlignment="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtChangeUsername" />
+
+        <Button
+            android:id="@+id/btnChangeDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="228dp"
+            android:backgroundTint="#8F9779"
+            android:fontFamily="@font/allerta_stencil"
+            android:text="Save Changes"
+            android:textColor="#3E2723"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtNewPassword" />
+
+        <Button
+            android:id="@+id/btnDeleteAccount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="124dp"
+            android:backgroundTint="#BD4848"
+            android:fontFamily="@font/allerta_stencil"
+            android:onClick="deleteButton"
+            android:text="Delete Account"
+            android:textColor="#3E2723"
+            app:layout_constraintEnd_toEndOf="@id/txtUserDetails_PhoneNumber"
+            app:layout_constraintTop_toBottomOf="@+id/txtUserDetails_PhoneNumber" />
+
+        <CheckBox
+            android:id="@+id/hiddenTaskCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="28dp"
+            android:text="Hide Expired Tasks"
+            android:textColor="#3E2723"
+            app:layout_constraintStart_toEndOf="@+id/btnDeleteAccount"
+            app:layout_constraintTop_toBottomOf="@+id/txtUserDetails_PhoneNumber" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

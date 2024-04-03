@@ -1,29 +1,40 @@
 <!-- preferences.xml -->
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <PreferenceCategory
-        android:title="Theme Settings">
-
-        <ListPreference
-            android:key="key_theme"
-            android:title="App Theme"
-            android:summary="Select your preferred app theme"
-            android:entries="@array/theme_entries"
-            android:entryValues="@array/theme_values"
-            android:defaultValue="light" />
-
-    </PreferenceCategory>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
         android:title="Account Settings">
 
         <EditTextPreference
-            android:key="key_username"
-            android:title="Username"
-            android:summary="Enter your username"
+            android:defaultValue=""
             android:inputType="text"
+            android:key="key_username"
+            android:singleLine="false"
+            android:summary="username"
+            android:title="Change Username"
+            app:singleLineTitle="false" />
+
+        <EditTextPreference
+            android:key="key_email"
+            android:title="Change Email"
+            android:inputType="textEmailAddress"
+            android:summary="username"
             android:defaultValue=""
             android:singleLine="true" />
+
+        <EditTextPreference
+            android:key="key_password"
+            android:title="Change Password"
+            android:inputType="textPassword"
+            android:defaultValue=""
+            android:singleLine="true" />
+
+        <CheckBoxPreference
+            android:key="key_expiredTasks"
+            android:title="Hide Expired Tasks"
+            android:summary="Hide tasks that are past their due date"
+            android:defaultValue="false" />
+
 
         <!-- Add more preferences as needed -->
 
