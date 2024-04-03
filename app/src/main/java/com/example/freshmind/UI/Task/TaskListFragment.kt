@@ -18,6 +18,7 @@ import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.R
+import com.example.freshmind.UI.Settings.isExpiredTasksEnabled
 
 
 class TaskListFragment : Fragment(), TaskAdapter.EditTaskClickListener {
@@ -57,9 +58,16 @@ class TaskListFragment : Fragment(), TaskAdapter.EditTaskClickListener {
         return view
     }
     private fun loadData() {
-        val updatedTasks = dbHelper.showAllTasks(globalUser)
-        tasks.clear()
-        tasks.addAll(updatedTasks)
+        if (isExpiredTasksEnabled) {
+            val validTasks = dbHelper.hideExpiredTasks(globalUser)
+            tasks.clear()
+            tasks.addAll(validTasks)
+        }
+        else {
+            val updatedTasks = dbHelper.showAllTasks(globalUser)
+            tasks.clear()
+            tasks.addAll(updatedTasks)
+        }
         taskAdapter.notifyDataSetChanged()
         swipeRefreshLayout.isRefreshing = false
     }

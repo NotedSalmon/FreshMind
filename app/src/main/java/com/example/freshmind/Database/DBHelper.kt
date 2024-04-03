@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.common.collect.Table
+import com.google.firebase.firestore.auth.User
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -178,12 +180,37 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1
     }
 
-    fun changePassword(oldPassword: String, newPassword: String): Boolean {
+    fun changePassword(oldPassword: String, newPassword: String, username: String) : Boolean {
+        val db: SQLiteDatabase = this.writableDatabase
+        val sqlStatement = "UPDATE $UserTableName SET $User_Column_Password = '$newPassword' WHERE $User_Column_Username = '$username' AND $User_Column_Password = '$newPassword'"
+        val cursor: Cursor = db.rawQuery(sqlStatement, null)
+        if(cursor.moveToFirst()){
+            db.close()
+            return true
+        }
+        else {
+            db.close()
+            return false
+        }
+    }
+
+    fun changeUsername(oldUsername: String, newUsername: String): Boolean {
         val db = this.writableDatabase
         val cv = ContentValues()
-        cv.put(User_Column_Password, newPassword)
-        val selection = "$User_Column_Password = ?"
-        val selectionArgs = arrayOf(oldPassword)
+        cv.put(User_Column_Username, newUsername)
+        val selection = "$User_Column_Username = ?"
+        val selectionArgs = arrayOf(oldUsername)
+        val success = db.update(UserTableName, cv, selection, selectionArgs)
+        db.close()
+        return success != -1
+    }
+
+    fun changeEmail(oldEmail: String, newEmail: String): Boolean {
+        val db = this.writableDatabase
+        val cv = ContentValues()
+        cv.put(User_Column_Email, newEmail)
+        val selection = "$User_Column_Email = ?"
+        val selectionArgs = arrayOf(oldEmail)
         val success = db.update(UserTableName, cv, selection, selectionArgs)
         db.close()
         return success != -1
@@ -337,6 +364,44 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         val db = this.readableDatabase
         val cursor: Cursor? = db.rawQuery(
             "SELECT * FROM $TaskTableName WHERE $Task_Column_userID = ? AND $Task_Column_EndTime >= ? ORDER BY $Task_Column_EndTime ASC LIMIT 2",
+            arrayOf(userId.toString(), localDate.toString())
+        )
+
+        try {
+            cursor?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    val taskID = cursor.getInt(cursor.getColumnIndex(Task_Column_ID))
+                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle))
+                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription))
+                    val startTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_StartTime))
+                    val endTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_EndTime))
+                    val dateModifiedString = cursor.getString(cursor.getColumnIndex(Task_Column_DateModified))
+
+                    val startTime = LocalDate.parse(startTimeString)
+                    val endTime = LocalDate.parse(endTimeString)
+                    val dateModified = LocalDate.parse(dateModifiedString)
+
+                    val taskDetails = Task_DataFiles(taskID, userId, taskTitle, taskDescription, startTime, endTime, dateModified)
+                    taskList.add(taskDetails)
+                }
+            }
+        } catch (e: SQLiteException) {
+            // Handle the exception appropriately, e.g., log or display an error message
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
+            db.close()
+        }
+        return taskList
+    }
+
+    fun hideExpiredTasks(userID: String): MutableList<Task_DataFiles> {
+        val userId = returnUserID(userID)
+        val localDate = LocalDate.now()
+        val taskList = mutableListOf<Task_DataFiles>()
+        val db = this.readableDatabase
+        val cursor: Cursor? = db.rawQuery(
+            "SELECT * FROM $TaskTableName WHERE $Task_Column_userID = ? AND $Task_Column_EndTime >= ? ORDER BY $Task_Column_StartTime ASC",
             arrayOf(userId.toString(), localDate.toString())
         )
 
