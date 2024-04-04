@@ -11,12 +11,16 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.freshmind.Authentication.User_Login
 import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.R
+import com.example.freshmind.UI.Calendar.Utils.makeGone
+import com.example.freshmind.UI.Calendar.Utils.makeVisible
+import com.example.freshmind.UI.Starter
 import com.example.wagonersexperts.extra.SHAEncryption.shaEncrypt
 
 var isExpiredTasksEnabled: Boolean = false
@@ -30,6 +34,9 @@ class SettingsFragment : Fragment() {
     private lateinit var hideTasks: CheckBox
     private lateinit var btnSaveChanges: Button
     private lateinit var deleteAccount: Button
+    private lateinit var displayFullName : TextView
+    private lateinit var displayEmail : TextView
+    private lateinit var displayPhone : TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,16 +50,24 @@ class SettingsFragment : Fragment() {
         setHasOptionsMenu(true)
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
 
+        val starterActivity = activity as? Starter
+        starterActivity?.floatingFab?.makeGone()
+
         newUsername = view.findViewById(R.id.txtNewUsername)
         newEmail = view.findViewById(R.id.txtNewEmail)
         oldPassword = view.findViewById(R.id.txtOldPassword)
         newPassword = view.findViewById(R.id.txtNewPassword)
         hideTasks = view.findViewById(R.id.hiddenTaskCheckbox)
         deleteAccount = view.findViewById(R.id.btnDeleteAccount)
+        displayFullName = view.findViewById(R.id.txtUserDetails_FullName)
+        displayEmail = view.findViewById(R.id.txtUserDetails_Email)
+        displayPhone = view.findViewById(R.id.txtUserDetails_PhoneNumber)
 
         deleteAccount.setOnClickListener {
             deleteButton()
         }
+
+        hideTasks.isChecked = isExpiredTasksEnabled
         hideTasks.setOnCheckedChangeListener { _, isChecked ->
             isExpiredTasksEnabled = isChecked
         }
@@ -63,7 +78,15 @@ class SettingsFragment : Fragment() {
             saveDetails()
         }
 
+        getUserDetails()
+
         return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        val starterActivity = activity as? Starter
+        starterActivity?.floatingFab?.makeVisible()
     }
 
 
@@ -83,7 +106,6 @@ class SettingsFragment : Fragment() {
     }
 
     private fun saveDetails(){
-        //Toast.makeText(requireContext(), "Details saved", Toast.LENGTH_SHORT).show()
         val newUsernameText = newUsername.text.toString()
         val newEmailText = newEmail.text.toString()
         val oldPasswordText = oldPassword.text.toString()
@@ -121,14 +143,28 @@ class SettingsFragment : Fragment() {
             }
         }
         else if (newEmailText.isNotEmpty()) {
-            // Perform email change here
-            // Example:
-            // changeEmail(newEmailText)
+            dbHelper.changeEmail(globalUser, newEmailText)
             Toast.makeText(requireContext(), "Email changed", Toast.LENGTH_SHORT).show()
         }
         else {
             Toast.makeText(requireContext(), "No changes made", Toast.LENGTH_SHORT).show()
         }
+        refreshData()
+    }
+
+    private fun refreshData(){
+        oldPassword.text.clear()
+        newPassword.text.clear()
+        newUsername.text.clear()
+        newEmail.text.clear()
+        getUserDetails()
+    }
+
+    private fun getUserDetails() {
+        val userDetails = dbHelper.getUser(globalUser)
+        displayFullName.text = userDetails.FullName
+        displayEmail.text = userDetails.Email
+        displayPhone.text = userDetails.PhoneNo
     }
 
 
