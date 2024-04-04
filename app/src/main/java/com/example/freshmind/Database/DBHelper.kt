@@ -182,7 +182,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
 
     fun changePassword(oldPassword: String, newPassword: String, username: String) : Boolean {
         val db: SQLiteDatabase = this.writableDatabase
-        val sqlStatement = "UPDATE $UserTableName SET $User_Column_Password = '$newPassword' WHERE $User_Column_Username = '$username' AND $User_Column_Password = '$newPassword'"
+        val sqlStatement = "UPDATE $UserTableName SET $User_Column_Password = '$newPassword' WHERE $User_Column_Username = '$username' AND $User_Column_Password = '$oldPassword'"
         val cursor: Cursor = db.rawQuery(sqlStatement, null)
         if(cursor.moveToFirst()){
             db.close()
