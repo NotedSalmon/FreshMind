@@ -45,6 +45,7 @@ class User_Register: AppCompatActivity() {
         val userPassword = shaEncrypt(passwordEditText.text.toString()) // Encryption used for password only
         val userIsActive = 1
 
+        //Add a loop or something to check all fields, if theres any error fail everything
         if (userName.isEmpty()) {
             fullNameEditText.error = "Full Name is required"
             fullNameEditText.requestFocus()
@@ -75,7 +76,6 @@ class User_Register: AppCompatActivity() {
             return
         }
 
-
         val localTime = LocalDateTime.now()
             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
 
@@ -98,9 +98,4 @@ class User_Register: AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun btnTestFirebase(view: View)
-    {
-
-
-    }
 }

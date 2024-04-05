@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
+import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import com.example.freshmind.UI.BaseFragment
 import com.example.freshmind.UI.Calendar.Utils.addStatusBarColorUpdate
@@ -61,6 +62,7 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
         addStatusBarColorUpdate(R.color.example_3_statusbar_color)
         binding = FragmentCalendarBinding.bind(view)
         selectedDate = today
@@ -113,6 +115,11 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
         return dbHelper.showAllTasks(globalUser)
     }
 
+    /**
+     * This function is called when a date is selected in the calendar.
+     * It updates the selectedDate variable and updates the adapter to show the tasks for the selected date.
+     * It also updates the selected date text view.
+     */
     private fun selectDate(date: LocalDate) {
         if (selectedDate != date) {
             val oldDate = selectedDate
@@ -125,6 +132,10 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
         }
     }
 
+    /**
+     * This function takes a list of tasks and returns a list of pairs of LocalDate and Task.
+     * This is used to populate the calendarTasks map.
+     */
     private fun populateCalendarFromTaskList(tasks: List<Task_DataFiles>): Collection<Pair<LocalDate, Task_DataFiles>> {
         return tasks.map { it.startTime to it }
     }
@@ -167,6 +178,12 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
         )
     }
 
+    /**
+     * This function configures the binders for the calendar view.
+     * It sets the day binder to display the day of the month and the dotView if there are tasks for that day.
+     * It sets the month header binder to display the days of the week.
+     * It also sets the click listener for each day to select the date.
+     */
     private fun configureBinders(daysOfWeek: List<DayOfWeek>) {
         class DayViewContainer(view: View) : ViewContainer(view) {
             lateinit var day: CalendarDay // Will be set when this container is bound.
@@ -197,17 +214,17 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
 
                     when (data.date) {
                         today -> {
-                            textView.setTextColorRes(R.color.example_3_white)
+                            textView.setTextColorRes(R.color.deepPurple)
                             textView.setBackgroundResource(R.drawable.example_3_today_bg)
                             dotView.makeInVisible() // Hide dot for today's date
                         }
                         selectedDate -> {
-                            textView.setTextColorRes(R.color.example_3_blue)
+                            textView.setTextColorRes(R.color.deepPurple)
                             textView.setBackgroundResource(R.drawable.example_3_selected_bg)
                             dotView.makeInVisible()
                         }
                         else -> {
-                            textView.setTextColorRes(R.color.example_3_black)
+                            textView.setTextColorRes(R.color.white)
                             textView.background = null
                             dotView.isVisible = hasTasks
                         }

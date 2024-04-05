@@ -52,7 +52,7 @@
 
         <TextView
             android:id="@+id/txtUserDetails_PhoneNumber"
-            android:layout_width="300dp"
+            android:layout_width="350dp"
             android:layout_height="30dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="16dp"
@@ -80,7 +80,7 @@
 
         <TextView
             android:id="@+id/txtUserDetails_Email"
-            android:layout_width="300dp"
+            android:layout_width="350dp"
             android:layout_height="30dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="16dp"
@@ -95,7 +95,7 @@
 
         <TextView
             android:id="@+id/txtUserDetails_FullName"
-            android:layout_width="300dp"
+            android:layout_width="350dp"
             android:layout_height="30dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="16dp"
@@ -110,7 +110,7 @@
 
         <EditText
             android:id="@+id/txtNewPassword"
-            android:layout_width="300dp"
+            android:layout_width="350dp"
             android:layout_height="52dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="24dp"
@@ -139,7 +139,7 @@
 
         <EditText
             android:id="@+id/txtOldPassword"
-            android:layout_width="300dp"
+            android:layout_width="350dp"
             android:layout_height="49dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="24dp"
@@ -155,7 +155,7 @@
 
         <EditText
             android:id="@+id/txtNewUsername"
-            android:layout_width="300dp"
+            android:layout_width="350dp"
             android:layout_height="49dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="12dp"
@@ -171,7 +171,7 @@
 
         <EditText
             android:id="@+id/txtNewEmail"
-            android:layout_width="300dp"
+            android:layout_width="350dp"
             android:layout_height="49dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="120dp"
@@ -206,7 +206,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
-            android:layout_marginEnd="124dp"
+            android:layout_marginEnd="172dp"
             android:backgroundTint="#BD4848"
             android:fontFamily="@font/allerta_stencil"
             android:onClick="deleteButton"
@@ -219,7 +219,7 @@
             android:id="@+id/hiddenTaskCheckbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="28dp"
             android:layout_marginTop="28dp"
             android:text="Hide Expired Tasks"
             android:textColor="#3E2723"

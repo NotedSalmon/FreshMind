@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.freshmind.Database.DBHelper
@@ -138,11 +139,13 @@ class NotesAdapter(private val notes: MutableList<Notes_DataFiles>, private val 
         holder.itemView.isSelected = position == selectedItemPosition
 
         if (selectedItemPosition == position) {
-            holder.itemView.setBackgroundResource(R.color.purple_200)
+            holder.itemView.setBackgroundResource(R.color.deepPurple)
+            holder.titleTextView.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.gold))
             holder.deleteIcon.visibility = View.VISIBLE
             holder.editIcon.visibility = View.VISIBLE
         } else {
-            holder.itemView.setBackgroundResource(R.color.white)
+            holder.itemView.setBackgroundResource(R.color.backgroundIndigo)
+            holder.titleTextView.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.white))
             holder.deleteIcon.visibility = View.GONE
             holder.editIcon.visibility = View.GONE
         }

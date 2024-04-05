@@ -182,17 +182,19 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
 
     fun changePassword(oldPassword: String, newPassword: String, username: String) : Boolean {
         val db: SQLiteDatabase = this.writableDatabase
-        val sqlStatement = "UPDATE $UserTableName SET $User_Column_Password = '$newPassword' WHERE $User_Column_Username = '$username' AND $User_Column_Password = '$newPassword'"
-        val cursor: Cursor = db.rawQuery(sqlStatement, null)
-        if(cursor.moveToFirst()){
+        return try {
+            val sqlStatement = "UPDATE $UserTableName SET $User_Column_Password = '$newPassword' WHERE $User_Column_Username = '$username' AND $User_Column_Password = '$oldPassword'"
+            db.execSQL(sqlStatement)
             db.close()
-            return true
-        }
-        else {
+            true
+        } catch (e: Exception) {
+            // Log the error or handle it gracefully
+            e.printStackTrace()
             db.close()
-            return false
+            false
         }
     }
+
 
     fun changeUsername(oldUsername: String, newUsername: String): Boolean {
         val db = this.writableDatabase
@@ -205,15 +207,46 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1
     }
 
-    fun changeEmail(oldEmail: String, newEmail: String): Boolean {
-        val db = this.writableDatabase
-        val cv = ContentValues()
-        cv.put(User_Column_Email, newEmail)
-        val selection = "$User_Column_Email = ?"
-        val selectionArgs = arrayOf(oldEmail)
-        val success = db.update(UserTableName, cv, selection, selectionArgs)
-        db.close()
-        return success != -1
+    @SuppressLint("Range")
+    fun getUser(username: String) : User_DataFiles {
+        val db = this.readableDatabase
+        val columns = arrayOf(User_Column_ID, User_Column_FullName, User_Column_Email, User_Column_PhoneNo, User_Column_Username, User_Column_Password, User_Column_IsActive, User_Column_DateCreated, User_Column_DateModified)
+        val selection = "$User_Column_Username = ?"
+        val selectionArgs = arrayOf(username)
+        val cursor: Cursor = db.query(UserTableName, columns, selection, selectionArgs, null, null, null)
+        var user = User_DataFiles(0, "", "", "", "", "", 0, LocalDateTime.now(), LocalDateTime.now())
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                val userID = cursor.getInt(cursor.getColumnIndex(User_Column_ID))
+                val fullName = cursor.getString(cursor.getColumnIndex(User_Column_FullName))
+                val email = cursor.getString(cursor.getColumnIndex(User_Column_Email))
+                val phoneNo = cursor.getString(cursor.getColumnIndex(User_Column_PhoneNo))
+                val username = cursor.getString(cursor.getColumnIndex(User_Column_Username))
+                val password = cursor.getString(cursor.getColumnIndex(User_Column_Password))
+                val isActive = cursor.getInt(cursor.getColumnIndex(User_Column_IsActive))
+                val dateCreated = LocalDateTime.parse(cursor.getString(cursor.getColumnIndex(User_Column_DateCreated)))
+                val dateModified = LocalDateTime.parse(cursor.getString(cursor.getColumnIndex(User_Column_DateModified)))
+
+                user = User_DataFiles(userID, fullName, email, phoneNo, username, password, isActive, dateCreated, dateModified)
+            }
+            cursor.close()
+        }
+        return user
+    }
+
+    fun changeEmail(username: String, newEmail: String): Boolean {
+        val db: SQLiteDatabase = this.writableDatabase
+        return try {
+            val sqlStatement = "UPDATE $UserTableName SET $User_Column_Email= '$newEmail' WHERE $User_Column_Username = '$username'"
+            db.execSQL(sqlStatement)
+            db.close()
+            true
+        } catch (e: Exception) {
+            // Log the error or handle it gracefully
+            e.printStackTrace()
+            db.close()
+            false
+        }
     }
 
     @SuppressLint("Range")
@@ -395,6 +428,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return taskList
     }
 
+    @SuppressLint("Range")
     fun hideExpiredTasks(userID: String): MutableList<Task_DataFiles> {
         val userId = returnUserID(userID)
         val localDate = LocalDate.now()

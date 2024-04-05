@@ -17,7 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Notes_DataFiles
-
+import com.example.freshmind.Extras.getColorResource
 
 
 class NotesFragment : Fragment(), NotesAdapter.EditNoteClickListener {
@@ -39,6 +39,7 @@ class NotesFragment : Fragment(), NotesAdapter.EditNoteClickListener {
     ): View? {
         setHasOptionsMenu(true)
         val view = inflater.inflate(com.example.freshmind.R.layout.fragment_notes, container, false)
+        view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
         recyclerView = view.findViewById(com.example.freshmind.R.id.notesRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         swipeRefreshLayout = view.findViewById(com.example.freshmind.R.id.swipeRefreshLayoutNotes)

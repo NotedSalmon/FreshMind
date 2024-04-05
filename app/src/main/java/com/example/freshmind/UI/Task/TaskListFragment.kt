@@ -17,6 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
+import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import com.example.freshmind.UI.Settings.isExpiredTasksEnabled
 
@@ -40,6 +41,7 @@ class TaskListFragment : Fragment(), TaskAdapter.EditTaskClickListener {
     ): View? {
         setHasOptionsMenu(true)
         val view = inflater.inflate(R.layout.fragment_tasks, container, false)
+        view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)

@@ -1,90 +1,96 @@
 package com.example.freshmind.UI.Settings
 
-import android.app.AlertDialog
-import android.os.Bundle
 import android.content.Intent
-import android.content.SharedPreferences
-import android.text.InputFilter
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.preference.*
+import androidx.fragment.app.Fragment
 import com.example.freshmind.Authentication.User_Login
 import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
+import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
-//var isExpiredTasksEnabled: Boolean = false
-class SettingsFragment : PreferenceFragmentCompat(),
-    SharedPreferences.OnSharedPreferenceChangeListener {
+import com.example.freshmind.UI.Calendar.Utils.makeGone
+import com.example.freshmind.UI.Calendar.Utils.makeVisible
+import com.example.freshmind.UI.Starter
+import com.example.wagonersexperts.extra.SHAEncryption.shaEncrypt
 
-    private lateinit var usernameTextView: TextView
-    private lateinit var expiredTasksCheckBox: CheckBox
-    private lateinit var usernamePreference: EditTextPreference
+var isExpiredTasksEnabled: Boolean = false
+class SettingsFragment : Fragment() {
+
     private lateinit var dbHelper: DBHelper
-    private lateinit var emailPreference: EditTextPreference
+    private lateinit var newUsername: EditText
+    private lateinit var newEmail: EditText
+    private lateinit var oldPassword: EditText
+    private lateinit var newPassword: EditText
+    private lateinit var hideTasks: CheckBox
+    private lateinit var btnSaveChanges: Button
+    private lateinit var deleteAccount: Button
+    private lateinit var displayFullName : TextView
+    private lateinit var displayEmail : TextView
+    private lateinit var displayPhone : TextView
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        dbHelper = DBHelper(requireContext()) // Initialize DBHelper in onCreate()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         setHasOptionsMenu(true)
-        setPreferencesFromResource(R.xml.preferences, rootKey)
-        dbHelper = DBHelper(requireContext())
-        //usernameTextView = view?.findViewById(R.id.textViewUsernameValue) ?: TextView(requireContext())
-        // = view?.findViewById(R.id.checkBoxExpiredTasks) ?: CheckBox(requireContext())
+        val view = inflater.inflate(R.layout.fragment_settings, container, false)
+        view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
 
-        /**
-         * Setting the Username values and validating the new username
-         * it uses the DBHelper to check if the new username is already in use and if so will
-         * call the showErrorDialog function to display an error message
-         */
-        usernamePreference = findPreference("key_username")!!
-        usernamePreference.setOnBindEditTextListener { editText ->
-            editText.filters = arrayOf(InputFilter.LengthFilter(20)) // Set max length if needed
-        }
-        usernamePreference.setOnPreferenceChangeListener { _, newValue ->
-            val newUsername = newValue as String
-            if (dbHelper.checkUsername(newUsername)) {
-                showErrorDialog("New Username cannot be $newUsername")
-                false // Return false to prevent saving
-            } else {
-                dbHelper.changeUsername(globalUser, newUsername)
-                globalUser = newUsername
-                logOut()
-                Toast.makeText(requireContext(), "Username changed please Log In again", Toast.LENGTH_LONG).show()
-                true
-            }
+        val starterActivity = activity as? Starter
+        starterActivity?.floatingFab?.makeGone()
+
+        newUsername = view.findViewById(R.id.txtNewUsername)
+        newEmail = view.findViewById(R.id.txtNewEmail)
+        oldPassword = view.findViewById(R.id.txtOldPassword)
+        newPassword = view.findViewById(R.id.txtNewPassword)
+        hideTasks = view.findViewById(R.id.hiddenTaskCheckbox)
+        deleteAccount = view.findViewById(R.id.btnDeleteAccount)
+        displayFullName = view.findViewById(R.id.txtUserDetails_FullName)
+        displayEmail = view.findViewById(R.id.txtUserDetails_Email)
+        displayPhone = view.findViewById(R.id.txtUserDetails_PhoneNumber)
+
+        deleteAccount.setOnClickListener {
+            deleteButton()
         }
 
-        /**
-         * Setting the Email values and validating the new email
-         */
-        emailPreference = findPreference("key_username")!!
-        emailPreference.setOnBindEditTextListener { editText ->
-            editText.filters = arrayOf(InputFilter.LengthFilter(20)) // Set max length if needed
+        hideTasks.isChecked = isExpiredTasksEnabled
+        hideTasks.setOnCheckedChangeListener { _, isChecked ->
+            isExpiredTasksEnabled = isChecked
         }
-        emailPreference.setOnPreferenceChangeListener { _, newValue ->
-            val newEmail = newValue as String
-            if (dbHelper.checkUsername(newEmail)) {
-                showErrorDialog("Email already in use")
-                false // Return false to prevent saving
-            } else {
-                dbHelper.changeEmail(globalUser, newEmail)
-                globalUser = newEmail
-                logOut()
-                Toast.makeText(requireContext(), "Username changed please Log In again", Toast.LENGTH_LONG).show()
-                true
-            }
+
+        btnSaveChanges = view.findViewById(R.id.btnChangeDetails)
+
+        btnSaveChanges.setOnClickListener {
+            saveDetails()
         }
+
+        getUserDetails()
+
+        return view
     }
 
-    private fun showErrorDialog(errorMessage: String) {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Error")
-            .setMessage(errorMessage)
-            .setPositiveButton("OK", null)
-            .show()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        val starterActivity = activity as? Starter
+        starterActivity?.floatingFab?.makeVisible()
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_settings, menu)
@@ -101,42 +107,71 @@ class SettingsFragment : PreferenceFragmentCompat(),
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        PreferenceManager.getDefaultSharedPreferences(requireContext())
-            .registerOnSharedPreferenceChangeListener(this)
-    }
+    private fun saveDetails(){
+        val newUsernameText = newUsername.text.toString()
+        val newEmailText = newEmail.text.toString()
+        val oldPasswordText = oldPassword.text.toString()
+        val newPasswordText = newPassword.text.toString()
 
-    override fun onPause() {
-        super.onPause()
-        PreferenceManager.getDefaultSharedPreferences(requireContext())
-            .unregisterOnSharedPreferenceChangeListener(this)
-    }
+        println("Old Password: $oldPasswordText")
+        println("New Password: $newPasswordText")
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        when (key) {
-            "key_username" -> {
-                displayUserSettings()
+        val encryptOldPasswordText = shaEncrypt(oldPasswordText)
+        val encryptNewPasswordText = shaEncrypt(newPasswordText)
+
+        if (oldPasswordText.isNotEmpty() && newPasswordText.isNotEmpty()) {
+            if (oldPasswordText.length > 8){
+                if (dbHelper.changePassword(encryptOldPasswordText, encryptNewPasswordText, globalUser)){
+                    Toast.makeText(requireContext(), "Password changed successfully", Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    oldPassword.error = "Password is incorrect or does not match"
+                    newPassword.error = "Password is less than 8 characters or does not match"
+                }
             }
-            "key_email" -> {
-                displayUserSettings()
-            }
-            "key_expiredTasks" -> {
-                isExpiredTasksEnabled = sharedPreferences?.getBoolean(key, false) ?: false
+            else{
+                oldPassword.error = "Password is incorrect or does not match"
+                newPassword.error = "Password is less than 8 characters or does not match"
             }
         }
+        else if (newUsernameText.isNotEmpty()) {
+            if (dbHelper.changeUsername(globalUser, newUsernameText)){
+                globalUser = newUsernameText
+                Toast.makeText(requireContext(), "Username changed, log in again", Toast.LENGTH_SHORT).show()
+                logOut()
+            }
+            else{
+                Toast.makeText(requireContext(), "Username taken/invalid", Toast.LENGTH_SHORT).show()
+            }
+        }
+        else if (newEmailText.isNotEmpty()) {
+            dbHelper.changeEmail(globalUser, newEmailText)
+            Toast.makeText(requireContext(), "Email changed", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            Toast.makeText(requireContext(), "No changes made", Toast.LENGTH_SHORT).show()
+        }
+        refreshData()
     }
 
-    private fun displayUserSettings() {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        val username = sharedPreferences.getString("key_username", "")
-        val email = sharedPreferences.getString("key_email", "")
-        val expiredTasks = sharedPreferences.getBoolean("key_expiredTasks", false)
-        usernameTextView.text = username
-        expiredTasksCheckBox.isChecked = expiredTasks
+    private fun refreshData(){
+        oldPassword.text.clear()
+        newPassword.text.clear()
+        newUsername.text.clear()
+        newEmail.text.clear()
+        getUserDetails()
+    }
 
-        isExpiredTasksEnabled = expiredTasks
-        // Add logic to handle other user settings as needed
+    private fun getUserDetails() {
+        val userDetails = dbHelper.getUser(globalUser)
+        displayFullName.text = userDetails.FullName
+        displayEmail.text = userDetails.Email
+        displayPhone.text = userDetails.PhoneNo
+    }
+
+
+    private fun deleteButton() {
+        dbHelper.deleteUser(globalUser)
     }
 
     private fun logOut() {
@@ -144,4 +179,5 @@ class SettingsFragment : PreferenceFragmentCompat(),
         globalUser = ""
         startActivity(i)
     }
+
 }
