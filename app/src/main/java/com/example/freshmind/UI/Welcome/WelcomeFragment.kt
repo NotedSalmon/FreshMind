@@ -13,9 +13,12 @@ import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Notes_DataFiles
 import com.example.freshmind.Database.Task_DataFiles
+import com.example.freshmind.Extras.changeTextColors
+import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import com.example.freshmind.UI.Notes.NotesPinnedAdapter
 import com.example.freshmind.UI.Task.ClosestTasksAdapter
+import com.example.freshmind.UI.globalTheme
 import com.example.freshmind.databinding.FragmentWelcomeBinding
 import org.w3c.dom.Text
 import java.time.ZoneId
@@ -32,11 +35,14 @@ class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
     private val tasks: MutableList<Task_DataFiles> = mutableListOf() // Initialize an empty list
     private lateinit var dbHelper: DBHelper
     private lateinit var txtWelcomeTitle: TextView
+    private lateinit var txtImportantNotes: TextView
+    private lateinit var txtClosestTasks: TextView
     private lateinit var txtCountdownTimer: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dbHelper = DBHelper(requireContext()) // Initialize DBHelper in onCreate()
+
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,8 +50,17 @@ class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
     ): View? {
         setHasOptionsMenu(true)
         val view = inflater.inflate(R.layout.fragment_welcome, container, false)
+        view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
+        /**
+         * Innitialise all the textViews in the Welcome Fragment
+         */
         txtWelcomeTitle = view.findViewById(R.id.txtWelcomeTitle)
         txtWelcomeTitle.text = "Welcome, $globalUser"
+        txtImportantNotes = view.findViewById(R.id.txtWelcome_Notes)
+        txtClosestTasks = view.findViewById(R.id.txtWelcome_Tasks)
+        txtCountdownTimer = view.findViewById(R.id.remainingTimeTextView)
+
+        changeTextColors(requireContext(), txtWelcomeTitle, txtImportantNotes, txtClosestTasks, txtCountdownTimer)
 
         notesRecyclerView = view.findViewById(R.id.recyclerViewPinnedNotes)
         notesRecyclerView.layoutManager = LinearLayoutManager(requireContext())

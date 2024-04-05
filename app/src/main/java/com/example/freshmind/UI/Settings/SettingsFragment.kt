@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import com.example.freshmind.Authentication.User_Login
 import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
+import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import com.example.freshmind.UI.Calendar.Utils.makeGone
 import com.example.freshmind.UI.Calendar.Utils.makeVisible
@@ -49,6 +50,7 @@ class SettingsFragment : Fragment() {
     ): View? {
         setHasOptionsMenu(true)
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
+        view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
 
         val starterActivity = activity as? Starter
         starterActivity?.floatingFab?.makeGone()
