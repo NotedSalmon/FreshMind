@@ -8,20 +8,29 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.graphics.drawable.DrawableCompat.applyTheme
 import androidx.fragment.app.Fragment
 import com.example.freshmind.Authentication.User_Login
 import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
+import com.example.freshmind.Extras.changeAccountColour
+import com.example.freshmind.Extras.changeEditBoxColor
+import com.example.freshmind.Extras.changeTextBoxColor
+import com.example.freshmind.Extras.changeTextColors
 import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import com.example.freshmind.UI.Calendar.Utils.makeGone
 import com.example.freshmind.UI.Calendar.Utils.makeVisible
 import com.example.freshmind.UI.Starter
+import com.example.freshmind.UI.globalTheme
 import com.example.wagonersexperts.extra.SHAEncryption.shaEncrypt
 
 var isExpiredTasksEnabled: Boolean = false
@@ -38,6 +47,13 @@ class SettingsFragment : Fragment() {
     private lateinit var displayFullName : TextView
     private lateinit var displayEmail : TextView
     private lateinit var displayPhone : TextView
+    private lateinit var txtchangeUsername: TextView
+    private lateinit var txtchangeEmail: TextView
+    private lateinit var txtchangePassword: TextView
+    private lateinit var txtUserDetails: TextView
+    private lateinit var titleAccountSettings: TextView
+    private lateinit var txtTheme: TextView
+    private lateinit var themeSpinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +80,36 @@ class SettingsFragment : Fragment() {
         displayFullName = view.findViewById(R.id.txtUserDetails_FullName)
         displayEmail = view.findViewById(R.id.txtUserDetails_Email)
         displayPhone = view.findViewById(R.id.txtUserDetails_PhoneNumber)
+        txtchangeUsername = view.findViewById(R.id.txtChangeUsername)
+        txtchangeEmail = view.findViewById(R.id.txtChangeEmail)
+        txtchangePassword = view.findViewById(R.id.txtChangePassword)
+        txtUserDetails = view.findViewById(R.id.txtUserDetails)
+        titleAccountSettings = view.findViewById(R.id.titleAccountSettings)
+        txtTheme = view.findViewById(R.id.txtTheme)
+        themeSpinner = view.findViewById(R.id.theme_spinner)
+
+        /**
+         * Spinner for changing the theme of the app
+         * This is a simple spinner that allows the user to select a theme from a list of themes
+         */
+        val themes = arrayOf("midnight", "light", "dark")
+        val adapter = ArrayAdapter(requireContext(), R.layout.spinner_item_layout, themes)
+        adapter.setDropDownViewResource(R.layout.spinner_item_layout)
+        themeSpinner.setSelection(adapter.getPosition("midnightSushi"))
+        themeSpinner.adapter = adapter
+
+        themeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                // Handle theme selection
+                globalTheme = themes[position]
+                // Apply the selected theme to your app
+                applyTheme()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Do nothing
+            }
+        }
 
         deleteAccount.setOnClickListener {
             deleteButton()
@@ -79,9 +125,11 @@ class SettingsFragment : Fragment() {
         btnSaveChanges.setOnClickListener {
             saveDetails()
         }
-
+        changeTextColors(requireContext(), txtchangeUsername, txtchangeEmail, txtUserDetails, txtchangePassword, deleteAccount, hideTasks,btnSaveChanges, txtTheme)
+        changeAccountColour(requireContext(), titleAccountSettings)
+        changeEditBoxColor(requireContext(), newUsername, newEmail, oldPassword, newPassword)
+        changeTextBoxColor(requireContext(), displayFullName, displayEmail, displayPhone)
         getUserDetails()
-
         return view
     }
 
@@ -105,6 +153,14 @@ class SettingsFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun applyTheme() {
+        view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
+        changeTextColors(requireContext(), txtchangeUsername, txtchangeEmail, txtUserDetails, txtchangePassword, deleteAccount, hideTasks,btnSaveChanges)
+        changeAccountColour(requireContext(), titleAccountSettings)
+        changeEditBoxColor(requireContext(), newUsername, newEmail, oldPassword, newPassword)
+        changeTextBoxColor(requireContext(), displayFullName, displayEmail, displayPhone)
     }
 
     private fun saveDetails(){

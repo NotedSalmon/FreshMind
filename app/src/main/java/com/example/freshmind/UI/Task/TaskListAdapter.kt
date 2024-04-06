@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
+import com.example.freshmind.Extras.changeAdapterTextColors
+import com.example.freshmind.Extras.changeTextColors
 import com.example.freshmind.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -66,6 +68,7 @@ class ClosestTasksAdapter(private val tasks: MutableList<Task_DataFiles>) : Recy
         val task = tasks[position]
         holder.titleTextView.text = task.taskTitle
         holder.descriptionTextView.text = task.taskDescription
+        changeAdapterTextColors(holder.itemView.context,holder.titleTextView)
 
         // Format start and end dates
         val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
@@ -176,7 +179,7 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>, private val ed
             holder.editIcon.visibility = View.VISIBLE
         } else {
             holder.itemView.setBackgroundResource(R.color.backgroundIndigo)
-            holder.titleTextView.setTextColor(ContextCompat.getColor(context, R.color.white))
+            changeTextColors(holder.itemView.context,holder.titleTextView)
             holder.deleteIcon.visibility = View.GONE
             holder.editIcon.visibility = View.GONE
         }

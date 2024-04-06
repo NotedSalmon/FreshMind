@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
+import com.example.freshmind.Extras.changeTextColors
 import androidx.recyclerview.widget.RecyclerView
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Notes_DataFiles
+import com.example.freshmind.Extras.changeAdapterTextColors
 import com.example.freshmind.R
 
 class NotesPinnedAdapter(private val notes: MutableList<Notes_DataFiles>) : RecyclerView.Adapter<NotesPinnedAdapter.NotesPinnedViewHolder>() {
@@ -62,6 +63,7 @@ class NotesPinnedAdapter(private val notes: MutableList<Notes_DataFiles>) : Recy
         holder.titleTextView.text = note.noteTitle
         holder.descriptionTextView.text = note.noteContent
         holder.currentNoteID = note.noteID
+        changeAdapterTextColors(holder.itemView.context,holder.titleTextView)
 
         // Highlight selected item
         holder.itemView.isSelected = position == selectedItemPosition
@@ -116,9 +118,8 @@ class NotesAdapter(private val notes: MutableList<Notes_DataFiles>, private val 
             }
 
         }
+
     }
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_notes, parent, false)
         return NotesViewHolder(view)
@@ -134,6 +135,8 @@ class NotesAdapter(private val notes: MutableList<Notes_DataFiles>, private val 
         holder.titleTextView.text = note.noteTitle
         holder.descriptionTextView.text = note.noteContent
         holder.currentNoteID = note.noteID
+        changeAdapterTextColors(holder.itemView.context,holder.titleTextView)
+
 
         // Highlight selected item
         holder.itemView.isSelected = position == selectedItemPosition

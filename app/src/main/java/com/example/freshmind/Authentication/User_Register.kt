@@ -5,12 +5,19 @@ import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.User_DataFiles
+import com.example.freshmind.Extras.changeEditBoxColor
+import com.example.freshmind.Extras.changeTextBoxColor
+import com.example.freshmind.Extras.changeTitleColor
+import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import com.example.wagonersexperts.extra.SHAEncryption.shaEncrypt
 import java.time.LocalDateTime
@@ -24,20 +31,36 @@ private const val TAG = "User_Register"
 class User_Register: AppCompatActivity() {
 
     val dbHelper: DBHelper = DBHelper(this)
+    private lateinit var fullnameEditText: EditText
+    private lateinit var emailEditText: EditText
+    private lateinit var phoneNumberEditText: EditText
+    private lateinit var usernameEditText: EditText
+    private lateinit var passwordEditText: EditText
+    private lateinit var btnGoBack : Button
+    private lateinit var btnUserRegister : Button
+    private lateinit var title: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(com.example.freshmind.R.layout.activity_register)
+        val rootLayout = findViewById<View>(android.R.id.content)
+        rootLayout.setBackgroundColor(ContextCompat.getColor(this, getColorResource(this)))
+        fullnameEditText = findViewById(com.example.freshmind.R.id.txtFullName)
+        emailEditText = findViewById(com.example.freshmind.R.id.txtEmail)
+        phoneNumberEditText = findViewById(com.example.freshmind.R.id.txtPhoneNumber)
+        usernameEditText = findViewById(com.example.freshmind.R.id.txtUsername)
+        passwordEditText = findViewById(com.example.freshmind.R.id.txtPassword)
+        btnGoBack = findViewById(com.example.freshmind.R.id.btnBack)
+        btnUserRegister = findViewById(com.example.freshmind.R.id.btnRegister)
+        title = findViewById(com.example.freshmind.R.id.txtTitle)
+        changeTitleColor(this, title)
+        changeEditBoxColor(this, fullnameEditText, emailEditText, phoneNumberEditText, usernameEditText, passwordEditText)
+        changeTextBoxColor(this, btnGoBack, btnUserRegister)
     }
 
     fun btnUserRegister(view: View)
     {
-        val fullNameEditText = findViewById<EditText>(com.example.freshmind.R.id.txtFullName)
-        val emailEditText = findViewById<EditText>(com.example.freshmind.R.id.txtEmail)
-        val phoneNumberEditText = findViewById<EditText>(com.example.freshmind.R.id.txtPhoneNumber)
-        val usernameEditText = findViewById<EditText>(com.example.freshmind.R.id.txtUsername)
-        val passwordEditText = findViewById<EditText>(com.example.freshmind.R.id.txtPassword)
-
-        val userName = fullNameEditText.text.toString()
+        val userName = fullnameEditText.text.toString()
         val userEmail = emailEditText.text.toString()
         val userPhone = phoneNumberEditText.text.toString()
         val userUsername = usernameEditText.text.toString()
@@ -47,8 +70,8 @@ class User_Register: AppCompatActivity() {
 
         //Add a loop or something to check all fields, if theres any error fail everything
         if (userName.isEmpty()) {
-            fullNameEditText.error = "Full Name is required"
-            fullNameEditText.requestFocus()
+            fullnameEditText.error = "Full Name is required"
+            fullnameEditText.requestFocus()
             return
         }
 

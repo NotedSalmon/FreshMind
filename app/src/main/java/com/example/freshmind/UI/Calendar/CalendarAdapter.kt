@@ -7,6 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
+import com.example.freshmind.Extras.changeAdapterTextColors
+import com.example.freshmind.Extras.changeTextColors
 import com.example.freshmind.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -42,6 +44,7 @@ class CalendarAdapter(private val calendarTasksView: MutableList<Pair<LocalDate,
         val formattedEndDate = task.endTime.format(dateFormatter)
         holder.startDate.text = formattedStartDate
         holder.endDate.text = formattedEndDate
+        changeAdapterTextColors(holder.itemView.context,holder.titleTextView)
 
         holder.itemView.isSelected = position == selectedItemPosition
     }

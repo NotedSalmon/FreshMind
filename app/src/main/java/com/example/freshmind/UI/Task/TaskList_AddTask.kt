@@ -5,13 +5,19 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
+import com.example.freshmind.Extras.changeEditBoxColor
+import com.example.freshmind.Extras.changeTextBoxColor
+import com.example.freshmind.Extras.changeTextColors
+import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -22,16 +28,21 @@ import java.util.Locale
 
 class TaskList_AddTask : AppCompatActivity() {
     val dbHelper: DBHelper = DBHelper(this)
-
+    private lateinit var taskTitleEditText: EditText
+    private lateinit var taskDescriptionEditText: EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_task)
+        val rootLayout = findViewById<View>(android.R.id.content)
+        rootLayout.setBackgroundColor(ContextCompat.getColor(this, getColorResource(this)))
 
-        val btnAddTask = findViewById<View>(R.id.buttonSaveTask)
+        val btnAddTask = findViewById<Button>(R.id.buttonSaveTask)
         val startDateCalendar = Calendar.getInstance()
         val endDateCalendar = Calendar.getInstance()
         val txtStartDate = findViewById<TextView>(R.id.txtCreateTask_StartDate)
         val txtEndDate = findViewById<TextView>(R.id.txtCreateTask_EndDate)
+        taskTitleEditText = findViewById(R.id.txtCreateTask_Title)
+        taskDescriptionEditText = findViewById(R.id.txtCreateTask_Description)
 
         txtStartDate.setOnClickListener { showDateTimePicker(startDateCalendar, txtStartDate) }
         txtEndDate.setOnClickListener { showDateTimePicker(endDateCalendar, txtEndDate) }
@@ -41,11 +52,12 @@ class TaskList_AddTask : AppCompatActivity() {
                 Toast.makeText(this, "End date cannot be before start date", Toast.LENGTH_SHORT).show()
                 txtEndDate.error
             } else { btnAddTask() } }
+        changeEditBoxColor(this, taskTitleEditText, taskDescriptionEditText)
+        changeTextBoxColor(this, txtStartDate, txtEndDate, btnAddTask)
+        changeTextColors(this , taskTitleEditText, taskDescriptionEditText, txtStartDate, txtEndDate, btnAddTask)
     }
 
     private fun btnAddTask() {
-        val taskTitleEditText: EditText = findViewById(R.id.txtCreateTask_Title)
-        val taskDescriptionEditText: EditText = findViewById(R.id.txtCreateTask_Description)
         val startDateTextView: TextView = findViewById(R.id.txtCreateTask_StartDate)
         val endDateTextView: TextView = findViewById(R.id.txtCreateTask_EndDate)
 

@@ -1,4 +1,7 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -7,23 +10,34 @@
         android:id="@+id/txtEditTask_Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="172dp"
         android:hint="Task Title"
-        android:padding="16dp"/>
+        android:inputType="text"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <EditText
         android:id="@+id/txtEditTask_Description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtEditTask_Title"
+        android:layout_marginTop="64dp"
         android:hint="Task Description"
-        android:padding="16dp"/>
+        android:inputType="textMultiLine"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtEditTask_Title"/>
 
     <TextView
         android:id="@+id/txtEditTask_StartDate"
-        android:layout_width="150dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_below="@id/txtEditTask_Description"
+        android:layout_marginTop="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtEditTask_Description"
         android:hint="Start Date"
         android:minHeight="24dp"
         android:textSize="16sp"
@@ -31,21 +45,26 @@
 
     <TextView
         android:id="@+id/txtEditTask_EndDate"
-        android:layout_width="150dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="40dp"
         android:hint="End Date"
         android:minHeight="24dp"
         android:textSize="16sp"
-        android:layout_below="@id/txtEditTask_StartDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtEditTask_StartDate" />
          />
 
     <Button
         android:id="@+id/buttonSaveTask"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtEditTask_EndDate"
+        android:layout_marginTop="44dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtEditTask_EndDate"
         android:layout_centerHorizontal="true"
         android:text="Save Task"/>
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
