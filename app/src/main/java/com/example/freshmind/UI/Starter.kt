@@ -31,7 +31,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.firestore
 import java.time.LocalDate
 
-var globalTheme : String = "midnightSushi"
+var globalTheme : String = "midnight"
 class Starter : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration

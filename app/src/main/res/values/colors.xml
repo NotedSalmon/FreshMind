@@ -19,11 +19,15 @@
     <color name="lightPurple"> #504c94</color>
     <color name="darkPurple">#383a5b</color>
     <color name="lightGray">#acbcc4</color>
-    <color name="beigeBackgroundDark">#c5bed5</color>
+    <color name="beige">#c5bed5</color>
     <color name="brownCoffee">#4c2424</color>
     <color name="deepPurple">#6A0DAD</color>
     <color name="indigo">#4B0082</color>
     <color name="gold">#FFD700</color>
     <color name="darkBlue">#0D47A1</color>
     <color name="backgroundIndigo">#35235D</color>
+    <color name="chalkyGold">#EFDA92</color>
+    <color name="comet">#50506A</color>
+    <color name="amethystSmoke">#9698BD</color>
+    <color name="spunPearl">#ACACC0</color>
 </resources>

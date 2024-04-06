@@ -63,7 +63,7 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
-        addStatusBarColorUpdate(R.color.example_3_statusbar_color)
+        addStatusBarColorUpdate(R.color.indigo)
         binding = FragmentCalendarBinding.bind(view)
         selectedDate = today
         calendarTaskAdapter = CalendarAdapter(calendarTasksView)
@@ -167,7 +167,7 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
     override fun onStart() {
         super.onStart()
         activityToolbar.setBackgroundColor(
-            requireContext().getColorCompat(R.color.example_3_toolbar_color),
+            requireContext().getColorCompat(R.color.indigo),
         )
     }
 
@@ -203,6 +203,7 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
                 container.day = data
                 val textView = container.binding.txtCalendarDay
                 val dotView = container.binding.txtCalendarDotView
+                binding.txtCalendarSelectedDate.setTextColorRes(R.color.white)
 
                 textView.text = data.date.dayOfMonth.toString()
 
@@ -249,7 +250,7 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
                         container.legendLayout.children.map { it as TextView }
                             .forEachIndexed { index, tv ->
                                 tv.text = daysOfWeek[index].name.first().toString()
-                                tv.setTextColorRes(R.color.example_3_black)
+                                tv.setTextColorRes(R.color.white)
                             }
                     }
                 }
