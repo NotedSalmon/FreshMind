@@ -1,35 +1,34 @@
 package com.example.freshmind.UI
 
-
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.LayoutRes
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.navigation.NavigationView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
-import com.example.freshmind.R
+import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.UI.Calendar.Utils.makeGone
 import com.example.freshmind.UI.Calendar.Utils.makeVisible
 import com.example.freshmind.databinding.ActivityWelcomeBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.firestore
 import java.time.LocalDate
+import com.example.freshmind.R
+import com.example.freshmind.UI.Settings.isExpiredTasksEnabled
 
 var globalTheme : String = "midnight"
 class Starter : AppCompatActivity() {
@@ -177,7 +176,6 @@ abstract class BaseFragment(@LayoutRes layoutRes: Int) : Fragment(layoutRes) {
 
         val actionBar = (requireActivity() as AppCompatActivity).supportActionBar
         if (this is HasBackButton) {
-            actionBar?.title = context?.getString(R.string.activity_title_view)
         }
         actionBar?.setDisplayHomeAsUpEnabled(true)
     }

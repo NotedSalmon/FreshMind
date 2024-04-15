@@ -47,7 +47,7 @@ class TaskListFragment : Fragment(), TaskAdapter.EditTaskClickListener {
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
 
 
-        tasks.addAll(getAllTasks())
+        //tasks.addAll(getAllTasks())
 
         taskAdapter = TaskAdapter(tasks, this)
         recyclerView.adapter = taskAdapter

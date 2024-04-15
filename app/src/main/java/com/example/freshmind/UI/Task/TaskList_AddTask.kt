@@ -17,6 +17,8 @@ import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.Extras.changeEditBoxColor
 import com.example.freshmind.Extras.changeTextBoxColor
 import com.example.freshmind.Extras.changeTextColors
+import com.example.freshmind.Extras.changeTextColorsNT
+import com.example.freshmind.Extras.changeTitleColor
 import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import java.text.SimpleDateFormat
@@ -30,6 +32,7 @@ class TaskList_AddTask : AppCompatActivity() {
     val dbHelper: DBHelper = DBHelper(this)
     private lateinit var taskTitleEditText: EditText
     private lateinit var taskDescriptionEditText: EditText
+    private lateinit var txtTitleCreateTask: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_task)
@@ -43,6 +46,7 @@ class TaskList_AddTask : AppCompatActivity() {
         val txtEndDate = findViewById<TextView>(R.id.txtCreateTask_EndDate)
         taskTitleEditText = findViewById(R.id.txtCreateTask_Title)
         taskDescriptionEditText = findViewById(R.id.txtCreateTask_Description)
+        txtTitleCreateTask = findViewById(R.id.txtTitleCreateTask)
 
         txtStartDate.setOnClickListener { showDateTimePicker(startDateCalendar, txtStartDate) }
         txtEndDate.setOnClickListener { showDateTimePicker(endDateCalendar, txtEndDate) }
@@ -52,9 +56,10 @@ class TaskList_AddTask : AppCompatActivity() {
                 Toast.makeText(this, "End date cannot be before start date", Toast.LENGTH_SHORT).show()
                 txtEndDate.error
             } else { btnAddTask() } }
+        changeTitleColor(this, txtTitleCreateTask)
         changeEditBoxColor(this, taskTitleEditText, taskDescriptionEditText)
         changeTextBoxColor(this, txtStartDate, txtEndDate, btnAddTask)
-        changeTextColors(this , taskTitleEditText, taskDescriptionEditText, txtStartDate, txtEndDate, btnAddTask)
+        changeTextColorsNT(this , taskTitleEditText, taskDescriptionEditText, txtStartDate, txtEndDate)
     }
 
     private fun btnAddTask() {

@@ -32,7 +32,7 @@
 
     <EditText
         android:id="@+id/txtUser_Login_Username"
-        android:layout_width="378dp"
+        android:layout_width="370dp"
         android:layout_height="68dp"
         android:layout_marginTop="92dp"
         android:background="#A3642888"
@@ -47,7 +47,7 @@
 
     <EditText
         android:id="@+id/txtUser_Login_Password"
-        android:layout_width="378dp"
+        android:layout_width="370dp"
         android:layout_height="68dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="56dp"
