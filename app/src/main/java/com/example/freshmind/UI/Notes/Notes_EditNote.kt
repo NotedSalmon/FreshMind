@@ -18,6 +18,8 @@ import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.Extras.changeEditBoxColor
 import com.example.freshmind.Extras.changeTextBoxColor
 import com.example.freshmind.Extras.changeTextColors
+import com.example.freshmind.Extras.changeTextColorsNT
+import com.example.freshmind.Extras.changeTitleColor
 import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import java.text.SimpleDateFormat
@@ -34,6 +36,7 @@ class Notes_EditNote : AppCompatActivity() {
     private lateinit var checkboxIsPinned: CheckBox
     private lateinit var buttonSaveTask: Button
     private lateinit var noteDateCreated: String
+    private lateinit var txtTitleEditNote: TextView
     private var noteID: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +50,7 @@ class Notes_EditNote : AppCompatActivity() {
         editTextContent = findViewById(R.id.txtEditNote_Content)
         checkboxIsPinned = findViewById(R.id.checkIsPinned)
         buttonSaveTask = findViewById(R.id.buttonSaveNote)
+        txtTitleEditNote = findViewById(R.id.txtTitleEditNote)
 
         // Retrieve task details passed from NoteFragment
         val intent = intent
@@ -68,9 +72,10 @@ class Notes_EditNote : AppCompatActivity() {
             updateTask()
         }
 
+        changeTitleColor(this, txtTitleEditNote)
         changeEditBoxColor(this, editTextTitle, editTextContent)
         changeTextBoxColor(this, checkboxIsPinned, buttonSaveTask)
-        changeTextColors(this , editTextTitle, checkboxIsPinned, buttonSaveTask, editTextContent)
+        changeTextColorsNT(this , editTextTitle, checkboxIsPinned, buttonSaveTask, editTextContent)
     }
 
     private fun updateTask() {

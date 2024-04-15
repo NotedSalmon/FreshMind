@@ -95,14 +95,19 @@ class SettingsFragment : Fragment() {
         val themes = arrayOf("midnight", "light", "dark")
         val adapter = ArrayAdapter(requireContext(), R.layout.spinner_item_layout, themes)
         adapter.setDropDownViewResource(R.layout.spinner_item_layout)
-        themeSpinner.setSelection(adapter.getPosition("midnightSushi"))
         themeSpinner.adapter = adapter
+
+        val themeIndex = themes.indexOf(globalTheme)
+        if (themeIndex != -1) {
+            themeSpinner.setSelection(themeIndex)
+        }
+
 
         themeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 // Handle theme selection
                 globalTheme = themes[position]
-                // Apply the selected theme to your app
+                dbHelper.updateTheme(globalTheme)
                 applyTheme()
             }
 
@@ -118,6 +123,7 @@ class SettingsFragment : Fragment() {
         hideTasks.isChecked = isExpiredTasksEnabled
         hideTasks.setOnCheckedChangeListener { _, isChecked ->
             isExpiredTasksEnabled = isChecked
+            dbHelper.updateHideTasks(isExpiredTasksEnabled)
         }
 
         btnSaveChanges = view.findViewById(R.id.btnChangeDetails)

@@ -1,6 +1,7 @@
 package com.example.freshmind.Extras
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -14,13 +15,30 @@ fun getColorResource(context: Context): Int {
         "dark" -> R.color.black
         "midnight" -> R.color.backgroundIndigo
         // Add more color mappings as needed
-        else -> throw IllegalArgumentException("Unknown color name: $globalTheme")
-    }
+        else -> {
+            Log.e("BackgroundSettings", "Unknown color name: $globalTheme")
+            throw IllegalArgumentException("Unknown color name: $globalTheme")
+            R.color.backgroundIndigo
+    } }
+    globalTheme = "midnight"
 }
 
 fun changeTextColors(context: Context, vararg textViews: TextView) {
     val textColor = when (globalTheme) {
         "midnight" -> R.color.white
+        "light" -> R.color.white
+        "dark" -> R.color.black
+        else -> R.color.black // Change this to the default text color
+    }
+
+    textViews.forEach { it.setTextColor(context.resources.getColor(textColor)) }
+}
+
+fun changeTextColorsNT(context: Context, vararg textViews: TextView) {
+    val textColor = when (globalTheme) {
+        "midnight" -> R.color.black
+        "light" -> R.color.white
+        "dark" -> R.color.black
         else -> R.color.black // Change this to the default text color
     }
 
@@ -30,6 +48,8 @@ fun changeTextColors(context: Context, vararg textViews: TextView) {
 fun changeAdapterTextColors(context: Context, vararg textViews: TextView) {
     val textColor = when (globalTheme) {
         "midnight" -> R.color.white
+        "light" -> R.color.white
+        "dark" -> R.color.black
         else -> R.color.black // Change this to the default text color
     }
 
@@ -39,6 +59,8 @@ fun changeAdapterTextColors(context: Context, vararg textViews: TextView) {
 fun changeAccountColour(context: Context, vararg textViews: TextView) {
     val textColor = when (globalTheme) {
         "midnight" -> R.color.gold
+        "light" -> R.color.white
+        "dark" -> R.color.black
         else -> R.color.black // Change this to the default text color
     }
 
@@ -48,6 +70,8 @@ fun changeAccountColour(context: Context, vararg textViews: TextView) {
 fun changeTitleColor(context: Context, vararg textViews: TextView) {
     val textColor = when (globalTheme) {
         "midnight" -> R.color.white
+        "light" -> R.color.white
+        "dark" -> R.color.black
         else -> R.color.black // Change this to the default text color
     }
 
@@ -58,6 +82,8 @@ fun changeTitleColor(context: Context, vararg textViews: TextView) {
 fun changeEditBoxColor(context: Context, vararg editTexts: EditText) {
     val backgroundColor = when (globalTheme) {
         "midnight" -> R.color.lightGray
+        "light" -> R.color.white
+        "dark" -> R.color.black
         else -> R.color.black // Change this to the default text color
     }
 
@@ -67,6 +93,8 @@ fun changeEditBoxColor(context: Context, vararg editTexts: EditText) {
 fun changeTextBoxColor(context: Context, vararg textViews: TextView) {
     val backgroundColor = when (globalTheme) {
         "midnight" -> R.color.lightGray
+        "light" -> R.color.white
+        "dark" -> R.color.black
         else -> R.color.black // Change this to the default text color
     }
 

@@ -19,6 +19,8 @@ import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.Extras.changeEditBoxColor
 import com.example.freshmind.Extras.changeTextBoxColor
 import com.example.freshmind.Extras.changeTextColors
+import com.example.freshmind.Extras.changeTextColorsNT
+import com.example.freshmind.Extras.changeTitleColor
 import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import java.text.SimpleDateFormat
@@ -33,6 +35,7 @@ class Notes_AddNote : AppCompatActivity() {
     private lateinit var noteContentEditText: EditText
     private lateinit var checkPin: CheckBox
     private lateinit var btnAddNote: Button
+    private lateinit var txtTitleCreateNote: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +45,7 @@ class Notes_AddNote : AppCompatActivity() {
         noteTitleEditText = findViewById(R.id.txtCreateNote_Title)
         noteContentEditText= findViewById(R.id.txtCreateNote_Content)
         checkPin= findViewById(R.id.checkIsPinned)
+        txtTitleCreateNote = findViewById(R.id.txtTitleCreateNote)
 
         btnAddNote = findViewById(R.id.buttonSaveNote)
 
@@ -49,9 +53,10 @@ class Notes_AddNote : AppCompatActivity() {
             btnAddNotes()
         }
 
+        changeTitleColor(this, txtTitleCreateNote)
         changeEditBoxColor(this, noteTitleEditText, noteContentEditText)
         changeTextBoxColor(this, checkPin, btnAddNote)
-        changeTextColors(this , checkPin, btnAddNote, noteTitleEditText, noteContentEditText)
+        changeTextColorsNT(this , checkPin, btnAddNote, noteTitleEditText, noteContentEditText)
     }
 
     private fun btnAddNotes() {

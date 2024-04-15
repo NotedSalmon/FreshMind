@@ -15,6 +15,8 @@ import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.Extras.changeEditBoxColor
 import com.example.freshmind.Extras.changeTextBoxColor
 import com.example.freshmind.Extras.changeTextColors
+import com.example.freshmind.Extras.changeTextColorsNT
+import com.example.freshmind.Extras.changeTitleColor
 import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import java.text.SimpleDateFormat
@@ -32,6 +34,7 @@ class TaskList_EditTask : AppCompatActivity() {
     private lateinit var buttonSaveTask: Button
     private lateinit var editTextStartDate: TextView
     private lateinit var editTextEndDate: TextView
+    private lateinit var txtTitleEditTask: TextView
     private var taskID: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +49,7 @@ class TaskList_EditTask : AppCompatActivity() {
         editTextStartDate = findViewById(R.id.txtEditTask_StartDate)
         editTextEndDate = findViewById(R.id.txtEditTask_EndDate)
         buttonSaveTask = findViewById(R.id.buttonSaveTask)
+        txtTitleEditTask = findViewById(R.id.txtTitleEditTask)
 
         // Retrieve task details passed from TaskListFragment
         val intent = intent
@@ -71,9 +75,10 @@ class TaskList_EditTask : AppCompatActivity() {
                 updateTask()
         }
 
+        changeTitleColor(this, txtTitleEditTask)
         changeEditBoxColor(this, editTextTitle, editTextDescription)
         changeTextBoxColor(this, buttonSaveTask, editTextStartDate, editTextEndDate)
-        changeTextColors(this , editTextTitle, editTextDescription, editTextStartDate, editTextEndDate)
+        changeTextColorsNT(this , editTextTitle, editTextDescription, editTextStartDate, editTextEndDate)
     }
 
     private fun updateTask() {

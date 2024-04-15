@@ -18,7 +18,9 @@ import com.example.freshmind.Extras.changeTextBoxColor
 import com.example.freshmind.Extras.changeTitleColor
 import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
+import com.example.freshmind.UI.Settings.isExpiredTasksEnabled
 import com.example.freshmind.UI.Starter
+import com.example.freshmind.UI.globalTheme
 import com.example.wagonersexperts.extra.SHAEncryption.shaEncrypt
 var globalUser: String = "" // Global variable to store the username
 class User_Login : AppCompatActivity() {

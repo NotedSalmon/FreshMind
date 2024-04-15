@@ -17,6 +17,7 @@ import com.example.freshmind.Extras.changeTextColors
 import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import com.example.freshmind.UI.Notes.NotesPinnedAdapter
+import com.example.freshmind.UI.Settings.isExpiredTasksEnabled
 import com.example.freshmind.UI.Task.ClosestTasksAdapter
 import com.example.freshmind.UI.globalTheme
 import com.example.freshmind.databinding.FragmentWelcomeBinding
@@ -25,8 +26,8 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 
 class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
+
     private var _binding: FragmentWelcomeBinding? = null
-    private val binding get() = _binding!!
     private lateinit var notesRecyclerView: RecyclerView
     private lateinit var notesPinnedAdapter: NotesPinnedAdapter
     private val notes: MutableList<Notes_DataFiles> = mutableListOf() // Initialize an empty list
@@ -50,6 +51,8 @@ class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
     ): View? {
         setHasOptionsMenu(true)
         val view = inflater.inflate(R.layout.fragment_welcome, container, false)
+        globalTheme = dbHelper.retrieveTheme()
+        isExpiredTasksEnabled = dbHelper.retrieveHideTasks()
         view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
         /**
          * Innitialise all the textViews in the Welcome Fragment

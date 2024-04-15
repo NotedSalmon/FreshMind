@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.freshmind.Authentication.globalUser
 import com.google.common.collect.Table
 import com.google.firebase.firestore.auth.User
 import java.time.LocalDate
@@ -59,30 +60,13 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     private val Note_Column_isPinned = "isPinned"
 
     /**
-     *  Calendar Table
-     */
-    private val CalendarTableName = "tblCalendar"
-    private val Calendar_Column_ID = "eventID"
-    private val Calendar_Column_userID = "userID"
-    private val Calendar_Column_taskID = "taskID"
-    private val Calendar_Column_EventTitle = "EventTitle"
-    private val Calendar_Column_EventDescription = "EventDescription"
-    private val Calendar_Column_EventColour = "Colour"
-    private val Calendar_Column_StartTime = "StartTime"
-    private val Calendar_Column_EndTime = "EndTime"
-    private val Calendar_Column_Reminder = "Reminder"
-    private val Calendar_Column_ReminderTime = "ReminderTime"
-    private val Calendar_Column_DateModified = "DateModified"
-
-    /**
      * Settings Table
      */
     private val SettingsTableName = "tblSettings"
     private val Settings_Column_ID = "settingID"
     private val Settings_Column_userID = "userID"
     private val Settings_Column_Theme = "Theme"
-    private val Settings_Column_PushNotification = "PushNotification"
-    private val Settings_Column_EmailNotification = "EmailNotification" //Maybe?
+    private val Settings_Column_HideTasks = "HideTasks"
     private val Settings_Column_DateModified = "DateModified"
     override fun onCreate(db: SQLiteDatabase?) {
         //-----------SQL Query for User Table----------------------------------
@@ -100,17 +84,10 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
                 " INTEGER PRIMARY KEY AUTOINCREMENT," + Note_Column_userID + " INTEGER, " + Note_Column_NoteTitle + " TEXT, " +
                 Note_Column_NoteContent + " TEXT, " + Note_Column_DateModified + " TEXT, " + Note_Column_DateCreated + " TEXT, " + Note_Column_isPinned + " BIT, " + "FOREIGN KEY(" + Note_Column_userID + ") REFERENCES " + UserTableName + "(" + User_Column_ID + "))"
         db?.execSQL(sqlCreateStatement)
-        //-------------SQL Query for Calendar Table----------------------------
-        sqlCreateStatement = "CREATE TABLE " + CalendarTableName + " ( " + Calendar_Column_ID +
-                " INTEGER PRIMARY KEY AUTOINCREMENT," + Calendar_Column_userID + " INTEGER, " + Calendar_Column_taskID + " INTEGER, " + Calendar_Column_EventTitle + " TEXT, " +
-                Calendar_Column_EventDescription + " TEXT, " + Calendar_Column_EventColour + " TEXT, " + Calendar_Column_StartTime + " TEXT, " + Calendar_Column_EndTime + " TEXT, " + Calendar_Column_Reminder +
-                " INTEGER, " + Calendar_Column_ReminderTime + " TEXT, " + Calendar_Column_DateModified + " TEXT, " + "FOREIGN KEY(" + Calendar_Column_userID + ") REFERENCES " + UserTableName + "(" + User_Column_ID + "), " + "FOREIGN KEY(" + Calendar_Column_taskID +
-                ") REFERENCES " + TaskTableName + "(" + Task_Column_ID + "))"
-        db?.execSQL(sqlCreateStatement)
         //--------------SQL Query for Settings Table---------------------------
         sqlCreateStatement = "CREATE TABLE " + SettingsTableName + " ( " + Settings_Column_ID +
                 " INTEGER PRIMARY KEY AUTOINCREMENT," + Settings_Column_userID + " INTEGER, " + Settings_Column_Theme + " TEXT, " +
-                Settings_Column_PushNotification + " INTEGER, " + Settings_Column_EmailNotification + " INTEGER, " + Settings_Column_DateModified + " TEXT, " + "FOREIGN KEY(" + Settings_Column_userID + ") REFERENCES " + UserTableName + "(" + User_Column_ID + "))"
+                Settings_Column_HideTasks + " BIT, " + Settings_Column_DateModified + " TEXT, " + "FOREIGN KEY(" + Settings_Column_userID + ") REFERENCES " + UserTableName + "(" + User_Column_ID + "))"
         db?.execSQL(sqlCreateStatement)
     }
 
@@ -325,7 +302,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
                         // Extract task details from cursor
                         val taskID = cursor.getInt(cursor.getColumnIndex(Task_Column_ID))
                         val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle))
-                        val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription))
+                        val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)) ?: ""
                         val startTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_StartTime))
                         val endTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_EndTime))
                         val dateModifiedString = cursor.getString(cursor.getColumnIndex(Task_Column_DateModified))
@@ -589,5 +566,114 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         }
         return notesList
     }
+
+    /**
+     * Settings Table Functions
+     */
+
+    fun retrieveHideTasks(): Boolean {
+        val retrievedID = returnUserID(globalUser)
+        val db = this.readableDatabase
+        val columns = arrayOf(Settings_Column_HideTasks)
+        val selection = "$Settings_Column_userID = ?"
+        val selectionArgs = arrayOf(retrievedID.toString())
+        val cursor: Cursor =
+            db.query(SettingsTableName, columns, selection, selectionArgs, null, null, null)
+        var hideTasks = false
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                hideTasks = cursor.getInt(cursor.getColumnIndex(Settings_Column_HideTasks)) == 1
+            }
+            cursor.close()
+        }
+        db.close()
+        return hideTasks
+    }
+
+    fun retrieveTheme(): String {
+        val retrievedID = returnUserID(globalUser)
+        val db = this.readableDatabase
+        var theme = "midnight" // Default theme
+
+        try {
+            val columns = arrayOf(Settings_Column_Theme)
+            val selection = "$Settings_Column_userID = ?"
+            val selectionArgs = arrayOf(retrievedID.toString())
+            val cursor: Cursor =
+                db.query(SettingsTableName, columns, selection, selectionArgs, null, null, null)
+
+            if (cursor.moveToFirst()) {
+                theme = cursor.getString(cursor.getColumnIndex(Settings_Column_Theme))
+            }
+            cursor.close()
+        } catch (e: SQLiteException) {
+            // Handle SQLiteException
+            e.printStackTrace()
+        } finally {
+            db.close()
+        }
+
+        return theme
+    }
+
+    fun updateHideTasks(hideTasks: Boolean): Boolean {
+        val retrievedID = returnUserID(globalUser)
+        val db = this.writableDatabase
+
+        // Check if settings row exists for the user
+        if (!checkSettingsExist(db)) {
+            // If not exists, create a new row with default values
+            createDefaultSettingsRow(db)
+        }
+
+        val cv = ContentValues()
+        cv.put(Settings_Column_HideTasks, hideTasks)
+        val selection = "$Settings_Column_userID = ?"
+        val selectionArgs = arrayOf(retrievedID.toString())
+        val success = db.update(SettingsTableName, cv, selection, selectionArgs)
+        db.close()
+        return success != -1
+    }
+
+    fun updateTheme(theme: String): Boolean {
+        val retrievedID = returnUserID(globalUser)
+        val db = this.writableDatabase
+
+        // Check if settings row exists for the user
+        if (!checkSettingsExist(db)) {
+            // If not exists, create a new row with default values
+            createDefaultSettingsRow(db)
+        }
+
+        val cv = ContentValues()
+        cv.put(Settings_Column_Theme, theme)
+        val selection = "$Settings_Column_userID = ?"
+        val selectionArgs = arrayOf(retrievedID.toString())
+        val success = db.update(SettingsTableName, cv, selection, selectionArgs)
+        db.close()
+        return success != -1
+    }
+
+    private fun checkSettingsExist(db: SQLiteDatabase): Boolean {
+        val retrievedID = returnUserID(globalUser)
+        val columns = arrayOf(Settings_Column_userID)
+        val selection = "$Settings_Column_userID = ?"
+        val selectionArgs = arrayOf(retrievedID.toString())
+        val cursor = db.query(SettingsTableName, columns, selection, selectionArgs, null, null, null)
+        val exists = cursor != null && cursor.count > 0
+        cursor.close()
+        return exists
+    }
+
+    private fun createDefaultSettingsRow(db: SQLiteDatabase) {
+        val retrievedID = returnUserID(globalUser)
+        val cv = ContentValues()
+        cv.put(Settings_Column_userID, retrievedID)
+        cv.put(Settings_Column_HideTasks, 0) // Default value for hideTasks
+        cv.put(Settings_Column_Theme, "midnight") // Default value for theme
+        cv.put(Settings_Column_DateModified, LocalDate.now().toString())
+        db.insert(SettingsTableName, null, cv)
+    }
+
 
 }
