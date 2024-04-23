@@ -121,8 +121,8 @@ class TaskListFragment : Fragment(), TaskAdapter.EditTaskClickListener {
             putExtra("taskID", task.taskID)
             putExtra("taskTitle", task.taskTitle)
             putExtra("taskDescription", task.taskDescription)
-            putExtra("startTime", task.startTime)
-            putExtra("endTime", task.endTime)
+            putExtra("startTime", task.startTime.toString())
+            putExtra("endTime", task.endTime.toString())
         }
         startActivityForResult(intent, EDIT_TASK_REQUEST_CODE)
     }

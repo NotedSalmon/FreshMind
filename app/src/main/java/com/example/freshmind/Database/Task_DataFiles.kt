@@ -11,7 +11,4 @@ data class Task_DataFiles(
     val endTime: LocalDate,
     val dateModified: LocalDate
 )
-{
-
-}
 

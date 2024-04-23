@@ -1,6 +1,7 @@
 package com.example.freshmind.UI.Calendar
 //https://github.com/kizitonwose/Calendar
 
+
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -62,7 +63,7 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
+        view.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
         addStatusBarColorUpdate(R.color.indigo)
         binding = FragmentCalendarBinding.bind(view)
         selectedDate = today

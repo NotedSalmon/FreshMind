@@ -71,21 +71,47 @@ class TaskList_AddTask : AppCompatActivity() {
         val startDateString = startDateTextView.text.toString()
         val endDateString = endDateTextView.text.toString()
 
+        if (startDateString.isEmpty()) {
+            Toast.makeText(this, "Please select a start date", Toast.LENGTH_SHORT).show()
+            startDateTextView.error
+            return
+        }
+
         val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val startDate = LocalDate.parse(startDateString, dateFormat)
-        val endDate = LocalDate.parse(endDateString, dateFormat)
+
         val localTime = LocalDate.now()
 
-        val userId = dbHelper.returnUserID(globalUser)
+        if (endDateString.isEmpty()) {
+            val endDate = startDate
+            val userId = dbHelper.returnUserID(globalUser)
+            val task = Task_DataFiles(0, userId, taskTitle, taskDescription, startDate, endDate, localTime)
+            if (dbHelper.addTask(task)) {
+                Toast.makeText(this, "Task created successfully", Toast.LENGTH_LONG).show()
+                setResult(RESULT_OK)
+                finish()
+            } else {
+                Toast.makeText(this, "Error: Task not created", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            val endDate = LocalDate.parse(endDateString, dateFormat)
 
-        val task = Task_DataFiles(0,userId,taskTitle,taskDescription,startDate,endDate, localTime)
-        if(dbHelper.addTask(task)){
-            Toast.makeText(this, "Task created successfully", Toast.LENGTH_LONG).show()
-            setResult(RESULT_OK)
-            finish()
+            if (startDate.isAfter(endDate)) {
+                Toast.makeText(this, "End date cannot be before start date", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val userId = dbHelper.returnUserID(globalUser)
+
+            val task = Task_DataFiles(0, userId, taskTitle, taskDescription, startDate, endDate, localTime)
+            if (dbHelper.addTask(task)) {
+                Toast.makeText(this, "Task created successfully", Toast.LENGTH_LONG).show()
+                setResult(RESULT_OK)
+                finish()
+            } else {
+                Toast.makeText(this, "Error: Task not created", Toast.LENGTH_SHORT).show()
+            }
         }
-        else Toast.makeText(this, "Error: Task not created", Toast.LENGTH_SHORT).show() //Error message
-
     }
 
     private fun showDateTimePicker(calendar: Calendar, textView: TextView) {

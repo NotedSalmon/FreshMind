@@ -10,8 +10,4 @@ data class Notes_DataFiles(
     val dateCreated: String,
     val dateModified: LocalDateTime?,
     val isPinned: Boolean)
-{
-
-
-}
 

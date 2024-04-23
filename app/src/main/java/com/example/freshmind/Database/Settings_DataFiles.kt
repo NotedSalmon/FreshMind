@@ -9,6 +9,3 @@ data class Settings_DataFiles(
     val taskHidden: Boolean,
     val dateModified: LocalDate
 )
-{
-
-}

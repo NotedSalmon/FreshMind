@@ -12,6 +12,3 @@ data class User_DataFiles(
     val IsActive: Int,
     val DateCreated: LocalDateTime,
     val DateModified: LocalDateTime?)
-{
-
-}
