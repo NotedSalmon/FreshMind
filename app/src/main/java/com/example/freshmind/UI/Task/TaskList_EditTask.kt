@@ -61,16 +61,17 @@ class TaskList_EditTask : AppCompatActivity() {
         val startDateCalendar = Calendar.getInstance()
         val endDateCalendar = Calendar.getInstance()
 
+
+
         // Set the retrieved task details to EditText fields
         editTextTitle.setText(taskTitle)
         editTextDescription.setText(taskDescription)
-        editTextStartDate.setText(taskStartDate)
-        editTextEndDate.setText(taskEndDate)
+        editTextStartDate.text = taskStartDate
+        editTextEndDate.text = taskEndDate
 
         editTextStartDate.setOnClickListener { showDateTimePicker(startDateCalendar, editTextStartDate) }
         editTextEndDate.setOnClickListener { showDateTimePicker(endDateCalendar, editTextEndDate)}
 
-        // Set click listener for the Save Task button
         buttonSaveTask.setOnClickListener {
                 updateTask()
         }
@@ -88,14 +89,22 @@ class TaskList_EditTask : AppCompatActivity() {
         val newEndDate = editTextEndDate.text.toString()
 
         // Parse new start and end dates as LocalDate objects
-        val startDate = LocalDate.parse(newStartDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-        val endDate = LocalDate.parse(newEndDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        val startDate = LocalDate.parse(newStartDate, DateTimeFormatter.ISO_DATE)
+        var endDate = LocalDate.parse(newEndDate, DateTimeFormatter.ISO_DATE)
 
         // Validate the dates
         if (startDate.isAfter(endDate)) {
             Toast.makeText(this, "End date cannot be before start date", Toast.LENGTH_SHORT).show()
             editTextEndDate.error = "Invalid Date"
-        } else {
+        } else if (startDate.isBefore(LocalDate.now())) {
+            Toast.makeText(this, "Start date cannot be in the past", Toast.LENGTH_SHORT).show()
+            editTextStartDate.error = "Invalid Date"
+        } else if (newStartDate.isEmpty()) {
+            Toast.makeText(this, "Select a start date", Toast.LENGTH_SHORT).show()
+        } else if (newEndDate.isEmpty() && newStartDate.isNotEmpty()) {
+            endDate = startDate
+        }
+        else {
             val localTime = LocalDate.now()
 
             val updatedTask = Task_DataFiles(taskID, -1, newTitle, newDescription, startDate, endDate, localTime)
@@ -107,22 +116,34 @@ class TaskList_EditTask : AppCompatActivity() {
     }
 
 
+
+
     private fun showDateTimePicker(calendar: Calendar, textView: TextView) {
         val datePicker = DatePickerDialog(
             this,
             { _, year, monthOfYear, dayOfMonth ->
-                // Set selected date to calendar
-                calendar.set(year, monthOfYear, dayOfMonth)
-                // Display selected date on TextView
-                displayDate(calendar, textView)
+                // Check if the selected date is after the current date
+                val selectedDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
+                val currentDate = LocalDate.now()
+                if (selectedDate.isBefore(currentDate)) {
+                    // Show a toast indicating that the selected date is invalid
+                    Toast.makeText(this, "Please select a date from today onwards", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Set selected date to calendar
+                    calendar.set(year, monthOfYear, dayOfMonth)
+                    // Display selected date on TextView
+                    displayDate(calendar, textView)
+                }
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
         )
+        // Set the minimum date to the current date
         datePicker.datePicker.minDate = System.currentTimeMillis() - 1000
         datePicker.show()
     }
+
 
     // Method to display selected date and time on TextView
     private fun displayDate(calendar: Calendar, textView: TextView) {

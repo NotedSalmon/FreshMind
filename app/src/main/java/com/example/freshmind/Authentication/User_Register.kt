@@ -40,6 +40,11 @@ class User_Register: AppCompatActivity() {
     private lateinit var btnUserRegister : Button
     private lateinit var title: TextView
 
+    /**
+     * This function is called when the activity is created.
+     * It sets the content view, initializes the views, and sets the colors of the views.
+     * It also sets the onClickListeners for the buttons.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(com.example.freshmind.R.layout.activity_register)
@@ -58,6 +63,11 @@ class User_Register: AppCompatActivity() {
         changeTextBoxColor(this, btnGoBack, btnUserRegister)
     }
 
+    /**
+     * This function is called when the user clicks the Register button.
+     * It gets the values from the EditTexts and validates them.
+     * If the values are valid, it creates a new User_DataFiles object and adds it to the database.
+     */
     fun btnUserRegister(view: View)
     {
         val userName = fullnameEditText.text.toString()
@@ -74,37 +84,35 @@ class User_Register: AppCompatActivity() {
             fullnameEditText.requestFocus()
             return
         }
-
         if (userEmail.isEmpty() || !userEmail.contains("@") || !userEmail.contains(".")){
             emailEditText.error = "Invalid Email Used"
             emailEditText.requestFocus()
             return
         }
-
         if (userPhone.isEmpty()) {
             phoneNumberEditText.error = "Phone Number is required"
             phoneNumberEditText.requestFocus()
             return
         }
-
         if (userUsername.isEmpty() || dbHelper.checkUsername(userUsername)){
             usernameEditText.error = "Username Invalid or Already Taken"
             usernameEditText.requestFocus()
             return
         }
-
-        if (validateUserPassword.isEmpty() || validateUserPassword.length < 8) {
+        if (validateUserPassword.isEmpty() || validateUserPassword.length <= 8) {
             passwordEditText.error = "Password must be at least 8 characters"
             passwordEditText.requestFocus()
             return
         }
-
         val localTime = LocalDateTime.now()
             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
-
         val dateCreated: LocalDateTime = LocalDateTime.parse(localTime, DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
 
-
+        /**
+         * This creates a new User_DataFiles object with the values from the EditTexts.
+         * It then calls the addUser function from the DBHelper to add the user to the database.
+         * If the user is added successfully, it displays a success message and sends the user to the Login Activity and sets GlobalUser to the username.
+         */
         val customer = User_DataFiles(0,userName,userEmail,userPhone,userUsername, userPassword, userIsActive, dateCreated, dateCreated)
         if(dbHelper.addUser(customer)){ //Calls function addCustomer within the dbHelper
             Toast.makeText(this, "Account created successfully", Toast.LENGTH_SHORT).show()
@@ -112,10 +120,9 @@ class User_Register: AppCompatActivity() {
             startActivity(intent)
         }
         else Toast.makeText(this, "Error: Account not created", Toast.LENGTH_SHORT).show() //Error message
-
     }
 
-    fun btnGoBack(view: View)
+    fun btnGoBack(view: View) // Function to send user back to the Login Activity
     {
         val intent = Intent(this, User_Login::class.java)
         startActivity(intent)

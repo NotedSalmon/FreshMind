@@ -36,7 +36,7 @@ class ClosestTasksAdapter(private val tasks: MutableList<Task_DataFiles>) : Recy
         val editIcon: ImageView = itemView.findViewById(R.id.icon_EditTask)
         val startDate : TextView = itemView.findViewById(R.id.txtTask_StartDate)
         val endDate : TextView = itemView.findViewById(R.id.txtTask_EndDate)
-        var currentNoteID: Int = -1
+
         init {
             dbHelper = DBHelper(itemView.context)
             deleteIcon.visibility = View.GONE

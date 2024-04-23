@@ -174,10 +174,6 @@ class SettingsFragment : Fragment() {
         val newEmailText = newEmail.text.toString()
         val oldPasswordText = oldPassword.text.toString()
         val newPasswordText = newPassword.text.toString()
-
-        println("Old Password: $oldPasswordText")
-        println("New Password: $newPasswordText")
-
         val encryptOldPasswordText = shaEncrypt(oldPasswordText)
         val encryptNewPasswordText = shaEncrypt(newPasswordText)
 
@@ -196,6 +192,15 @@ class SettingsFragment : Fragment() {
                 newPassword.error = "Password is less than 8 characters or does not match"
             }
         }
+        else if (newEmailText.isNotEmpty()) {
+            if (!newEmailText.contains("@") || !newEmailText.contains(".")){
+                Toast.makeText(requireContext(), "Invalid Email", Toast.LENGTH_SHORT).show()
+            }
+            else {
+                dbHelper.changeEmail(globalUser, newEmailText)
+                Toast.makeText(requireContext(), "Email changed", Toast.LENGTH_SHORT).show()
+            }
+        }
         else if (newUsernameText.isNotEmpty()) {
             if (dbHelper.changeUsername(globalUser, newUsernameText)){
                 globalUser = newUsernameText
@@ -205,10 +210,6 @@ class SettingsFragment : Fragment() {
             else{
                 Toast.makeText(requireContext(), "Username taken/invalid", Toast.LENGTH_SHORT).show()
             }
-        }
-        else if (newEmailText.isNotEmpty()) {
-            dbHelper.changeEmail(globalUser, newEmailText)
-            Toast.makeText(requireContext(), "Email changed", Toast.LENGTH_SHORT).show()
         }
         else {
             Toast.makeText(requireContext(), "No changes made", Toast.LENGTH_SHORT).show()

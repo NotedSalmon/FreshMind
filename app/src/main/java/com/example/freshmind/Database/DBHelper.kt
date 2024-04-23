@@ -301,7 +301,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
                     do {
                         // Extract task details from cursor
                         val taskID = cursor.getInt(cursor.getColumnIndex(Task_Column_ID))
-                        val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle))
+                        val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle)) ?: ""
                         val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)) ?: ""
                         val startTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_StartTime))
                         val endTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_EndTime))
@@ -342,8 +342,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
             cursor.use {
                 while (cursor.moveToNext()) {
                     val taskID = cursor.getInt(cursor.getColumnIndex(Task_Column_ID))
-                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle))
-                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription))
+                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle)) ?: ""
+                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)) ?: ""
                     val startTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_StartTime))
                     val endTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_EndTime))
                     val dateModifiedString = cursor.getString(cursor.getColumnIndex(Task_Column_DateModified))
@@ -381,18 +381,19 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
             cursor?.use { cursor ->
                 while (cursor.moveToNext()) {
                     val taskID = cursor.getInt(cursor.getColumnIndex(Task_Column_ID))
-                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle))
-                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription))
+                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle)) ?: ""
+                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)) ?: ""
                     val startTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_StartTime))
                     val endTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_EndTime))
                     val dateModifiedString = cursor.getString(cursor.getColumnIndex(Task_Column_DateModified))
 
-                    val startTime = LocalDate.parse(startTimeString)
-                    val endTime = LocalDate.parse(endTimeString)
-                    val dateModified = LocalDate.parse(dateModifiedString)
+                    val startTime = startTimeString?.let { LocalDate.parse(it) }
+                    val endTime = endTimeString?.let { LocalDate.parse(it) }
+                    val dateModified = dateModifiedString?.let { LocalDate.parse(it) }
 
-                    val taskDetails = Task_DataFiles(taskID, userId, taskTitle, taskDescription, startTime, endTime, dateModified)
+                    val taskDetails = Task_DataFiles(taskID, userId, taskTitle, taskDescription, startTime ?: LocalDate.MIN, endTime ?: LocalDate.MIN, dateModified ?: LocalDate.MIN)
                     taskList.add(taskDetails)
+
                 }
             }
         } catch (e: SQLiteException) {
@@ -420,8 +421,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
             cursor?.use { cursor ->
                 while (cursor.moveToNext()) {
                     val taskID = cursor.getInt(cursor.getColumnIndex(Task_Column_ID))
-                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle))
-                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription))
+                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle)) ?: ""
+                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)) ?: ""
                     val startTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_StartTime))
                     val endTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_EndTime))
                     val dateModifiedString = cursor.getString(cursor.getColumnIndex(Task_Column_DateModified))
