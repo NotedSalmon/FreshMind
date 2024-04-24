@@ -2,7 +2,6 @@ package com.example.freshmind.UI.Task
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +17,10 @@ import com.example.freshmind.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+/**
+ * This class is the adapter for the ClosestTasks in the WelcomeFragment
+ * It displays the list of tasks that are closest to the current date
+ */
 class ClosestTasksAdapter(private val tasks: MutableList<Task_DataFiles>) : RecyclerView.Adapter<ClosestTasksAdapter.ClosestTasksViewHolder>() {
 
     private var selectedItemPosition = RecyclerView.NO_POSITION
@@ -54,6 +57,9 @@ class ClosestTasksAdapter(private val tasks: MutableList<Task_DataFiles>) : Recy
         }
     }
 
+    /**
+     * This function is called when the RecyclerView needs a new view holder
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClosestTasksViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_task, parent, false)
         return ClosestTasksViewHolder(view)
@@ -63,12 +69,11 @@ class ClosestTasksAdapter(private val tasks: MutableList<Task_DataFiles>) : Recy
      * This function is called when the RecyclerView needs to display an item
      * It binds the data to the view holder
      */
-
     override fun onBindViewHolder(holder: ClosestTasksAdapter.ClosestTasksViewHolder, position: Int) {
         val task = tasks[position]
         holder.titleTextView.text = task.taskTitle
         holder.descriptionTextView.text = task.taskDescription
-        changeAdapterTextColors(holder.itemView.context,holder.titleTextView)
+        changeAdapterTextColors(holder.itemView.context,holder.titleTextView) // Change text color based on date
 
         // Format start and end dates
         val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
@@ -84,6 +89,10 @@ class ClosestTasksAdapter(private val tasks: MutableList<Task_DataFiles>) : Recy
     }
 }
 
+/**
+ * This class is the adapter for the TaskList in the TaskListFragment
+ * It displays the list of tasks in the TaskListFragment
+ */
 class TaskAdapter(private val tasks: MutableList<Task_DataFiles>, private val editTaskClickListener: EditTaskClickListener) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     private var selectedItemPosition = RecyclerView.NO_POSITION
@@ -132,7 +141,6 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>, private val ed
         }
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_task, parent, false)
         return TaskViewHolder(view)
@@ -171,26 +179,28 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>, private val ed
 
         // Highlight selected item
         holder.itemView.isSelected = position == selectedItemPosition
-
+        // Change background color and text color when item is selected
         if (selectedItemPosition == position) {
             holder.itemView.setBackgroundResource(R.color.deepPurple)
             holder.titleTextView.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.gold))
-            holder.deleteIcon.visibility = View.VISIBLE
-            holder.editIcon.visibility = View.VISIBLE
+            holder.deleteIcon.visibility = View.VISIBLE // Show delete icon
+            holder.editIcon.visibility = View.VISIBLE // Show edit icon
         } else {
             holder.itemView.setBackgroundResource(R.color.backgroundIndigo)
             changeTextColors(holder.itemView.context,holder.titleTextView)
-            holder.deleteIcon.visibility = View.GONE
-            holder.editIcon.visibility = View.GONE
+            holder.deleteIcon.visibility = View.GONE // Hide delete icon
+            holder.editIcon.visibility = View.GONE // Hide edit icon
         }
     }
-
-
 
     override fun getItemCount(): Int {
         return tasks.size
     }
 
+    /**
+     * This function is called when the delete icon is clicked
+     * It deletes the task from the database and the RecyclerView
+     */
     fun iconDeleteTask(position: Int) {
         val deletedTaskID = tasks[position].taskID
         tasks.removeAt(position)
@@ -198,6 +208,9 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>, private val ed
         dbHelper.deleteTask(deletedTaskID)
     }
 
+    /**
+     * This interface is used to handle the click event for the edit icon
+     */
     interface EditTaskClickListener {
         fun iconEditTask(position: Int, context: Context)
     }

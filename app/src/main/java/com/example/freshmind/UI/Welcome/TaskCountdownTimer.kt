@@ -11,7 +11,7 @@ import android.os.CountDownTimer
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.example.freshmind.R
+import kotlin.math.log
 
 class TaskCountdownTimer(
     private val context: Context,
@@ -52,6 +52,9 @@ class TaskCountdownTimer(
         createNotification()
     }
 
+    /**
+     * Create a notification to inform the user that the task has finished.
+     */
     private fun createNotification() {
         val notificationManager = NotificationManagerCompat.from(context)
 
@@ -76,8 +79,7 @@ class TaskCountdownTimer(
             try {
                 notificationManager.notify(notificationId, notification)
             } catch (e: SecurityException) {
-                // Handle the SecurityException here
-                // For example, log the error or show a toast message to the user
+                println("Error: ${e.message}")
             }
         } else {
             // Request notification permission from the user

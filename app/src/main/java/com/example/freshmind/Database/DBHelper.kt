@@ -7,11 +7,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.freshmind.Authentication.globalUser
-import com.google.common.collect.Table
-import com.google.firebase.firestore.auth.User
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -68,6 +64,10 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     private val Settings_Column_Theme = "Theme"
     private val Settings_Column_HideTasks = "HideTasks"
     private val Settings_Column_DateModified = "DateModified"
+
+    /**
+     * Script to create all the tables needed for the database.
+     */
     override fun onCreate(db: SQLiteDatabase?) {
         //-----------SQL Query for User Table----------------------------------
         var sqlCreateStatement: String = "CREATE TABLE " + UserTableName + " ( " + User_Column_ID +
@@ -91,6 +91,9 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         db?.execSQL(sqlCreateStatement)
     }
 
+    /**
+     * Script to drop all the table and recreate them if the database version is updated.
+     */
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db?.execSQL("DROP TABLE Users")
         db?.execSQL("DROP TABLE Tasks")
@@ -102,6 +105,13 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
 
     /**
      * User Table Functions
+     */
+
+    /**
+     * Function to add a user to the database.
+     * @param user: User_DataFiles object containing the user details.
+     * @return Boolean: True if the user is added successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while adding the user.
      */
     fun addUser(user: User_DataFiles): Boolean {
         //WriteableDatabase for insert actions
@@ -122,6 +132,13 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1L
     }
 
+    /**
+     * Function to validate a user's credentials.
+     * @param username: String containing the username.
+     * @param password: String containing the password.
+     * @return Boolean: True if the user is validated, false otherwise.
+     * @throws SQLiteException if an error occurs while validating the user.
+     */
     fun validateUser(username: String, password: String): Boolean {
         val db = this.readableDatabase
         val columns = arrayOf(User_Column_Username, User_Column_Password)
@@ -135,6 +152,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return count > 0
     }
 
+    /**
+     * Function to check if a username already exists in the database.
+     * @param username: String containing the username.
+     * @return Boolean: True if the username exists, false otherwise.
+     * @throws SQLiteException if an error occurs while checking the username.
+     */
     fun checkUsername(username: String): Boolean {
         val db = this.readableDatabase
         val columns = arrayOf(User_Column_Username)
@@ -148,6 +171,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return count > 0
     }
 
+    /**
+     * Function to delete a user from the database.
+     * @param username: String containing the username.
+     * @return Boolean: True if the user is deleted successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while deleting the user.
+     */
     fun deleteUser(username: String): Boolean {
         val db = this.writableDatabase
         val selection = "$User_Column_Username = ?"
@@ -157,6 +186,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1
     }
 
+    /**
+     * Function to update a user's password in the database.
+     * @param user: User_DataFiles object containing the updated user password.
+     * @return Boolean: True if the user is updated successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while updating the user.
+     */
     fun changePassword(oldPassword: String, newPassword: String, username: String) : Boolean {
         val db: SQLiteDatabase = this.writableDatabase
         return try {
@@ -172,7 +207,13 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         }
     }
 
-
+    /**
+     * Function to update a user's username in the database.
+     * @param oldUsername: String containing the old username.
+     * @param newUsername: String containing the new username.
+     * @return Boolean: True if the username is updated successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while updating the username.
+     */
     fun changeUsername(oldUsername: String, newUsername: String): Boolean {
         val db = this.writableDatabase
         val cv = ContentValues()
@@ -184,6 +225,13 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1
     }
 
+    /**
+     * Function to update a user's email in the database.
+     * @param username: String containing the username.
+     * @param newEmail: String containing the new email.
+     * @return Boolean: True if the email is updated successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while updating the email.
+     */
     @SuppressLint("Range")
     fun getUser(username: String) : User_DataFiles {
         val db = this.readableDatabase
@@ -211,6 +259,13 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return user
     }
 
+    /**
+     * Function to update a user's email in the database.
+     * @param username: String containing the username.
+     * @param newEmail: String containing the new email.
+     * @return Boolean: True if the email is updated successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while updating the email.
+     */
     fun changeEmail(username: String, newEmail: String): Boolean {
         val db: SQLiteDatabase = this.writableDatabase
         return try {
@@ -226,6 +281,13 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         }
     }
 
+    /**
+     * Function to update a user's phone number in the database.
+     * @param username: String containing the username.
+     * @param newPhoneNo: String containing the new phone number.
+     * @return Boolean: True if the phone number is updated successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while updating the phone number.
+     */
     @SuppressLint("Range")
     fun returnUserID(username: String): Int {
         val db = this.readableDatabase
@@ -248,6 +310,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
      * Task Table Functions
      */
 
+    /**
+     * Function to add a task to the database.
+     * @param task: Task_DataFiles object containing the task details.
+     * @return Boolean: True if the task is added successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while adding the task.
+     */
     fun addTask(task: Task_DataFiles): Boolean {
         val db: SQLiteDatabase = this.writableDatabase
         val cv: ContentValues = ContentValues()
@@ -264,6 +332,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1L
     }
 
+    /**
+     * Function to delete a task from the database.
+     * @param taskID: Int containing the task ID.
+     * @return Boolean: True if the task is deleted successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while deleting the task.
+     */
     fun deleteTask(taskID: Int): Boolean {
         val db = this.writableDatabase
         val selection = "$Task_Column_ID = ?"
@@ -273,6 +347,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1
     }
 
+    /**
+     * Function to update a task in the database.
+     * @param task: Task_DataFiles object containing the updated task details.
+     * @return Boolean: True if the task is updated successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while updating the task.
+     */
     fun updateTask(task: Task_DataFiles): Boolean {
         val db = this.writableDatabase
         val cv = ContentValues()
@@ -287,6 +367,13 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         db.close()
         return success != -1
     }
+
+    /**
+     * Function to retrieve all tasks associated with a user.
+     * @param userID: String containing the user ID.
+     * @return MutableList<Task_DataFiles>: List of Task_DataFiles objects containing the task details.
+     * @throws SQLiteException if an error occurs while retrieving the tasks.
+     */
     @SuppressLint("Range")
     fun showAllTasks(userID: String): MutableList<Task_DataFiles> {
         val userId = returnUserID(userID)
@@ -326,7 +413,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return taskList
     }
 
-
+    /**
+     * Function to retrieve a task from the database.
+     * @param taskID: Int containing the task ID.
+     * @return Task_DataFiles: Task_DataFiles object containing the task details.
+     * @throws SQLiteException if an error occurs while retrieving the task.
+     */
     @SuppressLint("Range")
     fun showTasksForDate(userID: String, selectedDate: LocalDate): List<Task_DataFiles> {
         val userId = returnUserID(userID)
@@ -366,6 +458,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         }
     }
 
+    /**
+     * Function to retrieve a task from the database.
+     * @param taskID: Int containing the task ID.
+     * @return Task_DataFiles: Task_DataFiles object containing the task details.
+     * @throws SQLiteException if an error occurs while retrieving the task.
+     */
     @SuppressLint("Range")
     fun closesTasks(userID: String): MutableList<Task_DataFiles> {
         val userId = returnUserID(userID)
@@ -406,6 +504,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return taskList
     }
 
+    /**
+     * Function to retrieve a task from the database.
+     * @param taskID: Int containing the task ID.
+     * @return Task_DataFiles: Task_DataFiles object containing the task details.
+     * @throws SQLiteException if an error occurs while retrieving the task.
+     */
     @SuppressLint("Range")
     fun hideExpiredTasks(userID: String): MutableList<Task_DataFiles> {
         val userId = returnUserID(userID)
@@ -445,12 +549,16 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return taskList
     }
 
-
-
     /**
      * Notes Table Functions
      */
 
+    /**
+     * Function to retrieve a note from the database.
+     * @param noteID: Int containing the note ID.
+     * @return Notes_DataFiles: Notes_DataFiles object containing the note details.
+     * @throws SQLiteException if an error occurs while retrieving the note.
+     */
     @SuppressLint("Range")
     fun showAllNotes(userID: String): MutableList<Notes_DataFiles> {
         val userId = returnUserID(userID)
@@ -490,6 +598,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return notesList
     }
 
+    /**
+     * Function to add a note to the database.
+     * @param note: Notes_DataFiles object containing the note details.
+     * @return Boolean: True if the note is added successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while adding the note.
+     */
     fun addNote(note: Notes_DataFiles): Boolean {
         val db: SQLiteDatabase = this.writableDatabase
         val cv: ContentValues = ContentValues()
@@ -506,6 +620,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1L
     }
 
+    /**
+     * Function to delete a note from the database.
+     * @param noteID: Int containing the note ID.
+     * @return Boolean: True if the note is deleted successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while deleting the note.
+     */
     fun deleteNotes(noteID: Int): Boolean {
         val db = this.writableDatabase
         val selection = "$Note_Column_ID = ?"
@@ -515,6 +635,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1
     }
 
+    /**
+     * Function to update a note in the database.
+     * @param note: Notes_DataFiles object containing the updated note details.
+     * @return Boolean: True if the note is updated successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while updating the note.
+     */
     fun updateNotes(note: Notes_DataFiles): Boolean {
         val db = this.writableDatabase
         val cv = ContentValues()
@@ -529,6 +655,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1
     }
 
+    /**
+     * Function to retrieve a note from the database.
+     * @param noteID: Int containing the note ID.
+     * @return Notes_DataFiles: Notes_DataFiles object containing the note details.
+     * @throws SQLiteException if an error occurs while retrieving the note.
+     */
     @SuppressLint("Range")
     fun showAllPinnedNotes(userID: String): MutableList<Notes_DataFiles> {
         val userId = returnUserID(userID)
@@ -572,6 +704,13 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
      * Settings Table Functions
      */
 
+    /**
+     * Function to retrieve a user's settings from the database.
+     * @param userID: Int containing the user ID.
+     * @return Settings_DataFiles: Settings_DataFiles object containing the user's settings.
+     * @throws SQLiteException if an error occurs while retrieving the settings.
+     */
+    @SuppressLint("Range")
     fun retrieveHideTasks(): Boolean {
         val retrievedID = returnUserID(globalUser)
         val db = this.readableDatabase
@@ -591,6 +730,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return hideTasks
     }
 
+    /**
+     * Function to retrieve a user's theme from the database.
+     * @param userID: Int containing the user ID.
+     * @return Settings_DataFiles: Settings_DataFiles object containing the user's Theme.
+     */
+    @SuppressLint("Range")
     fun retrieveTheme(): String {
         val retrievedID = returnUserID(globalUser)
         val db = this.readableDatabase
@@ -617,6 +762,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return theme
     }
 
+    /**
+     * Function to update a user's settings in the database.
+     * @param settings: Settings_DataFiles object containing the updated user settings.
+     * @return Boolean: True if the settings are updated successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while updating the settings.
+     */
     fun updateHideTasks(hideTasks: Boolean): Boolean {
         val retrievedID = returnUserID(globalUser)
         val db = this.writableDatabase
@@ -636,6 +787,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1
     }
 
+    /**
+     * Function to update a user's settings in the database.
+     * @param settings: Settings_DataFiles object containing the updated user settings.
+     * @return Boolean: True if the settings are updated successfully, false otherwise.
+     * @throws SQLiteException if an error occurs while updating the settings.
+     */
     fun updateTheme(theme: String): Boolean {
         val retrievedID = returnUserID(globalUser)
         val db = this.writableDatabase
@@ -655,6 +812,11 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return success != -1
     }
 
+    /**
+     * Function to check if a settings row exists for a user.
+     * @param db: SQLiteDatabase object containing the database connection.
+     * @return Boolean: True if the settings row exists, false otherwise.
+     */
     private fun checkSettingsExist(db: SQLiteDatabase): Boolean {
         val retrievedID = returnUserID(globalUser)
         val columns = arrayOf(Settings_Column_userID)
@@ -666,6 +828,10 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         return exists
     }
 
+    /**
+     * Function to create a default settings row for a user.
+     * @param db: SQLiteDatabase object containing the database connection.
+     */
     private fun createDefaultSettingsRow(db: SQLiteDatabase) {
         val retrievedID = returnUserID(globalUser)
         val cv = ContentValues()

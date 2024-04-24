@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import com.example.freshmind.Extras.changeTextColors
 import androidx.recyclerview.widget.RecyclerView
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Notes_DataFiles
@@ -23,6 +22,8 @@ class NotesPinnedAdapter(private val notes: MutableList<Notes_DataFiles>) : Recy
      * This class is the view holder for the RecyclerView
      * It holds the views for the item_task layout
      * It also sets the click listeners for the delete and edit icons
+     *
+     * This is used when displaying the pinned notes in the Welcome Fragment
      */
 
     inner class NotesPinnedViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -74,9 +75,14 @@ class NotesPinnedAdapter(private val notes: MutableList<Notes_DataFiles>) : Recy
     }
 }
 
+/**
+ * This class is the adapter for the RecyclerView in the NotesFragment
+ * It takes in a list of notes and a click listener for the edit icon
+ * It also has a function to delete a note
+ */
 class NotesAdapter(private val notes: MutableList<Notes_DataFiles>, private val editNoteClickListener: EditNoteClickListener) : RecyclerView.Adapter<NotesAdapter.NotesViewHolder>() {
 
-    private var selectedItemPosition = RecyclerView.NO_POSITION
+    private var selectedItemPosition = RecyclerView.NO_POSITION // Initialize selected item position
     private lateinit var dbHelper: DBHelper
 
     /**
@@ -158,6 +164,9 @@ class NotesAdapter(private val notes: MutableList<Notes_DataFiles>, private val 
         return notes.size
     }
 
+    /**
+     * This function deletes a note from the database and the list
+     */
     fun iconDeleteNote(position: Int) {
         val deletedNoteID = notes[position].noteID
         notes.removeAt(position)
