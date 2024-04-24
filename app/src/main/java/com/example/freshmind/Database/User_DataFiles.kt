@@ -2,6 +2,9 @@ package com.example.freshmind.Database
 
 import java.time.LocalDateTime
 
+/**
+ * This class is used to store the data of the User in the database.
+ */
 data class User_DataFiles(
     val userID: Int,
     val FullName: String,

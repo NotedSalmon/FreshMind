@@ -19,7 +19,10 @@ import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Notes_DataFiles
 import com.example.freshmind.Extras.getColorResource
 
-
+/**
+ * This fragment displays the list of notes in a RecyclerView
+ * It also has a swipe refresh layout to refresh the data
+ */
 class NotesFragment : Fragment(), NotesAdapter.EditNoteClickListener {
 
     private lateinit var recyclerView: RecyclerView
@@ -33,19 +36,24 @@ class NotesFragment : Fragment(), NotesAdapter.EditNoteClickListener {
         dbHelper = DBHelper(requireContext()) // Initialize DBHelper in onCreate()
     }
 
+    /**
+     * This function inflates the layout for the fragment
+     * It also sets up the RecyclerView and SwipeRefreshLayout
+     * It also loads the data from the database and displays it in the RecyclerView
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
         val view = inflater.inflate(com.example.freshmind.R.layout.fragment_notes, container, false)
-        view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
+        view?.setBackgroundColor(resources.getColor(getColorResource(requireContext()))) // Set background color
         recyclerView = view.findViewById(com.example.freshmind.R.id.notesRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         swipeRefreshLayout = view.findViewById(com.example.freshmind.R.id.swipeRefreshLayoutNotes)
 
 
-        notes.addAll(getAllNotes())
+        notes.addAll(getAllNotes()) // Add all notes from the database to the list
 
         notesAdapter = NotesAdapter(notes,this)
         recyclerView.adapter = notesAdapter
@@ -57,6 +65,9 @@ class NotesFragment : Fragment(), NotesAdapter.EditNoteClickListener {
         loadData()
         return view
     }
+    /**
+     * This function loads the data from the database and updates the RecyclerView
+     */
     private fun loadData() {
         val updatedNotes = dbHelper.showAllNotes(globalUser)
         notes.clear()
@@ -69,11 +80,17 @@ class NotesFragment : Fragment(), NotesAdapter.EditNoteClickListener {
         loadData()
     }
 
+    /**
+     * This function inflates the menu for the notes fragment
+     */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(com.example.freshmind.R.menu.menu_notes, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    /**
+     * This function gets all the notes from the database
+     */
     private fun getAllNotes() : MutableList<Notes_DataFiles> {
         val allNotes = mutableListOf<Notes_DataFiles>()
         dbHelper.showAllNotes(globalUser).forEach {
@@ -82,6 +99,10 @@ class NotesFragment : Fragment(), NotesAdapter.EditNoteClickListener {
         return allNotes
     }
 
+    /**
+     * This function is called when an item in the menu is selected
+     * It opens the AddNote activity when the add note icon is clicked
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             com.example.freshmind.R.id.action_add_note -> {
@@ -94,6 +115,10 @@ class NotesFragment : Fragment(), NotesAdapter.EditNoteClickListener {
         }
     }
 
+    /**
+     * This function is called when an activity returns a result
+     * It refreshes the data when a note is added or edited
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ADD_NOTE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {

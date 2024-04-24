@@ -5,23 +5,19 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import com.example.freshmind.Database.DBHelper
-import com.example.freshmind.Extras.changeAccountColour
 import com.example.freshmind.Extras.changeEditBoxColor
 import com.example.freshmind.Extras.changeTextBoxColor
 import com.example.freshmind.Extras.changeTitleColor
 import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
-import com.example.freshmind.UI.Settings.isExpiredTasksEnabled
 import com.example.freshmind.UI.Starter
-import com.example.freshmind.UI.globalTheme
 import com.example.wagonersexperts.extra.SHAEncryption.shaEncrypt
+
 var globalUser: String = "" // Global variable to store the username
 class User_Login : AppCompatActivity() {
     val dbHelper: DBHelper = DBHelper(this)
@@ -31,7 +27,11 @@ class User_Login : AppCompatActivity() {
     private lateinit var btnLogin : Button
     private lateinit var title: TextView
 
-
+    /**
+     * This function is called when the activity is created
+     * It sets the content view to the activity_login layout
+     * It also sets the background color of the layout
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -49,12 +49,23 @@ class User_Login : AppCompatActivity() {
         changeTextBoxColor(this, btnRegister, btnLogin)
     }
 
+    /**
+     * This function is called when the user clicks the Register button
+     * It creates an intent to go to the User_Register activity
+     */
     fun btnUserRegister(view: View)
     {
         val intent = Intent(this, User_Register::class.java)
         startActivity(intent)
     }
 
+    /**
+     * This function is called when the user clicks the Login button
+     * It gets the username and password from the EditTexts
+     * It checks if the username and password are valid
+     * If they are valid, it goes to the Menu activity
+     * If they are not valid, it shows a toast message
+     */
     fun btnUserLogin(view: View)
     {
         val username = findViewById<EditText>(R.id.txtUser_Login_Username).text.toString()

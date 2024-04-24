@@ -16,7 +16,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.UI.Calendar.Utils.makeGone
 import com.example.freshmind.UI.Calendar.Utils.makeVisible
 import com.example.freshmind.databinding.ActivityWelcomeBinding
@@ -28,17 +27,20 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import java.time.LocalDate
 import com.example.freshmind.R
-import com.example.freshmind.UI.Settings.isExpiredTasksEnabled
 
-var globalTheme : String = "midnight"
+var globalTheme : String = "midnight" // Global variable to store the theme
 class Starter : AppCompatActivity() {
-
+    /**
+     * This is the main activity of the app. It is the entry point of the app and contains the
+     * navigation drawer and the toolbar. The activity also contains the floating action button.
+     * The activity also contains the global variable globalUser which is used to store the username
+     */
     private lateinit var appBarConfiguration: AppBarConfiguration
     lateinit var binding: ActivityWelcomeBinding
     lateinit var floatingFab: FloatingActionButton
     var globalUser: String = "" // Global variable to store the username
     private val db = Firebase.firestore
-    private val feedbackRef = db.collection("feedback")
+    private val feedbackRef = db.collection("feedback") // Reference to the feedback collection
     private val TAG = "Feedback"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,6 +97,11 @@ class Starter : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
+    /**
+     * This function is called when the user clicks on the floating action button. It opens a
+     * BottomSheetDialog where the user can enter feedback. The feedback is then sent to the
+     * Firestore database which can then be viewed in the Website I created.
+     */
     private fun sendFeedback() {
         // Create a BottomSheetDialog
         val dialog = BottomSheetDialog(this)
@@ -109,7 +116,7 @@ class Starter : AppCompatActivity() {
         feedbackSubmit.setOnClickListener {
             val feedback = feedbackText.text.toString()
             if (feedback.isNotEmpty()) {
-                // Construct feedback data
+                // Construct feedback data using the variables assigned
                 val date = LocalDate.now()
                 val feedbackData = hashMapOf(
                     "username" to globalUser,
@@ -133,8 +140,6 @@ class Starter : AppCompatActivity() {
                 feedbackText.error = "Feedback cannot be empty"
             }
         }
-
-        // Show the dialog
         dialog.show()
     }
 }
@@ -145,9 +150,14 @@ class Starter : AppCompatActivity() {
 
 interface HasBackButton
 
+/**
+ * This fragment was created for the purpose of the Calendar as it is the only fragment that
+ * requires a toolbar. This fragment is used to set the toolbar to the activity's toolbar when the
+ * fragment is started and to set the activity's toolbar back to the activity's toolbar when the
+ * fragment is stopped.
+ */
 abstract class BaseFragment(@LayoutRes layoutRes: Int) : Fragment(layoutRes) {
     abstract val titleRes: Int?
-
     val activityToolbar: Toolbar
         get() = (requireActivity() as Starter).binding.appBarWelcome.toolbar
 

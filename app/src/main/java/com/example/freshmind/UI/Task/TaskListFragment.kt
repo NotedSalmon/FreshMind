@@ -21,7 +21,9 @@ import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import com.example.freshmind.UI.Settings.isExpiredTasksEnabled
 
-
+/**
+ * This is the TaskListFragment class that displays the list of tasks
+ */
 class TaskListFragment : Fragment(), TaskAdapter.EditTaskClickListener {
 
     private lateinit var recyclerView: RecyclerView
@@ -35,6 +37,11 @@ class TaskListFragment : Fragment(), TaskAdapter.EditTaskClickListener {
         dbHelper = DBHelper(requireContext()) // Initialize DBHelper in onCreate()
     }
 
+    /**
+     * This method inflates the layout for the fragment
+     * It also sets up the RecyclerView and SwipeRefreshLayout
+     * It also loads the data from the database
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,19 +53,21 @@ class TaskListFragment : Fragment(), TaskAdapter.EditTaskClickListener {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
 
-
-        //tasks.addAll(getAllTasks())
-
         taskAdapter = TaskAdapter(tasks, this)
         recyclerView.adapter = taskAdapter
 
         swipeRefreshLayout.setOnRefreshListener {
             refreshData()
         }
-
         loadData()
         return view
     }
+
+    /**
+     * This method loads the data from the database and checks if expired tasks is enabled
+     * If expired tasks is enabled, it hides the expired tasks
+     * If expired tasks is disabled, it shows all tasks
+     */
     private fun loadData() {
         if (isExpiredTasksEnabled) {
             val validTasks = dbHelper.hideExpiredTasks(globalUser)
@@ -74,23 +83,26 @@ class TaskListFragment : Fragment(), TaskAdapter.EditTaskClickListener {
         swipeRefreshLayout.isRefreshing = false
     }
 
+    /**
+     * This method refreshes the data in the RecyclerView
+     */
     private fun refreshData() {
         loadData()
     }
 
+    /**
+     * This method inflates the menu for the tasks with the add task option
+     */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_task, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    private fun getAllTasks() : MutableList<Task_DataFiles> {
-        val allTasks = mutableListOf<Task_DataFiles>()
-        dbHelper.showAllTasks(globalUser).forEach {
-            allTasks.add(it)
-        }
-        return allTasks
-    }
-
+    /**
+     * This method handles the click event for the add task option
+     * It starts the AddTask activity
+     * It also refreshes the task list after adding a task
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_add_task -> {
@@ -103,18 +115,24 @@ class TaskListFragment : Fragment(), TaskAdapter.EditTaskClickListener {
         }
     }
 
+    /**
+     * This method handles the result of the activity
+     * It refreshes the data after adding or editing a task
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ADD_TASK_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            // Task added successfully, refresh the task list
             refreshData()
         }
         if (requestCode == EDIT_TASK_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            // Task edited successfully, refresh the task list
             refreshData()
         }
     }
 
+    /**
+     * This method is called when the edit icon is clicked
+     * It starts the EditTask activity and passes the task details to it
+     */
     override fun iconEditTask(position: Int, context: Context) {
         val task = tasks[position]
         val intent = Intent(context, TaskList_EditTask::class.java).apply {
@@ -127,6 +145,9 @@ class TaskListFragment : Fragment(), TaskAdapter.EditTaskClickListener {
         startActivityForResult(intent, EDIT_TASK_REQUEST_CODE)
     }
 
+    /**
+     * This is the companion object that contains the request codes for adding and editing tasks
+     */
     companion object {
         private const val ADD_TASK_REQUEST_CODE = 1001
         private const val EDIT_TASK_REQUEST_CODE = 1002

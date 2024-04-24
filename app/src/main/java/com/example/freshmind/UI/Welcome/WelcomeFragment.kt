@@ -21,10 +21,14 @@ import com.example.freshmind.UI.Settings.isExpiredTasksEnabled
 import com.example.freshmind.UI.Task.ClosestTasksAdapter
 import com.example.freshmind.UI.globalTheme
 import com.example.freshmind.databinding.FragmentWelcomeBinding
-import org.w3c.dom.Text
 import java.time.ZoneId
-import java.time.ZoneOffset
 
+/**
+ * This is the  Welcome [Fragment].
+ * This fragment is the first fragment that the user sees when they open the app.
+ * It displays the user's name, pinned notes and the closest tasks.
+ * It also displays a countdown timer for the closest task.
+ */
 class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
 
     private var _binding: FragmentWelcomeBinding? = null
@@ -42,9 +46,16 @@ class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dbHelper = DBHelper(requireContext()) // Initialize DBHelper in onCreate()
+        dbHelper = DBHelper(requireContext()) // Initialize DBHelper
 
     }
+
+    /**
+     * This function is called when the fragment is created.
+     * It inflates the layout of the fragment and sets the text of the textViews.
+     * It also sets the background color of the fragment.
+     * It also sets the adapter for the recyclerViews.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,7 +66,7 @@ class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
         isExpiredTasksEnabled = dbHelper.retrieveHideTasks()
         view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
         /**
-         * Innitialise all the textViews in the Welcome Fragment
+         * Initialise all the textViews in the Welcome Fragment
          */
         txtWelcomeTitle = view.findViewById(R.id.txtWelcomeTitle)
         txtWelcomeTitle.text = "Welcome, $globalUser"
@@ -63,7 +74,7 @@ class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
         txtClosestTasks = view.findViewById(R.id.txtWelcome_Tasks)
         txtCountdownTimer = view.findViewById(R.id.remainingTimeTextView)
 
-        changeTextColors(requireContext(), txtWelcomeTitle, txtImportantNotes, txtClosestTasks, txtCountdownTimer)
+        changeTextColors(requireContext(), txtWelcomeTitle, txtImportantNotes, txtClosestTasks, txtCountdownTimer) // Change text colors based on theme
 
         notesRecyclerView = view.findViewById(R.id.recyclerViewPinnedNotes)
         notesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -71,8 +82,8 @@ class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
         tasksRecycleView.layoutManager = LinearLayoutManager(requireContext())
 
 
-        notes.addAll(getAllPinnedNotes())
-        tasks.addAll(getClosestTasks())
+        notes.addAll(getAllPinnedNotes()) // Add all pinned notes to the list
+        tasks.addAll(getClosestTasks()) // Add all closest tasks to the list
 
 
         notesPinnedAdapter = NotesPinnedAdapter(notes)
@@ -84,6 +95,10 @@ class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
         return view
     }
 
+    /**
+     * This function is called when the fragment is first created.
+     * It loads the data from the database and updates the recyclerViews.
+     */
     private fun loadData() {
         val updatedNotes = dbHelper.showAllPinnedNotes(globalUser)
         val updatedTasks = dbHelper.closesTasks(globalUser)
@@ -97,6 +112,10 @@ class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
         startCountdownForTasks(updatedTasks)
     }
 
+    /**
+     * This function gets all the pinned notes from the database.
+     * It returns a list of all the pinned notes but only the ones that are pinned.
+     */
     private fun getAllPinnedNotes() : MutableList<Notes_DataFiles> {
         val allNotes = mutableListOf<Notes_DataFiles>()
         dbHelper.showAllPinnedNotes(globalUser).forEach {
@@ -105,6 +124,10 @@ class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
         return allNotes
     }
 
+    /**
+     * This function gets all the closest tasks from the database.
+     * It returns a list of all the closest tasks but only the ones that are closest.
+     */
     private fun getClosestTasks() : MutableList<Task_DataFiles> {
         val allTasks = mutableListOf<Task_DataFiles>()
         dbHelper.closesTasks(globalUser).forEach {
@@ -113,12 +136,18 @@ class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
         return allTasks
     }
 
+    /**
+     * This function is called when the countdown timer ticks.
+     */
     override fun onTick(remainingTime: String) {
         txtCountdownTimer = view?.findViewById(R.id.remainingTimeTextView) ?: return
         txtCountdownTimer.text = remainingTime
     }
 
-
+    /**
+     * This function is called when the countdown timer finishes.
+     * After the countdown timer finishes, it sends a notification to the user.
+     */
     private fun startCountdownForTasks(tasks: List<Task_DataFiles>) {
         val currentTimeMillis = System.currentTimeMillis()
         for (task in tasks) {
@@ -131,9 +160,9 @@ class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
                     requireContext(),
                     task.taskTitle,
                     timeInMillis,
-                    "task_notification_channel", // Replace with your channel ID
+                    "task_notification_channel",
                     task.taskID,
-                    this // Notification ID can be the task ID for uniqueness
+                    this
                 )
                 countdownTimer.start()
 
@@ -143,20 +172,16 @@ class WelcomeFragment : Fragment(), TaskCountdownTimer.CountdownTickListener {
         }
     }
 
-
-
-
+    // TODO: Implement the notification permission request
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == TaskCountdownTimer.REQUEST_NOTIFICATION_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, you can now create notifications
-                // You might want to restart the countdown timers here if needed
+                // Permission granted, handle accordingly
             } else {
                 // Permission denied, handle accordingly
             }
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

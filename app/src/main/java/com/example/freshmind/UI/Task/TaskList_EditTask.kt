@@ -1,7 +1,6 @@
 package com.example.freshmind.UI.Task
 
 import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -14,18 +13,20 @@ import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.Extras.changeEditBoxColor
 import com.example.freshmind.Extras.changeTextBoxColor
-import com.example.freshmind.Extras.changeTextColors
 import com.example.freshmind.Extras.changeTextColorsNT
 import com.example.freshmind.Extras.changeTitleColor
 import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 
+/**
+ * This class is the activity for editing a task
+ * It allows the user to edit the title, description, start date, and end date of a task
+ */
 class TaskList_EditTask : AppCompatActivity() {
 
     private lateinit var dbHelper: DBHelper
@@ -37,6 +38,10 @@ class TaskList_EditTask : AppCompatActivity() {
     private lateinit var txtTitleEditTask: TextView
     private var taskID: Int = -1
 
+    /**
+     * This method is called when the activity is created
+     * It initializes the views and sets the click listeners
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_task)
@@ -76,12 +81,17 @@ class TaskList_EditTask : AppCompatActivity() {
                 updateTask()
         }
 
+        // Change the text and other colors matching the global theme
         changeTitleColor(this, txtTitleEditTask)
         changeEditBoxColor(this, editTextTitle, editTextDescription)
         changeTextBoxColor(this, buttonSaveTask, editTextStartDate, editTextEndDate)
         changeTextColorsNT(this , editTextTitle, editTextDescription, editTextStartDate, editTextEndDate)
     }
 
+    /**
+     * This method is called when the user clicks the Save button
+     * It updates the task details in the database
+     */
     private fun updateTask() {
         val newTitle = editTextTitle.text.toString()
         val newDescription = editTextDescription.text.toString()
@@ -110,14 +120,14 @@ class TaskList_EditTask : AppCompatActivity() {
             val updatedTask = Task_DataFiles(taskID, -1, newTitle, newDescription, startDate, endDate, localTime)
             dbHelper.updateTask(updatedTask)
 
-            setResult(RESULT_OK)
-            finish()
+            setResult(RESULT_OK) // Sets the activity result to OK which will refresh the task list
+            finish() // Closes the activity and returns to the TaskListFragment
         }
     }
 
-
-
-
+    /**
+     * This method shows the date picker dialog, allowing the user to select a date
+     */
     private fun showDateTimePicker(calendar: Calendar, textView: TextView) {
         val datePicker = DatePickerDialog(
             this,
@@ -141,13 +151,13 @@ class TaskList_EditTask : AppCompatActivity() {
         )
         // Set the minimum date to the current date
         datePicker.datePicker.minDate = System.currentTimeMillis() - 1000
-        datePicker.show()
+        datePicker.show() // Show the date picker dialog
     }
 
 
     // Method to display selected date and time on TextView
     private fun displayDate(calendar: Calendar, textView: TextView) {
-        // Format date and time as per your requirement
+        // Format date and time
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val dateTimeString = dateFormat.format(calendar.time)
         // Update TextView with selected date and time

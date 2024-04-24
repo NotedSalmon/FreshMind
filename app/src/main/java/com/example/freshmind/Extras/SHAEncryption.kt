@@ -3,6 +3,7 @@ package com.example.wagonersexperts.extra
 import java.security.MessageDigest
 
 //https://gist.github.com/lovubuntu/164b6b9021f5ba54cefc67f60f7a1a25
+//Encryption used when storing passwords
 object SHAEncryption {
     fun shaEncrypt(info : String): String {
         val bytes = info.toByteArray()

@@ -1,9 +1,7 @@
 package com.example.freshmind.Authentication
 
 import android.content.Intent
-import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -11,20 +9,15 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.User_DataFiles
 import com.example.freshmind.Extras.changeEditBoxColor
 import com.example.freshmind.Extras.changeTextBoxColor
 import com.example.freshmind.Extras.changeTitleColor
 import com.example.freshmind.Extras.getColorResource
-import com.example.freshmind.R
 import com.example.wagonersexperts.extra.SHAEncryption.shaEncrypt
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import com.google.firebase.*
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 
 private const val TAG = "User_Register"
 
@@ -111,7 +104,7 @@ class User_Register: AppCompatActivity() {
         /**
          * This creates a new User_DataFiles object with the values from the EditTexts.
          * It then calls the addUser function from the DBHelper to add the user to the database.
-         * If the user is added successfully, it displays a success message and sends the user to the Login Activity and sets GlobalUser to the username.
+         * If the user is added successfully, it displays a success message and sends the user to the Login Activity.
          */
         val customer = User_DataFiles(0,userName,userEmail,userPhone,userUsername, userPassword, userIsActive, dateCreated, dateCreated)
         if(dbHelper.addUser(customer)){ //Calls function addCustomer within the dbHelper

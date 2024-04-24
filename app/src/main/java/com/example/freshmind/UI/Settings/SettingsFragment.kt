@@ -16,7 +16,6 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.graphics.drawable.DrawableCompat.applyTheme
 import androidx.fragment.app.Fragment
 import com.example.freshmind.Authentication.User_Login
 import com.example.freshmind.Authentication.globalUser
@@ -33,7 +32,12 @@ import com.example.freshmind.UI.Starter
 import com.example.freshmind.UI.globalTheme
 import com.example.wagonersexperts.extra.SHAEncryption.shaEncrypt
 
-var isExpiredTasksEnabled: Boolean = false
+var isExpiredTasksEnabled: Boolean = false // Global variable to store the state of the hiddenTask checkbox
+
+/**
+ * This class is the fragment for the settings page
+ * It allows the user to change their username, email, password, and delete their account
+ */
 class SettingsFragment : Fragment() {
 
     private lateinit var dbHelper: DBHelper
@@ -69,7 +73,7 @@ class SettingsFragment : Fragment() {
         view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
 
         val starterActivity = activity as? Starter
-        starterActivity?.floatingFab?.makeGone()
+        starterActivity?.floatingFab?.makeGone() // Hide the feedback floating button
 
         newUsername = view.findViewById(R.id.txtNewUsername)
         newEmail = view.findViewById(R.id.txtNewEmail)
@@ -102,17 +106,17 @@ class SettingsFragment : Fragment() {
             themeSpinner.setSelection(themeIndex)
         }
 
-
+        /**
+         * OnItemSelectedListener for the theme spinner. Stores selection in globalTheme and updates the theme
+         */
         themeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                // Handle theme selection
                 globalTheme = themes[position]
                 dbHelper.updateTheme(globalTheme)
                 applyTheme()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                // Do nothing
             }
         }
 
@@ -120,6 +124,10 @@ class SettingsFragment : Fragment() {
             deleteButton()
         }
 
+        /**
+         * Checkbox for hiding expired tasks
+         * This checkbox allows the user to hide tasks that are expired
+         */
         hideTasks.isChecked = isExpiredTasksEnabled
         hideTasks.setOnCheckedChangeListener { _, isChecked ->
             isExpiredTasksEnabled = isChecked
@@ -131,6 +139,8 @@ class SettingsFragment : Fragment() {
         btnSaveChanges.setOnClickListener {
             saveDetails()
         }
+
+        //Change colours according to the theme
         changeTextColors(requireContext(), txtchangeUsername, txtchangeEmail, txtUserDetails, txtchangePassword, deleteAccount, hideTasks,btnSaveChanges, txtTheme)
         changeAccountColour(requireContext(), titleAccountSettings)
         changeEditBoxColor(requireContext(), newUsername, newEmail, oldPassword, newPassword)
@@ -139,18 +149,22 @@ class SettingsFragment : Fragment() {
         return view
     }
 
+    /**
+     * When the view is destroyed, make the floating fab visible again
+     */
     override fun onDestroyView() {
         super.onDestroyView()
         val starterActivity = activity as? Starter
         starterActivity?.floatingFab?.makeVisible()
     }
 
-
+    //Uses the menu_settings.xml file to create the menu in the settings fragment
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_settings, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    //Handles the menu item clicks which logs out the user
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_logout -> {
@@ -161,6 +175,9 @@ class SettingsFragment : Fragment() {
         }
     }
 
+    /**
+     * This function applies the theme to the settings fragment depending on the theme selected by the user
+     */
     private fun applyTheme() {
         view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
         changeTextColors(requireContext(), txtchangeUsername, txtchangeEmail, txtUserDetails, txtchangePassword, deleteAccount, hideTasks,btnSaveChanges)
@@ -169,14 +186,21 @@ class SettingsFragment : Fragment() {
         changeTextBoxColor(requireContext(), displayFullName, displayEmail, displayPhone)
     }
 
+    /**
+     * This function saves the changes made by the user to their account details
+     * It checks if the user has entered a new username, email, password, or all three
+     * It then updates the database with the new details and displays a toast message to the user
+     */
     private fun saveDetails(){
         val newUsernameText = newUsername.text.toString()
         val newEmailText = newEmail.text.toString()
         val oldPasswordText = oldPassword.text.toString()
         val newPasswordText = newPassword.text.toString()
+        //Encrypt the passwords
         val encryptOldPasswordText = shaEncrypt(oldPasswordText)
         val encryptNewPasswordText = shaEncrypt(newPasswordText)
 
+        //Check if the user has entered a new username, email, password, or all three
         if (oldPasswordText.isNotEmpty() && newPasswordText.isNotEmpty()) {
             if (oldPasswordText.length > 8){
                 if (dbHelper.changePassword(encryptOldPasswordText, encryptNewPasswordText, globalUser)){
@@ -217,6 +241,7 @@ class SettingsFragment : Fragment() {
         refreshData()
     }
 
+    //Refreshes the data in the settings fragment
     private fun refreshData(){
         oldPassword.text.clear()
         newPassword.text.clear()
@@ -225,6 +250,7 @@ class SettingsFragment : Fragment() {
         getUserDetails()
     }
 
+    //Gets the user details from the database
     private fun getUserDetails() {
         val userDetails = dbHelper.getUser(globalUser)
         displayFullName.text = userDetails.FullName
@@ -232,11 +258,12 @@ class SettingsFragment : Fragment() {
         displayPhone.text = userDetails.PhoneNo
     }
 
-
+    //Deletes the user account
     private fun deleteButton() {
         dbHelper.deleteUser(globalUser)
     }
 
+    //Logs out the user
     private fun logOut() {
         val i = Intent(activity, User_Login::class.java)
         globalUser = ""
