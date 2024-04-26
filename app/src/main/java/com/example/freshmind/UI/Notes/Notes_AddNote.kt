@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Notes_DataFiles
+import com.example.freshmind.Extras.changeButtonColor
 import com.example.freshmind.Extras.changeEditBoxColor
 import com.example.freshmind.Extras.changeTextBoxColor
 import com.example.freshmind.Extras.changeTextColorsNT
@@ -55,8 +56,8 @@ class Notes_AddNote : AppCompatActivity() {
         // Change colors of the views
         changeTitleColor(this, txtTitleCreateNote)
         changeEditBoxColor(this, noteTitleEditText, noteContentEditText)
-        changeTextBoxColor(this, checkPin, btnAddNote)
-        changeTextColorsNT(this , checkPin, btnAddNote, noteTitleEditText, noteContentEditText)
+        changeButtonColor(this, btnAddNote, checkPin)
+        changeTextColorsNT(this, noteTitleEditText, noteContentEditText)
     }
 
     /**

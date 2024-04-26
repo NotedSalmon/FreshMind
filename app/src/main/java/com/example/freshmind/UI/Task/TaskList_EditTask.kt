@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
+import com.example.freshmind.Extras.changeButtonColor
 import com.example.freshmind.Extras.changeEditBoxColor
 import com.example.freshmind.Extras.changeTextBoxColor
 import com.example.freshmind.Extras.changeTextColorsNT
@@ -84,7 +85,8 @@ class TaskList_EditTask : AppCompatActivity() {
         // Change the text and other colors matching the global theme
         changeTitleColor(this, txtTitleEditTask)
         changeEditBoxColor(this, editTextTitle, editTextDescription)
-        changeTextBoxColor(this, buttonSaveTask, editTextStartDate, editTextEndDate)
+        changeButtonColor(this, buttonSaveTask)
+        changeTextBoxColor(this, editTextStartDate, editTextEndDate)
         changeTextColorsNT(this , editTextTitle, editTextDescription, editTextStartDate, editTextEndDate)
     }
 

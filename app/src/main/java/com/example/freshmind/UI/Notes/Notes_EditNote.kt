@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Notes_DataFiles
+import com.example.freshmind.Extras.changeButtonColor
 import com.example.freshmind.Extras.changeEditBoxColor
 import com.example.freshmind.Extras.changeTextBoxColor
 import com.example.freshmind.Extras.changeTextColorsNT
@@ -69,8 +70,8 @@ class Notes_EditNote : AppCompatActivity() {
         // Change colours of the text and background
         changeTitleColor(this, txtTitleEditNote)
         changeEditBoxColor(this, editTextTitle, editTextContent)
-        changeTextBoxColor(this, checkboxIsPinned, buttonSaveNote)
-        changeTextColorsNT(this , editTextTitle, checkboxIsPinned, buttonSaveNote, editTextContent)
+        changeButtonColor(this, buttonSaveNote, checkboxIsPinned)
+        changeTextColorsNT(this , editTextTitle, editTextContent)
     }
 
     /**

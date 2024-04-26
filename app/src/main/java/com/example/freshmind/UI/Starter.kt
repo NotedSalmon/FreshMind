@@ -9,6 +9,8 @@ import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.recreate
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
@@ -16,8 +18,12 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.freshmind.Extras.changeTextColors
+import com.example.freshmind.Extras.getDrawableResource
 import com.example.freshmind.UI.Calendar.Utils.makeGone
 import com.example.freshmind.UI.Calendar.Utils.makeVisible
+import com.example.freshmind.Extras.getSideBarColor
+import com.example.freshmind.Extras.getToolbarColor
 import com.example.freshmind.databinding.ActivityWelcomeBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -50,16 +56,18 @@ class Starter : AppCompatActivity() {
         setSupportActionBar(binding.appBarWelcome.toolbar)
         globalUser = intent.getStringExtra("user")
             .toString() //This extra is how the global customer will be sent between activities
+        floatingFab = binding.appBarWelcome.fab
 
         binding.appBarWelcome.fab.setOnClickListener {
             sendFeedback()
         }
 
-        floatingFab = binding.appBarWelcome.fab
-
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
+        navView.background
         val navController = findNavController(R.id.nav_host_fragment_content_main)
+
+        navView.setBackgroundColor(resources.getColor(getSideBarColor(this)))
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -74,7 +82,7 @@ class Starter : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
+        updateTheme()
         // Update the navigation header when globalUser changes
         updateNavigationHeader()
     }
@@ -142,6 +150,17 @@ class Starter : AppCompatActivity() {
         }
         dialog.show()
     }
+
+    fun updateTheme() {
+        val navView: NavigationView = binding.navView
+        navView.background
+        navView.setBackgroundColor(resources.getColor(getSideBarColor(this)))
+        val headerView = binding.navView.getHeaderView(0)
+        headerView.setBackgroundDrawable(resources.getDrawable(getDrawableResource(this)))
+        val toolbarView = binding.appBarWelcome.toolbar
+        //changeTextColors(this, toolbarView)
+        toolbarView.setBackgroundColor(resources.getColor(getToolbarColor(this)))
+    }
 }
 
     interface HasToolbar {
@@ -176,6 +195,8 @@ abstract class BaseFragment(@LayoutRes layoutRes: Int) : Fragment(layoutRes) {
             actionBar?.setDisplayHomeAsUpEnabled(false)
         }
     }
+
+
 
     override fun onStop() {
         super.onStop()

@@ -141,6 +141,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
      */
     fun validateUser(username: String, password: String): Boolean {
         val db = this.readableDatabase
+        // Query to check if the username and password match
         val columns = arrayOf(User_Column_Username, User_Column_Password)
         val selection = "$User_Column_Username = ? AND $User_Column_Password = ?"
         val selectionArgs = arrayOf(username, password)
@@ -195,12 +196,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     fun changePassword(oldPassword: String, newPassword: String, username: String) : Boolean {
         val db: SQLiteDatabase = this.writableDatabase
         return try {
+            // Query to update the password
             val sqlStatement = "UPDATE $UserTableName SET $User_Column_Password = '$newPassword' WHERE $User_Column_Username = '$username' AND $User_Column_Password = '$oldPassword'"
             db.execSQL(sqlStatement)
             db.close()
             true
         } catch (e: Exception) {
-            // Log the error or handle it gracefully
             e.printStackTrace()
             db.close()
             false
@@ -226,15 +227,15 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     }
 
     /**
-     * Function to update a user's email in the database.
+     * Function to return a single user from the database.
      * @param username: String containing the username.
-     * @param newEmail: String containing the new email.
-     * @return Boolean: True if the email is updated successfully, false otherwise.
-     * @throws SQLiteException if an error occurs while updating the email.
+     * @return User_DataFiles: User_DataFiles object containing the user details.
+     * @throws SQLiteException if an error occurs while returning a user
      */
     @SuppressLint("Range")
     fun getUser(username: String) : User_DataFiles {
         val db = this.readableDatabase
+        // Query to get the user details based on the username
         val columns = arrayOf(User_Column_ID, User_Column_FullName, User_Column_Email, User_Column_PhoneNo, User_Column_Username, User_Column_Password, User_Column_IsActive, User_Column_DateCreated, User_Column_DateModified)
         val selection = "$User_Column_Username = ?"
         val selectionArgs = arrayOf(username)
@@ -251,12 +252,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
                 val isActive = cursor.getInt(cursor.getColumnIndex(User_Column_IsActive))
                 val dateCreated = LocalDateTime.parse(cursor.getString(cursor.getColumnIndex(User_Column_DateCreated)))
                 val dateModified = LocalDateTime.parse(cursor.getString(cursor.getColumnIndex(User_Column_DateModified)))
-
+                // Create User_DataFiles object
                 user = User_DataFiles(userID, fullName, email, phoneNo, username, password, isActive, dateCreated, dateModified)
             }
             cursor.close()
         }
-        return user
+        return user // Return the user object
     }
 
     /**
@@ -274,7 +275,6 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
             db.close()
             true
         } catch (e: Exception) {
-            // Log the error or handle it gracefully
             e.printStackTrace()
             db.close()
             false
@@ -282,11 +282,10 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     }
 
     /**
-     * Function to update a user's phone number in the database.
+     * Function to return a users ID from the database.
      * @param username: String containing the username.
-     * @param newPhoneNo: String containing the new phone number.
-     * @return Boolean: True if the phone number is updated successfully, false otherwise.
-     * @throws SQLiteException if an error occurs while updating the phone number.
+     * @return Int: Int containing the user ID.
+     * @throws SQLiteException if an error occurs while returning the ID
      */
     @SuppressLint("Range")
     fun returnUserID(username: String): Int {
@@ -319,7 +318,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     fun addTask(task: Task_DataFiles): Boolean {
         val db: SQLiteDatabase = this.writableDatabase
         val cv: ContentValues = ContentValues()
-
+        // Add task details to ContentValues object
         cv.put(Task_Column_userID, task.userID)
         cv.put(Task_Column_TaskTitle, task.taskTitle)
         cv.put(Task_Column_TaskDescription, task.taskDescription)
@@ -327,9 +326,9 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         cv.put(Task_Column_EndTime, task.endTime.toString())
         cv.put(Task_Column_DateModified, task.dateModified.toString())
 
-        val success = db.insert(TaskTableName, null, cv)
+        val success = db.insert(TaskTableName, null, cv) //Creates a value to send back
         db.close()
-        return success != -1L
+        return success != -1L //Return the value
     }
 
     /**
@@ -406,7 +405,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
                 cursor.close()
             }
         } catch (e: SQLiteException) {
-            return mutableListOf()
+            return mutableListOf() // Return an empty list if an error occurs
         } finally {
             db.close()
         }
@@ -414,42 +413,42 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     }
 
     /**
-     * Function to retrieve a task from the database.
-     * @param taskID: Int containing the task ID.
-     * @return Task_DataFiles: Task_DataFiles object containing the task details.
-     * @throws SQLiteException if an error occurs while retrieving the task.
+     * Function to show tasks for a specific date. This is used in the Calendar View
+     * @param userID: String containing the user ID.
+     * @param selectedDate: LocalDate containing the selected date.
+     * @return MutableList<Task_DataFiles>: List of Task_DataFiles objects containing the task details.
+     * @throws SQLiteException if an error occurs while retrieving the tasks.
      */
     @SuppressLint("Range")
     fun showTasksForDate(userID: String, selectedDate: LocalDate): List<Task_DataFiles> {
-        val userId = returnUserID(userID)
+        val userId = returnUserID(userID) // Get the user ID
         val taskList = mutableListOf<Task_DataFiles>()
         val db = this.readableDatabase
 
         return try {
             val cursor = db.rawQuery(
+                // Query tasks associated with the given userID and selected date
                 "SELECT * FROM $TaskTableName WHERE $Task_Column_userID = ? AND $Task_Column_StartTime = ?",
                 arrayOf(userId.toString(), selectedDate.toString())  // Assuming the date format in the database matches LocalDate.toString()
             )
 
-            cursor.use {
+            cursor.use { // Use the cursor to iterate through the results and add to the list
                 while (cursor.moveToNext()) {
                     val taskID = cursor.getInt(cursor.getColumnIndex(Task_Column_ID))
-                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle)) ?: ""
-                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)) ?: ""
+                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle)) ?: "" // Get the task title, return empty if Null
+                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)) ?: "" // Get the task description, return empty if Null
                     val startTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_StartTime))
                     val endTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_EndTime))
                     val dateModifiedString = cursor.getString(cursor.getColumnIndex(Task_Column_DateModified))
-
+                    // Parse the date strings to LocalDate objects
                     val startTime = LocalDate.parse(startTimeString)
                     val endTime = LocalDate.parse(endTimeString)
                     val dateModified = LocalDate.parse(dateModifiedString)
-
-
+                    // Create TaskDetails object and add to list
                     val taskDetails = Task_DataFiles(taskID, userId, taskTitle, taskDescription, startTime, endTime, dateModified)
                     taskList.add(taskDetails)
                 }
             }
-
             taskList
         } catch (e: SQLiteException) {
             emptyList()
@@ -459,43 +458,42 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     }
 
     /**
-     * Function to retrieve a task from the database.
-     * @param taskID: Int containing the task ID.
+     * Function to retrieve a task from the database that is closest to its end time.
+     * @param userID: String containing the user ID.
      * @return Task_DataFiles: Task_DataFiles object containing the task details.
      * @throws SQLiteException if an error occurs while retrieving the task.
      */
     @SuppressLint("Range")
     fun closesTasks(userID: String): MutableList<Task_DataFiles> {
-        val userId = returnUserID(userID)
-        val localDate = LocalDate.now()
+        val userId = returnUserID(userID) // Get the user ID
+        val localDate = LocalDate.now() // Get the current date
         val taskList = mutableListOf<Task_DataFiles>()
         val db = this.readableDatabase
         val cursor: Cursor? = db.rawQuery(
+            // Query tasks associated with the given userID and end time greater than or equal to the current date
             "SELECT * FROM $TaskTableName WHERE $Task_Column_userID = ? AND $Task_Column_EndTime >= ? ORDER BY $Task_Column_EndTime ASC LIMIT 2",
             arrayOf(userId.toString(), localDate.toString())
         )
 
         try {
-            cursor?.use { cursor ->
+            cursor?.use { cursor -> // Use the cursor to iterate through the results and add to the list
                 while (cursor.moveToNext()) {
                     val taskID = cursor.getInt(cursor.getColumnIndex(Task_Column_ID))
-                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle)) ?: ""
-                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)) ?: ""
+                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle)) ?: "" // Get the task title, return empty if Null
+                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)) ?: "" // Get the task description, return empty if Null
                     val startTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_StartTime))
                     val endTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_EndTime))
                     val dateModifiedString = cursor.getString(cursor.getColumnIndex(Task_Column_DateModified))
-
+                    // Parse the date strings to LocalDate objects
                     val startTime = startTimeString?.let { LocalDate.parse(it) }
                     val endTime = endTimeString?.let { LocalDate.parse(it) }
                     val dateModified = dateModifiedString?.let { LocalDate.parse(it) }
 
                     val taskDetails = Task_DataFiles(taskID, userId, taskTitle, taskDescription, startTime ?: LocalDate.MIN, endTime ?: LocalDate.MIN, dateModified ?: LocalDate.MIN)
-                    taskList.add(taskDetails)
-
+                    taskList.add(taskDetails) // Add the task to the list
                 }
             }
         } catch (e: SQLiteException) {
-            // Handle the exception appropriately, e.g., log or display an error message
             e.printStackTrace()
         } finally {
             cursor?.close()
@@ -505,8 +503,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     }
 
     /**
-     * Function to retrieve a task from the database.
-     * @param taskID: Int containing the task ID.
+     * Function to display tasks that are not expired.
+     * @param userID: String containing the user ID.
      * @return Task_DataFiles: Task_DataFiles object containing the task details.
      * @throws SQLiteException if an error occurs while retrieving the task.
      */
@@ -517,30 +515,30 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         val taskList = mutableListOf<Task_DataFiles>()
         val db = this.readableDatabase
         val cursor: Cursor? = db.rawQuery(
+            // Query tasks associated with the given userID and end time greater than or equal to the current date
             "SELECT * FROM $TaskTableName WHERE $Task_Column_userID = ? AND $Task_Column_EndTime >= ? ORDER BY $Task_Column_StartTime ASC",
             arrayOf(userId.toString(), localDate.toString())
         )
-
+        // Iterate through the results and add to the list
         try {
             cursor?.use { cursor ->
-                while (cursor.moveToNext()) {
+                while (cursor.moveToNext()) { // Move to the next row
                     val taskID = cursor.getInt(cursor.getColumnIndex(Task_Column_ID))
-                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle)) ?: ""
-                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)) ?: ""
+                    val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle)) ?: "" // Get the task title, return empty if Null
+                    val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)) ?: "" // Get the task description, return empty if Null
                     val startTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_StartTime))
                     val endTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_EndTime))
                     val dateModifiedString = cursor.getString(cursor.getColumnIndex(Task_Column_DateModified))
-
+                    // Parse the date strings to LocalDate objects
                     val startTime = LocalDate.parse(startTimeString)
                     val endTime = LocalDate.parse(endTimeString)
                     val dateModified = LocalDate.parse(dateModifiedString)
-
+                    // Create TaskDetails object and add to list
                     val taskDetails = Task_DataFiles(taskID, userId, taskTitle, taskDescription, startTime, endTime, dateModified)
                     taskList.add(taskDetails)
                 }
             }
         } catch (e: SQLiteException) {
-            // Handle the exception appropriately, e.g., log or display an error message
             e.printStackTrace()
         } finally {
             cursor?.close()
@@ -554,17 +552,17 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
      */
 
     /**
-     * Function to retrieve a note from the database.
-     * @param noteID: Int containing the note ID.
+     * Function to retrieve all notes from the database.
+     * @param userID: String containing the user ID.
      * @return Notes_DataFiles: Notes_DataFiles object containing the note details.
      * @throws SQLiteException if an error occurs while retrieving the note.
      */
     @SuppressLint("Range")
     fun showAllNotes(userID: String): MutableList<Notes_DataFiles> {
-        val userId = returnUserID(userID)
+        val userId = returnUserID(userID) // Get the user ID
         val notesList = mutableListOf<Notes_DataFiles>()
         val db = this.readableDatabase
-        val cursor: Cursor?
+        val cursor: Cursor? // Cursor to iterate through the results
         try {
             // Query tasks associated with the given userID
             cursor = db.rawQuery("SELECT * FROM $NoteTableName WHERE $Note_Column_userID = $userId", null)
@@ -577,12 +575,10 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
                         val noteContent = cursor.getString(cursor.getColumnIndex(Note_Column_NoteContent))
                         val dateCreated = cursor.getString(cursor.getColumnIndex(Note_Column_DateCreated))
                         val isPinned = cursor.getInt(cursor.getColumnIndex(Note_Column_isPinned))
-
+                        // Get the current date and time
                         val localTime = LocalDateTime.now()
                             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
-
                         val dateModified: LocalDateTime = LocalDateTime.parse(localTime, DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
-
                         // Create NoteDetails object and add to list
                         val noteDetails = Notes_DataFiles(noteID,userId,noteTitle, noteContent, dateCreated,dateModified, isPinned == 1)
                         notesList.add(noteDetails)
@@ -591,7 +587,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
                 cursor.close()
             }
         } catch (e: SQLiteException) {
-            return mutableListOf()
+            return mutableListOf() // Return an empty list if an error occurs
         } finally {
             db.close()
         }
@@ -607,14 +603,14 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     fun addNote(note: Notes_DataFiles): Boolean {
         val db: SQLiteDatabase = this.writableDatabase
         val cv: ContentValues = ContentValues()
-
+        // Add note details to ContentValues object
         cv.put(Note_Column_userID, note.userID)
         cv.put(Note_Column_NoteTitle, note.noteTitle)
         cv.put(Note_Column_NoteContent, note.noteContent)
         cv.put(Note_Column_DateCreated, note.dateCreated)
         cv.put(Note_Column_DateModified, note.dateModified.toString())
         cv.put(Note_Column_isPinned, note.isPinned)
-
+        // Insert the note into the database
         val success = db.insert(NoteTableName, null, cv)
         db.close()
         return success != -1L
@@ -656,8 +652,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     }
 
     /**
-     * Function to retrieve a note from the database.
-     * @param noteID: Int containing the note ID.
+     * Function to retrieve all pinned notes from the database.
+     * @param userID: String containing the user ID.
      * @return Notes_DataFiles: Notes_DataFiles object containing the note details.
      * @throws SQLiteException if an error occurs while retrieving the note.
      */
@@ -679,21 +675,19 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
                         val noteContent = cursor.getString(cursor.getColumnIndex(Note_Column_NoteContent))
                         val dateCreated = cursor.getString(cursor.getColumnIndex(Note_Column_DateCreated))
                         val isPinned = cursor.getInt(cursor.getColumnIndex(Note_Column_isPinned))
-
+                        //  Get the current date and time
                         val localTime = LocalDateTime.now()
                             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
-
                         val dateModified: LocalDateTime = LocalDateTime.parse(localTime, DateTimeFormatter.ofPattern("yyyy-MM-dd/-/HH:mm:ss"))
-
                         // Create NoteDetails object and add to list
                         val noteDetails = Notes_DataFiles(noteID,userId,noteTitle, noteContent, dateCreated,dateModified, isPinned == 1)
-                        notesList.add(noteDetails)
+                        notesList.add(noteDetails) // Add the note to the list
                     } while (cursor.moveToNext())
                 }
                 cursor.close()
             }
         } catch (e: SQLiteException) {
-            return mutableListOf()
+            return mutableListOf() // Return an empty list if an error occurs
         } finally {
             db.close()
         }
@@ -705,35 +699,35 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
      */
 
     /**
-     * Function to retrieve a user's settings from the database.
+     * Function to retrieve a user's hide tasks setting from the database.
      * @param userID: Int containing the user ID.
      * @return Settings_DataFiles: Settings_DataFiles object containing the user's settings.
      * @throws SQLiteException if an error occurs while retrieving the settings.
      */
     @SuppressLint("Range")
     fun retrieveHideTasks(): Boolean {
-        val retrievedID = returnUserID(globalUser)
+        val retrievedID = returnUserID(globalUser) // Get the user ID
         val db = this.readableDatabase
-        val columns = arrayOf(Settings_Column_HideTasks)
+        val columns = arrayOf(Settings_Column_HideTasks) // Get the hideTasks column
         val selection = "$Settings_Column_userID = ?"
         val selectionArgs = arrayOf(retrievedID.toString())
-        val cursor: Cursor =
+        val cursor: Cursor = // Query the settings table
             db.query(SettingsTableName, columns, selection, selectionArgs, null, null, null)
-        var hideTasks = false
+        var hideTasks = false // Default value for hideTasks
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                hideTasks = cursor.getInt(cursor.getColumnIndex(Settings_Column_HideTasks)) == 1
+                hideTasks = cursor.getInt(cursor.getColumnIndex(Settings_Column_HideTasks)) == 1 // Get the hideTasks value
             }
             cursor.close()
         }
         db.close()
-        return hideTasks
+        return hideTasks // Return the hideTasks value
     }
 
     /**
      * Function to retrieve a user's theme from the database.
-     * @param userID: Int containing the user ID.
      * @return Settings_DataFiles: Settings_DataFiles object containing the user's Theme.
+     * @throws SQLiteException if an error occurs while retrieving the settings.
      */
     @SuppressLint("Range")
     fun retrieveTheme(): String {
@@ -741,7 +735,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         val db = this.readableDatabase
         var theme = "midnight" // Default theme
 
-        try {
+        try { // Query the settings table
             val columns = arrayOf(Settings_Column_Theme)
             val selection = "$Settings_Column_userID = ?"
             val selectionArgs = arrayOf(retrievedID.toString())
@@ -749,11 +743,10 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
                 db.query(SettingsTableName, columns, selection, selectionArgs, null, null, null)
 
             if (cursor.moveToFirst()) {
-                theme = cursor.getString(cursor.getColumnIndex(Settings_Column_Theme))
+                theme = cursor.getString(cursor.getColumnIndex(Settings_Column_Theme)) // Get the theme value
             }
             cursor.close()
         } catch (e: SQLiteException) {
-            // Handle SQLiteException
             e.printStackTrace()
         } finally {
             db.close()
@@ -763,21 +756,19 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     }
 
     /**
-     * Function to update a user's settings in the database.
-     * @param settings: Settings_DataFiles object containing the updated user settings.
+     * Function to update a user's hide task setting in the database.
+     * @param hideTasks: Boolean containing the hide tasks setting.
      * @return Boolean: True if the settings are updated successfully, false otherwise.
      * @throws SQLiteException if an error occurs while updating the settings.
      */
     fun updateHideTasks(hideTasks: Boolean): Boolean {
         val retrievedID = returnUserID(globalUser)
         val db = this.writableDatabase
-
         // Check if settings row exists for the user
         if (!checkSettingsExist(db)) {
             // If not exists, create a new row with default values
             createDefaultSettingsRow(db)
         }
-
         val cv = ContentValues()
         cv.put(Settings_Column_HideTasks, hideTasks)
         val selection = "$Settings_Column_userID = ?"
@@ -788,21 +779,19 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
     }
 
     /**
-     * Function to update a user's settings in the database.
-     * @param settings: Settings_DataFiles object containing the updated user settings.
+     * Function to update a user's theme settings in the database.
+     * @param theme: String containing the theme setting.
      * @return Boolean: True if the settings are updated successfully, false otherwise.
      * @throws SQLiteException if an error occurs while updating the settings.
      */
     fun updateTheme(theme: String): Boolean {
         val retrievedID = returnUserID(globalUser)
         val db = this.writableDatabase
-
         // Check if settings row exists for the user
         if (!checkSettingsExist(db)) {
             // If not exists, create a new row with default values
             createDefaultSettingsRow(db)
         }
-
         val cv = ContentValues()
         cv.put(Settings_Column_Theme, theme)
         val selection = "$Settings_Column_userID = ?"
@@ -841,6 +830,4 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
         cv.put(Settings_Column_DateModified, LocalDate.now().toString())
         db.insert(SettingsTableName, null, cv)
     }
-
-
 }

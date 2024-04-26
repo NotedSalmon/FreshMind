@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
+import com.example.freshmind.Extras.changeButtonColor
 import com.example.freshmind.Extras.changeEditBoxColor
 import com.example.freshmind.Extras.changeTextBoxColor
 import com.example.freshmind.Extras.changeTextColorsNT
@@ -65,7 +66,8 @@ class TaskList_AddTask : AppCompatActivity() {
         // Change colors
         changeTitleColor(this, txtTitleCreateTask)
         changeEditBoxColor(this, taskTitleEditText, taskDescriptionEditText)
-        changeTextBoxColor(this, txtStartDate, txtEndDate, btnAddTask)
+        changeTextBoxColor(this, txtStartDate, txtEndDate)
+        changeButtonColor(this, btnAddTask)
         changeTextColorsNT(this , taskTitleEditText, taskDescriptionEditText, txtStartDate, txtEndDate)
     }
 

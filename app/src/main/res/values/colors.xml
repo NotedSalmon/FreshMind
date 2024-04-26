@@ -8,17 +8,12 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="red">#FFFF0000</color>
-    <color name="example_3_black">#D9000000</color>
-    <color name="example_3_white">#D9FFFFFF</color>
-    <color name="example_3_blue">#1973E8</color>
-    <color name="example_3_blue_light">#D2E3FC</color>
-    <color name="example_3_toolbar_color">#607D8B</color>
-    <color name="example_3_statusbar_color">#455A64</color>
+    <color name="black_v2">#D9000000</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorPrimary">#3F51B5</color>
     <color name="lightPurple"> #504c94</color>
     <color name="darkPurple">#383a5b</color>
-    <color name="lightGray">#acbcc4</color>
+    <color name="lightGray">#F5F5F5</color>
     <color name="beige">#c5bed5</color>
     <color name="brownCoffee">#4c2424</color>
     <color name="deepPurple">#6A0DAD</color>
@@ -30,4 +25,15 @@
     <color name="comet">#50506A</color>
     <color name="amethystSmoke">#9698BD</color>
     <color name="spunPearl">#ACACC0</color>
+    <color name="darkGray">#333333</color>
+    <color name="softGreen">#B1B592</color>
+    <color name="darkerGray">#121212</color>
+    <color name="softYellow">#FFC107</color>
+    <color name="light_green">#CCE599</color>
+    <color name="light_sky_blue">#87CEEB</color>
+    <color name="eggplant">#4B0082</color>
+    <color name="lightLavender">#D1C4E9</color>
+
+
+
 </resources>

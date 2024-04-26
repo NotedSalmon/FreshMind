@@ -1,5 +1,6 @@
 package com.example.freshmind.UI.Settings
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,21 +10,26 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.widget.BaseAdapter
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.freshmind.Authentication.User_Login
 import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Extras.changeAccountColour
+import com.example.freshmind.Extras.changeButtonColor
 import com.example.freshmind.Extras.changeEditBoxColor
+import com.example.freshmind.Extras.changeSpinner
+import com.example.freshmind.Extras.changeSpinnerTextBox
 import com.example.freshmind.Extras.changeTextBoxColor
 import com.example.freshmind.Extras.changeTextColors
+import com.example.freshmind.Extras.changeTextColorsNT
 import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
 import com.example.freshmind.UI.Calendar.Utils.makeGone
@@ -73,7 +79,7 @@ class SettingsFragment : Fragment() {
         view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
 
         val starterActivity = activity as? Starter
-        starterActivity?.floatingFab?.makeGone() // Hide the feedback floating button
+        starterActivity?.floatingFab?.makeGone()
 
         newUsername = view.findViewById(R.id.txtNewUsername)
         newEmail = view.findViewById(R.id.txtNewEmail)
@@ -91,14 +97,14 @@ class SettingsFragment : Fragment() {
         titleAccountSettings = view.findViewById(R.id.titleAccountSettings)
         txtTheme = view.findViewById(R.id.txtTheme)
         themeSpinner = view.findViewById(R.id.theme_spinner)
+        btnSaveChanges = view.findViewById(R.id.btnChangeDetails)
 
         /**
          * Spinner for changing the theme of the app
          * This is a simple spinner that allows the user to select a theme from a list of themes
          */
         val themes = arrayOf("midnight", "light", "dark")
-        val adapter = ArrayAdapter(requireContext(), R.layout.spinner_item_layout, themes)
-        adapter.setDropDownViewResource(R.layout.spinner_item_layout)
+        val adapter = MySpinnerAdapter(requireContext(), themes)
         themeSpinner.adapter = adapter
 
         val themeIndex = themes.indexOf(globalTheme)
@@ -134,17 +140,12 @@ class SettingsFragment : Fragment() {
             dbHelper.updateHideTasks(isExpiredTasksEnabled)
         }
 
-        btnSaveChanges = view.findViewById(R.id.btnChangeDetails)
-
         btnSaveChanges.setOnClickListener {
             saveDetails()
         }
 
         //Change colours according to the theme
-        changeTextColors(requireContext(), txtchangeUsername, txtchangeEmail, txtUserDetails, txtchangePassword, deleteAccount, hideTasks,btnSaveChanges, txtTheme)
-        changeAccountColour(requireContext(), titleAccountSettings)
-        changeEditBoxColor(requireContext(), newUsername, newEmail, oldPassword, newPassword)
-        changeTextBoxColor(requireContext(), displayFullName, displayEmail, displayPhone)
+        applyTheme()
         getUserDetails()
         return view
     }
@@ -179,12 +180,22 @@ class SettingsFragment : Fragment() {
      * This function applies the theme to the settings fragment depending on the theme selected by the user
      */
     private fun applyTheme() {
-        view?.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
-        changeTextColors(requireContext(), txtchangeUsername, txtchangeEmail, txtUserDetails, txtchangePassword, deleteAccount, hideTasks,btnSaveChanges)
+        // Apply theme to the entire fragment's view
+        view?.setBackgroundColor(ContextCompat.getColor(requireContext(), getColorResource(requireContext())))
+
+        // Update colors of specific views based on the selected theme
+        changeSpinner(requireContext(), themeSpinner)
+        changeTextColors(requireContext(), txtchangeUsername, txtchangeEmail, txtUserDetails, txtchangePassword, hideTasks, txtTheme)
+        changeButtonColor(requireContext(), btnSaveChanges, deleteAccount)
         changeAccountColour(requireContext(), titleAccountSettings)
         changeEditBoxColor(requireContext(), newUsername, newEmail, oldPassword, newPassword)
         changeTextBoxColor(requireContext(), displayFullName, displayEmail, displayPhone)
+
+        // Notify the activity to update its theme
+        val starterActivity = activity as? Starter
+        starterActivity?.updateTheme()
     }
+
 
     /**
      * This function saves the changes made by the user to their account details
@@ -271,3 +282,26 @@ class SettingsFragment : Fragment() {
     }
 
 }
+
+class MySpinnerAdapter(private val context: Context, private val themes: Array<String>) : BaseAdapter() {
+
+    private val inflater = LayoutInflater.from(context)
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        val view = convertView ?: inflater.inflate(R.layout.spinner_item_layout, parent, false)
+        val textView = view.findViewById<TextView>(R.id.txtSpinnerItem)
+        textView.text = themes[position]
+        changeSpinnerTextBox(context, textView)
+        return view
+    }
+    override fun getItem(position: Int): Any {
+        return themes[position]
+    }
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+    override fun getCount(): Int {
+        return themes.size
+    }
+}
+

@@ -13,7 +13,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
+import com.example.freshmind.Extras.changeTextBoxColor
+import com.example.freshmind.Extras.changeTextColors
 import com.example.freshmind.Extras.getColorResource
+import com.example.freshmind.Extras.getToolbarColor
 import com.example.freshmind.R
 import com.example.freshmind.UI.BaseFragment
 import com.example.freshmind.UI.Calendar.Utils.addStatusBarColorUpdate
@@ -165,26 +168,6 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
     }
 
     /**
-     * This function is called when the fragment is started. It sets the colour of the toolbar to indigo.
-     */
-    override fun onStart() {
-        super.onStart()
-        activityToolbar.setBackgroundColor(
-            requireContext().getColorCompat(R.color.indigo),
-        )
-    }
-
-    /**
-     * This function is called when the fragment is stopped. It sets the colour of the toolbar to the primary colour.
-     */
-    override fun onStop() {
-        super.onStop()
-        activityToolbar.setBackgroundColor(
-            requireContext().getColorCompat(R.color.colorPrimary),
-        )
-    }
-
-    /**
      * This function configures the binders for the calendar view.
      * It sets the day binder to display the day of the month and the dotView if there are tasks for that day.
      * It sets the month header binder to display the days of the week.
@@ -211,7 +194,7 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
                 container.day = data
                 val textView = container.binding.txtCalendarDay
                 val dotView = container.binding.txtCalendarDotView
-                binding.txtCalendarSelectedDate.setTextColorRes(R.color.white)
+                changeTextBoxColor(requireContext(), binding.txtCalendarSelectedDate) // Change the text color of the selected date text view
 
                 textView.text = data.date.dayOfMonth.toString()
 
@@ -223,16 +206,16 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
                     when (data.date) {
                         today -> { // If the date is today, adds a yellow circle to indicate it is today's date
                             textView.setTextColorRes(R.color.deepPurple)
-                            textView.setBackgroundResource(R.drawable.example_3_today_bg)
+                            textView.setBackgroundResource(R.drawable.calendar_today_bg)
                             dotView.makeInVisible() // Hide dot for today's date
                         }
                         selectedDate -> { // If the date is selected, adds a purple circle to indicate it is the selected date
                             textView.setTextColorRes(R.color.deepPurple)
-                            textView.setBackgroundResource(R.drawable.example_3_selected_bg)
+                            textView.setBackgroundResource(R.drawable.calendar_selected_bg)
                             dotView.makeInVisible()
                         }
                         else -> { // If the date is not today or selected, set the text color to white
-                            textView.setTextColorRes(R.color.white)
+                            changeTextColors(requireContext(), textView) // Change the text color of the day
                             textView.background = null
                             dotView.isVisible = hasTasks
                         }
