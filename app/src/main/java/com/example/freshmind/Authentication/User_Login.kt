@@ -2,6 +2,7 @@ package com.example.freshmind.Authentication
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -10,8 +11,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.freshmind.Database.DBHelper
+import com.example.freshmind.Extras.changeButtonColor
 import com.example.freshmind.Extras.changeEditBoxColor
 import com.example.freshmind.Extras.changeTextBoxColor
+import com.example.freshmind.Extras.changeTextColors
+import com.example.freshmind.Extras.changeTextColorsNT
 import com.example.freshmind.Extras.changeTitleColor
 import com.example.freshmind.Extras.getColorResource
 import com.example.freshmind.R
@@ -46,7 +50,7 @@ class User_Login : AppCompatActivity() {
         title = findViewById(R.id.txtTitle)
         changeTitleColor(this, title)
         changeEditBoxColor(this, usernameEditText, passwordEditText)
-        changeTextBoxColor(this, btnRegister, btnLogin)
+        changeButtonColor(this, btnRegister, btnLogin)
     }
 
     /**
@@ -66,11 +70,11 @@ class User_Login : AppCompatActivity() {
      * If they are valid, it goes to the Menu activity
      * If they are not valid, it shows a toast message
      */
-    fun btnUserLogin(view: View)
-    {
-        val username = findViewById<EditText>(R.id.txtUser_Login_Username).text.toString()
-        val password = shaEncrypt(findViewById<EditText>(R.id.txtUser_Login_Password).text.toString())
+    fun btnUserLogin(view: View) {
+        val username = usernameEditText.text.toString().trim()
+        val password = passwordEditText.text.toString().trim()
 
+        // Validate username and password
         if (username.isEmpty()) {
             usernameEditText.error = "Username is required"
             usernameEditText.requestFocus()
@@ -81,18 +85,27 @@ class User_Login : AppCompatActivity() {
             passwordEditText.requestFocus()
             return
         }
-
-        if (dbHelper.validateUser(username,password)) {
-            // Credentials are valid so should go to Menu Activity
-            Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
-            globalUser = username //Sets the Global Customer as the Username
-
-            val intent = Intent(this@User_Login, Starter::class.java)
-            intent.putExtra("user", globalUser) //This extra is how the global customer will be sent between activities
-            startActivity(intent)
-        } else {
-            Toast.makeText(this, "Username or Password Incorrect", Toast.LENGTH_SHORT).show()
-
+        // Attempt to authenticate user
+        try {
+            if (dbHelper.validateUser(username, shaEncrypt(password))) {
+                // Credentials are valid, proceed to Menu Activity
+                Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
+                globalUser = username
+                startMenuActivity()
+            } else {
+                // Invalid credentials
+                Toast.makeText(this, "Username or Password Incorrect", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            // Handle authentication errors
+            Toast.makeText(this, "An error occurred. Please try again.", Toast.LENGTH_SHORT).show()
+            Log.e("User_Login", "Error during login: ${e.message}", e)
         }
+    }
+    // Function to start the Menu Activity
+    private fun startMenuActivity() {
+        val intent = Intent(this, Starter::class.java)
+        intent.putExtra("user", globalUser)
+        startActivity(intent)
     }
 }

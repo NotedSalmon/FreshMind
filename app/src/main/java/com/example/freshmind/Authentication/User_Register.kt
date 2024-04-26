@@ -11,8 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.User_DataFiles
+import com.example.freshmind.Extras.changeButtonColor
 import com.example.freshmind.Extras.changeEditBoxColor
 import com.example.freshmind.Extras.changeTextBoxColor
+import com.example.freshmind.Extras.changeTextColorsNT
 import com.example.freshmind.Extras.changeTitleColor
 import com.example.freshmind.Extras.getColorResource
 import com.example.wagonersexperts.extra.SHAEncryption.shaEncrypt
@@ -53,7 +55,7 @@ class User_Register: AppCompatActivity() {
         title = findViewById(com.example.freshmind.R.id.txtTitle)
         changeTitleColor(this, title)
         changeEditBoxColor(this, fullnameEditText, emailEditText, phoneNumberEditText, usernameEditText, passwordEditText)
-        changeTextBoxColor(this, btnGoBack, btnUserRegister)
+        changeButtonColor(this, btnGoBack, btnUserRegister)
     }
 
     /**

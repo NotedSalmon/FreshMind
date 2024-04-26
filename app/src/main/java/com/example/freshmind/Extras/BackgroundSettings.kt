@@ -3,6 +3,7 @@ package com.example.freshmind.Extras
 import android.content.Context
 import android.util.Log
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.example.freshmind.R
@@ -15,8 +16,8 @@ import com.example.freshmind.UI.globalTheme
  */
 fun getColorResource(context: Context): Int {
     return when (globalTheme) {
-        "light" -> R.color.white
-        "dark" -> R.color.black
+        "light" -> R.color.lightGray
+        "dark" -> R.color.darkerGray
         "midnight" -> R.color.backgroundIndigo
         // Add more color mappings as needed
         else -> {
@@ -28,6 +29,80 @@ fun getColorResource(context: Context): Int {
 }
 
 /**
+ * This function returns the color resource ID for the background color based on the global theme
+ * @param context The context of the activity
+ * @return The color resource ID for the background color
+ */
+fun getSideBarColor(context: Context): Int {
+    return when (globalTheme) {
+        "light" -> R.color.light_green
+        "dark" -> R.color.softYellow
+        "midnight" -> R.color.chalkyGold
+        // Add more color mappings as needed
+        else -> {
+            Log.e("BackgroundSettings", "Unknown color name: $globalTheme")
+            throw IllegalArgumentException("Unknown color name: $globalTheme")
+            R.color.gold
+        }
+    }
+}
+
+/**
+ * This function returns the drawable resource ID for the background color based on the global theme
+ * @param context The context of the activity
+ * @return The drawable resource ID for the background color
+ */
+fun getDrawableResource(context: Context): Int {
+    return when (globalTheme) {
+        "light" -> R.drawable.side_nav_bar_light
+        "dark" -> R.drawable.side_nav_bar_dark
+        "midnight" -> R.drawable.side_nav_bar
+        // Add more color mappings as needed
+        else -> {
+            Log.e("BackgroundSettings", "Unknown color name: $globalTheme")
+            throw IllegalArgumentException("Unknown color name: $globalTheme")
+            R.drawable.side_nav_bar
+        }
+    }
+}
+
+fun changeSpinner(context: Context, spinner : Spinner) {
+    val backgroundColor = when (globalTheme) {
+        "midnight" -> R.color.chalkyGold
+        "light" -> R.color.softGreen
+        "dark" -> R.color.darkGray
+        else -> R.color.black // Change this to the default text color
+    }
+
+    val textColor = when (globalTheme) {
+        "midnight" -> R.color.black
+        "light" -> R.color.comet
+        "dark" -> R.color.white
+        else -> R.color.black // Change this to the default text color
+    }
+    val selectedItemTextView = spinner.selectedView as? TextView
+    selectedItemTextView?.setTextColor(context.resources.getColor(textColor))
+    selectedItemTextView?.setBackgroundColor(context.resources.getColor(backgroundColor))
+}
+fun changeSpinnerTextBox(context: Context, text : TextView) {
+    val backgroundColor = when (globalTheme) {
+        "midnight" -> R.color.chalkyGold
+        "light" -> R.color.softGreen
+        "dark" -> R.color.darkGray
+        else -> R.color.black // Change this to the default text color
+    }
+
+    val textColor = when (globalTheme) {
+        "midnight" -> R.color.black
+        "light" -> R.color.comet
+        "dark" -> R.color.white
+        else -> R.color.black // Change this to the default text color
+    }
+    text.setTextColor(context.resources.getColor(textColor))
+    text.setBackgroundColor(context.resources.getColor(backgroundColor))
+}
+
+/**
  * This function changes the background color of the given views based on the global theme
  * @param context The context of the activity
  * @param views The views to change the background color of
@@ -35,12 +110,42 @@ fun getColorResource(context: Context): Int {
 fun changeTextColors(context: Context, vararg textViews: TextView) {
     val textColor = when (globalTheme) {
         "midnight" -> R.color.white
-        "light" -> R.color.white
-        "dark" -> R.color.black
+        "light" -> R.color.comet
+        "dark" -> R.color.white
         else -> R.color.black // Change this to the default text color
     }
 
     textViews.forEach { it.setTextColor(context.resources.getColor(textColor)) }
+}
+
+fun getToolbarColor(context: Context): Int {
+    return when (globalTheme) {
+        "light" -> R.color.lightLavender
+        "dark" -> R.color.eggplant
+        "midnight" -> R.color.deepPurple
+        // Add more color mappings as needed
+        else -> {
+            Log.e("BackgroundSettings", "Unknown color name: $globalTheme")
+            throw IllegalArgumentException("Unknown color name: $globalTheme")
+            R.color.deepPurple
+        }
+    }
+}
+fun changeButtonColor(context: Context, vararg textViews: TextView) {
+    val textColor = when (globalTheme) {
+        "midnight" -> R.color.black
+        "light" -> R.color.white
+        "dark" -> R.color.black
+        else -> R.color.black // Change this to the default text color
+    }
+    val backgroundColor = when (globalTheme) {
+        "midnight" -> R.color.chalkyGold
+        "light" -> R.color.softGreen
+        "dark" -> R.color.darkGray
+        else -> R.color.black // Change this to the default text color
+    }
+    textViews.forEach { it.setTextColor(context.resources.getColor(textColor))
+        it.setBackgroundColor(context.resources.getColor(backgroundColor))}
 }
 
 /**
@@ -67,8 +172,8 @@ fun changeTextColorsNT(context: Context, vararg textViews: TextView) {
 fun changeAdapterTextColors(context: Context, vararg textViews: TextView) {
     val textColor = when (globalTheme) {
         "midnight" -> R.color.white
-        "light" -> R.color.white
-        "dark" -> R.color.black
+        "light" -> R.color.black
+        "dark" -> R.color.white
         else -> R.color.black // Change this to the default text color
     }
 
@@ -83,8 +188,8 @@ fun changeAdapterTextColors(context: Context, vararg textViews: TextView) {
 fun changeAccountColour(context: Context, vararg textViews: TextView) {
     val textColor = when (globalTheme) {
         "midnight" -> R.color.gold
-        "light" -> R.color.white
-        "dark" -> R.color.black
+        "light" -> R.color.softGreen
+        "dark" -> R.color.softYellow
         else -> R.color.black // Change this to the default text color
     }
 
@@ -99,8 +204,8 @@ fun changeAccountColour(context: Context, vararg textViews: TextView) {
 fun changeTitleColor(context: Context, vararg textViews: TextView) {
     val textColor = when (globalTheme) {
         "midnight" -> R.color.white
-        "light" -> R.color.white
-        "dark" -> R.color.black
+        "light" -> R.color.black
+        "dark" -> R.color.white
         else -> R.color.black // Change this to the default text color
     }
 
@@ -116,8 +221,8 @@ fun changeTitleColor(context: Context, vararg textViews: TextView) {
 fun changeEditBoxColor(context: Context, vararg editTexts: EditText) {
     val backgroundColor = when (globalTheme) {
         "midnight" -> R.color.lightGray
-        "light" -> R.color.white
-        "dark" -> R.color.black
+        "light" -> R.color.amethystSmoke
+        "dark" -> R.color.lightGray
         else -> R.color.black // Change this to the default text color
     }
 
@@ -132,10 +237,9 @@ fun changeEditBoxColor(context: Context, vararg editTexts: EditText) {
 fun changeTextBoxColor(context: Context, vararg textViews: TextView) {
     val backgroundColor = when (globalTheme) {
         "midnight" -> R.color.lightGray
-        "light" -> R.color.white
-        "dark" -> R.color.black
+        "light" -> R.color.amethystSmoke
+        "dark" -> R.color.lightGray
         else -> R.color.black // Change this to the default text color
     }
-
     textViews.forEach { it.setBackgroundColor(context.resources.getColor(backgroundColor)) }
 }

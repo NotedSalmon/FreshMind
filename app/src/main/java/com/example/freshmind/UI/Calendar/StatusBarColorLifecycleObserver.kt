@@ -11,6 +11,9 @@ import com.example.freshmind.R
 import com.example.freshmind.UI.Calendar.Utils.getColorCompat
 import java.lang.ref.WeakReference
 
+/**
+ * Lifecycle observer that changes the status bar color of the activity when it is started and resets it when it is stopped.
+ */
 class StatusBarColorLifecycleObserver(
     activity: Activity,
     @ColorInt private val color: Int,
@@ -19,6 +22,9 @@ class StatusBarColorLifecycleObserver(
     private val defaultStatusBarColor = activity.getColorCompat(R.color.colorPrimaryDark)
     private val activity = WeakReference(activity)
 
+    /**
+     * Changes the status bar color of the activity to the specified color and sets the system UI visibility to light if the color is light.
+     */
     override fun onStart(owner: LifecycleOwner) {
         activity.get()?.window?.apply {
             statusBarColor = color

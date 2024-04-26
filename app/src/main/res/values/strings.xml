@@ -11,7 +11,7 @@
     <string name="close">Close</string>
     <string name="save">Save</string>
     <string name="activity_title_view">Task Page</string>
-    <string name="example_3_title">Example 3</string>
-    <string name="example_3_subtitle">Event style implementation, day labels as header view, single selection, month scroll listener. Similar to what is in the Google Calendar app.</string>
+    <string name="calendar_title">Calendar</string>
+    <string name="calendar_subtitle">Event style implementation, day labels as header view, single selection, month scroll listener. Similar to what is in the Google Calendar app.</string>
     <string name="select_theme">Select Theme</string>
 </resources>

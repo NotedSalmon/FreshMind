@@ -13,7 +13,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.freshmind.Authentication.globalUser
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
+import com.example.freshmind.Extras.changeTextBoxColor
+import com.example.freshmind.Extras.changeTextColors
 import com.example.freshmind.Extras.getColorResource
+import com.example.freshmind.Extras.getToolbarColor
 import com.example.freshmind.R
 import com.example.freshmind.UI.BaseFragment
 import com.example.freshmind.UI.Calendar.Utils.addStatusBarColorUpdate
@@ -26,7 +29,6 @@ import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.example.freshmind.databinding.CalendarDayLayoutBinding
-import com.example.freshmind.databinding.CalendarEventItemViewBinding
 import com.example.freshmind.databinding.CalendarHeaderLayoutBinding
 import com.example.freshmind.databinding.FragmentCalendarBinding
 import com.kizitonwose.calendar.core.CalendarMonth
@@ -42,18 +44,20 @@ import java.time.format.DateTimeFormatter
  * CalendarFragment is a fragment that displays a calendar with events.
  * It uses a [RecyclerView] to display the events for the selected date.
  * It also shows a dialog to add new events.
+ *
+ * It uses the library referenced on line 2 to allow customisation of the calendar view.
  */
 
 class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton {
     private lateinit var recyclerView: RecyclerView
     private lateinit var calendarTaskAdapter: CalendarAdapter
-    override val titleRes: Int = R.string.example_3_title
+    override val titleRes: Int = R.string.calendar_title
     private lateinit var dbHelper: DBHelper
     private var selectedDate: LocalDate? = null
     private val today = LocalDate.now()
-    private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM")
-    private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy")
-    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
+    private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM") // Format for the title when the year is the same
+    private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy") // Format for the title when the year is different
+    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy") // Format for the selected date
 
     private val calendarTasks: MutableList<Pair<LocalDate, Task_DataFiles>> = mutableListOf()
     private val calendarTasksView: MutableList<Pair<LocalDate, Task_DataFiles>> = mutableListOf()
@@ -61,15 +65,20 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
 
     private lateinit var binding: FragmentCalendarBinding
 
+    /**
+     * This function is called when the fragment is created.
+     * It sets up the calendar view and the adapter for the recycler view.
+     * It also populates the calendarTasks map with tasks.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.setBackgroundColor(resources.getColor(getColorResource(requireContext())))
+        view.setBackgroundColor(resources.getColor(getColorResource(requireContext()))) // Set background color
         addStatusBarColorUpdate(R.color.indigo)
         binding = FragmentCalendarBinding.bind(view)
-        selectedDate = today
-        calendarTaskAdapter = CalendarAdapter(calendarTasksView)
+        selectedDate = today // Set the selected date to today
+        calendarTaskAdapter = CalendarAdapter(calendarTasksView) // Create a new adapter for the tasks that are displayed in the calendar
 
-        binding.calendarView.apply {
+        binding.calendarView.apply { // Set up the calendar view
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             adapter = calendarTaskAdapter
             addItemDecoration(DividerItemDecoration(requireContext(), RecyclerView.VERTICAL))
@@ -81,12 +90,13 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
         recyclerView = view.findViewById(R.id.recycleView_Calendar)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        recyclerView.adapter = calendarTaskAdapter
+        recyclerView.adapter = calendarTaskAdapter // Set the adapter for the recycler view
 
         // Populate the calendarTasks map with tasks
-        calendarTasks.addAll(populateCalendarFromTaskList(allTasks))
-        calendarTasksView.addAll(populateCalendarFromTaskList(allTasks))
+        calendarTasks.addAll(populateCalendarFromTaskList(allTasks)) // This is used to display the dots in the calendar
+        calendarTasksView.addAll(populateCalendarFromTaskList(allTasks)) // This is used to update the adapter when a date is selected
 
+        // This sets the scroll listener so the month is changed when the user scrolls to the left/right
         binding.calendarView.monthScrollListener = {
             activityToolbar.title = if (it.yearMonth.year == today.year) {
                 titleSameYearFormatter.format(it.yearMonth)
@@ -100,7 +110,7 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
         val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusMonths(50)
         val endMonth = currentMonth.plusMonths(50)
-        configureBinders(daysOfWeek)
+        configureBinders(daysOfWeek) // Configure the binders for the calendar view
         binding.calendarView.apply {
             setup(startMonth, endMonth, daysOfWeek.first())
             scrollToMonth(currentMonth)
@@ -142,17 +152,9 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
     }
 
     /**
-     * Producing an error:
-     * It is adding all the tasks in the recycleview no matter the date selected
-     * It is not filtering the tasks based on the selected date
-     *
-     * However if there is a filter instead of the calendarTasks.addAll(populateCalendarFromTaskList(getAllTasks()))
-     * it will display the tasks for the selected date, however, if you select the date and then select another date
-     * it will not display the dotView anymore for whatever reason.
-     *
-     * I think the calendar is being updated constantly based on what tasks are showing. Proven
+     * This function updates the adapter to show the tasks for the selected date.
+     * It changes only the calendarTasksView list and notifies the adapter that the data set has changed.
      */
-
     private fun updateAdapterForDate(date: LocalDate) {
         calendarTaskAdapter.apply {
             calendarTasksView.clear()
@@ -160,23 +162,9 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
             notifyDataSetChanged()
         }
         val tasksForSelectedDate = dbHelper.showTasksForDate(globalUser, date)
-        val updatedTasksList = tasksForSelectedDate.map { date to it }
-        calendarTaskAdapter.updateTasks(updatedTasksList)
+        val updatedTasksList = tasksForSelectedDate.map { date to it } // Create a list of pairs of LocalDate and Task
+        calendarTaskAdapter.updateTasks(updatedTasksList) // Update the adapter with the tasks for the selected date
         binding.txtCalendarSelectedDate.text = selectionFormatter.format(date)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        activityToolbar.setBackgroundColor(
-            requireContext().getColorCompat(R.color.indigo),
-        )
-    }
-
-    override fun onStop() {
-        super.onStop()
-        activityToolbar.setBackgroundColor(
-            requireContext().getColorCompat(R.color.colorPrimary),
-        )
     }
 
     /**
@@ -189,44 +177,45 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
         class DayViewContainer(view: View) : ViewContainer(view) {
             lateinit var day: CalendarDay // Will be set when this container is bound.
             val binding = CalendarDayLayoutBinding.bind(view)
-
             init {
-                view.setOnClickListener {
+                view.setOnClickListener { // Set the click listener for each day
                     if (day.position == DayPosition.MonthDate) {
                         selectDate(day.date)
                     }
                 }
             }
         }
+        /**
+         * This class is used to bind the days of the week to the corresponding TextViews.
+         */
         binding.calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun create(view: View) = DayViewContainer(view)
             override fun bind(container: DayViewContainer, data: CalendarDay) {
                 container.day = data
                 val textView = container.binding.txtCalendarDay
                 val dotView = container.binding.txtCalendarDotView
-                binding.txtCalendarSelectedDate.setTextColorRes(R.color.white)
+                changeTextBoxColor(requireContext(), binding.txtCalendarSelectedDate) // Change the text color of the selected date text view
 
                 textView.text = data.date.dayOfMonth.toString()
 
-                if (data.position == DayPosition.MonthDate) {
+                if (data.position == DayPosition.MonthDate) { // If the day is in the current month
                     textView.makeVisible()
                     // Check if the date has any tasks associated with it
                     val hasTasks = calendarTasks.any { it.first == data.date }
                     dotView.isVisible = hasTasks // Set dot visibility based on tasks
-
                     when (data.date) {
-                        today -> {
+                        today -> { // If the date is today, adds a yellow circle to indicate it is today's date
                             textView.setTextColorRes(R.color.deepPurple)
-                            textView.setBackgroundResource(R.drawable.example_3_today_bg)
+                            textView.setBackgroundResource(R.drawable.calendar_today_bg)
                             dotView.makeInVisible() // Hide dot for today's date
                         }
-                        selectedDate -> {
+                        selectedDate -> { // If the date is selected, adds a purple circle to indicate it is the selected date
                             textView.setTextColorRes(R.color.deepPurple)
-                            textView.setBackgroundResource(R.drawable.example_3_selected_bg)
+                            textView.setBackgroundResource(R.drawable.calendar_selected_bg)
                             dotView.makeInVisible()
                         }
-                        else -> {
-                            textView.setTextColorRes(R.color.white)
+                        else -> { // If the date is not today or selected, set the text color to white
+                            changeTextColors(requireContext(), textView) // Change the text color of the day
                             textView.background = null
                             dotView.isVisible = hasTasks
                         }
@@ -237,7 +226,9 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
                 }
             }
         }
-
+        /**
+         * This class is used to bind the month header to the corresponding TextViews.
+         */
         class MonthViewContainer(view: View) : ViewContainer(view) {
             val legendLayout = CalendarHeaderLayoutBinding.bind(view).legendLayout.root
         }
