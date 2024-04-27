@@ -15,7 +15,10 @@ import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
 import com.example.freshmind.Extras.changeTextBoxColor
 import com.example.freshmind.Extras.changeTextColors
+import com.example.freshmind.Extras.getCalendarSelectedbg
+import com.example.freshmind.Extras.getCalendarTodaybg
 import com.example.freshmind.Extras.getColorResource
+import com.example.freshmind.Extras.getSideBarColor
 import com.example.freshmind.Extras.getToolbarColor
 import com.example.freshmind.R
 import com.example.freshmind.UI.BaseFragment
@@ -194,6 +197,7 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
                 container.day = data
                 val textView = container.binding.txtCalendarDay
                 val dotView = container.binding.txtCalendarDotView
+                dotView.setBackgroundResource(getCalendarTodaybg(requireContext()))
                 changeTextBoxColor(requireContext(), binding.txtCalendarSelectedDate) // Change the text color of the selected date text view
 
                 textView.text = data.date.dayOfMonth.toString()
@@ -205,16 +209,16 @@ class CalendarFragment : BaseFragment(R.layout.fragment_calendar), HasBackButton
                     dotView.isVisible = hasTasks // Set dot visibility based on tasks
                     when (data.date) {
                         today -> { // If the date is today, adds a yellow circle to indicate it is today's date
-                            textView.setTextColorRes(R.color.deepPurple)
-                            textView.setBackgroundResource(R.drawable.calendar_today_bg)
+                            textView.setTextColorRes(getToolbarColor(requireContext()))
+                            textView.setBackgroundResource(getCalendarTodaybg(requireContext()))
                             dotView.makeInVisible() // Hide dot for today's date
                         }
-                        selectedDate -> { // If the date is selected, adds a purple circle to indicate it is the selected date
-                            textView.setTextColorRes(R.color.deepPurple)
-                            textView.setBackgroundResource(R.drawable.calendar_selected_bg)
+                        selectedDate -> { // If the date is selected, adds a circle to indicate it is the selected date
+                            textView.setTextColorRes(getToolbarColor(requireContext()))
+                            textView.setBackgroundResource(getCalendarSelectedbg(requireContext()))
                             dotView.makeInVisible()
                         }
-                        else -> { // If the date is not today or selected, set the text color to white
+                        else -> { // If the date is not today or selected, set the text color to backgroundSettings
                             changeTextColors(requireContext(), textView) // Change the text color of the day
                             textView.background = null
                             dotView.isVisible = hasTasks

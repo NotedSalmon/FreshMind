@@ -35,8 +35,8 @@ fun getColorResource(context: Context): Int {
  */
 fun getSideBarColor(context: Context): Int {
     return when (globalTheme) {
-        "light" -> R.color.light_green
-        "dark" -> R.color.softYellow
+        "light" -> R.color.softGreen
+        "dark" -> R.color.salmon
         "midnight" -> R.color.chalkyGold
         // Add more color mappings as needed
         else -> {
@@ -118,16 +118,58 @@ fun changeTextColors(context: Context, vararg textViews: TextView) {
     textViews.forEach { it.setTextColor(context.resources.getColor(textColor)) }
 }
 
+fun getCalendarTodaybg(context: Context): Int {
+    return when (globalTheme) {
+        "light" -> R.drawable.light_calendar_today_bg
+        "dark" -> R.drawable.dark_calendar_today_bg
+        "midnight" -> R.drawable.calendar_today_bg
+        // Add more color mappings as needed
+        else -> {
+            Log.e("BackgroundSettings", "Unknown color name: $globalTheme")
+            throw IllegalArgumentException("Unknown color name: $globalTheme")
+            R.drawable.calendar_today_bg
+        }
+    }
+}
+
+fun getCalendarSelectedbg(context: Context): Int {
+    return when (globalTheme) {
+        "light" -> R.drawable.light_calendar_selected_bg
+        "dark" -> R.drawable.dark_calendar_selected_bg
+        "midnight" -> R.drawable.calendar_selected_bg
+        // Add more color mappings as needed
+        else -> {
+            Log.e("BackgroundSettings", "Unknown color name: $globalTheme")
+            throw IllegalArgumentException("Unknown color name: $globalTheme")
+            R.drawable.calendar_selected_bg
+        }
+    }
+}
+
 fun getToolbarColor(context: Context): Int {
     return when (globalTheme) {
         "light" -> R.color.lightLavender
-        "dark" -> R.color.eggplant
+        "dark" -> R.color.purple_200
         "midnight" -> R.color.deepPurple
         // Add more color mappings as needed
         else -> {
             Log.e("BackgroundSettings", "Unknown color name: $globalTheme")
             throw IllegalArgumentException("Unknown color name: $globalTheme")
             R.color.deepPurple
+        }
+    }
+}
+
+fun getButtonColor(context: Context): Int {
+    return when (globalTheme) {
+        "light" -> R.color.softGreen
+        "dark" -> R.color.salmon
+        "midnight" -> R.color.chalkyGold
+        // Add more color mappings as needed
+        else -> {
+            Log.e("BackgroundSettings", "Unknown color name: $globalTheme")
+            throw IllegalArgumentException("Unknown color name: $globalTheme")
+            R.color.chalkyGold
         }
     }
 }
@@ -141,7 +183,7 @@ fun changeButtonColor(context: Context, vararg textViews: TextView) {
     val backgroundColor = when (globalTheme) {
         "midnight" -> R.color.chalkyGold
         "light" -> R.color.softGreen
-        "dark" -> R.color.darkGray
+        "dark" -> R.color.salmon
         else -> R.color.black // Change this to the default text color
     }
     textViews.forEach { it.setTextColor(context.resources.getColor(textColor))
@@ -189,7 +231,7 @@ fun changeAccountColour(context: Context, vararg textViews: TextView) {
     val textColor = when (globalTheme) {
         "midnight" -> R.color.gold
         "light" -> R.color.softGreen
-        "dark" -> R.color.softYellow
+        "dark" -> R.color.salmon
         else -> R.color.black // Change this to the default text color
     }
 
@@ -242,4 +284,14 @@ fun changeTextBoxColor(context: Context, vararg textViews: TextView) {
         else -> R.color.black // Change this to the default text color
     }
     textViews.forEach { it.setBackgroundColor(context.resources.getColor(backgroundColor)) }
+}
+
+fun changeTextAdapter(context: Context, vararg textViews: TextView) {
+    val backgroundColor = when (globalTheme) {
+        "midnight" -> R.color.lightGray
+        "light" -> R.color.darkerGray
+        "dark" -> R.color.lightGray
+        else -> R.color.black // Change this to the default text color
+    }
+    textViews.forEach { it.setTextColor(context.resources.getColor(backgroundColor)) }
 }
