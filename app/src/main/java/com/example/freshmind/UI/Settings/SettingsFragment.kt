@@ -104,7 +104,7 @@ class SettingsFragment : Fragment() {
          * This is a simple spinner that allows the user to select a theme from a list of themes
          */
         val themes = arrayOf("midnight", "light", "dark")
-        val adapter = MySpinnerAdapter(requireContext(), themes)
+        val adapter = SpinnerAdapter(requireContext(), themes)
         themeSpinner.adapter = adapter
 
         val themeIndex = themes.indexOf(globalTheme)
@@ -126,10 +126,6 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        deleteAccount.setOnClickListener {
-            deleteButton()
-        }
-
         /**
          * Checkbox for hiding expired tasks
          * This checkbox allows the user to hide tasks that are expired
@@ -138,6 +134,10 @@ class SettingsFragment : Fragment() {
         hideTasks.setOnCheckedChangeListener { _, isChecked ->
             isExpiredTasksEnabled = isChecked
             dbHelper.updateHideTasks(isExpiredTasksEnabled)
+        }
+
+        deleteAccount.setOnClickListener {
+            deleteButton()
         }
 
         btnSaveChanges.setOnClickListener {
@@ -283,7 +283,7 @@ class SettingsFragment : Fragment() {
 
 }
 
-class MySpinnerAdapter(private val context: Context, private val themes: Array<String>) : BaseAdapter() {
+class SpinnerAdapter(private val context: Context, private val themes: Array<String>) : BaseAdapter() {
 
     private val inflater = LayoutInflater.from(context)
 

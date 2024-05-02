@@ -67,8 +67,6 @@ class TaskList_EditTask : AppCompatActivity() {
         val startDateCalendar = Calendar.getInstance()
         val endDateCalendar = Calendar.getInstance()
 
-
-
         // Set the retrieved task details to EditText fields
         editTextTitle.setText(taskTitle)
         editTextDescription.setText(taskDescription)

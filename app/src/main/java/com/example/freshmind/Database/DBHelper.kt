@@ -387,8 +387,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
                     do {
                         // Extract task details from cursor
                         val taskID = cursor.getInt(cursor.getColumnIndex(Task_Column_ID))
-                        val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle)) ?: ""
-                        val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)) ?: ""
+                        val taskTitle = cursor.getString(cursor.getColumnIndex(Task_Column_TaskTitle)) ?: "" // Get the task title, return empty if Null
+                        val taskDescription = cursor.getString(cursor.getColumnIndex(Task_Column_TaskDescription)) ?: "" // Get the task description, return empty if Null
                         val startTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_StartTime))
                         val endTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_EndTime))
                         val dateModifiedString = cursor.getString(cursor.getColumnIndex(Task_Column_DateModified))
@@ -485,7 +485,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null,
                     val endTimeString = cursor.getString(cursor.getColumnIndex(Task_Column_EndTime))
                     val dateModifiedString = cursor.getString(cursor.getColumnIndex(Task_Column_DateModified))
                     // Parse the date strings to LocalDate objects
-                    val startTime = startTimeString?.let { LocalDate.parse(it) }
+                    val startTime = startTimeString?.let { LocalDate.parse(it) } // Use let to handle null values
                     val endTime = endTimeString?.let { LocalDate.parse(it) }
                     val dateModified = dateModifiedString?.let { LocalDate.parse(it) }
 
