@@ -10,7 +10,11 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Notes_DataFiles
+import com.example.freshmind.Extras.changeAccountColour
 import com.example.freshmind.Extras.changeAdapterTextColors
+import com.example.freshmind.Extras.changeTextColors
+import com.example.freshmind.Extras.getColorResource
+import com.example.freshmind.Extras.getToolbarColor
 import com.example.freshmind.R
 
 class NotesPinnedAdapter(private val notes: MutableList<Notes_DataFiles>) : RecyclerView.Adapter<NotesPinnedAdapter.NotesPinnedViewHolder>() {
@@ -137,6 +141,7 @@ class NotesAdapter(private val notes: MutableList<Notes_DataFiles>, private val 
      */
 
     override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
+        val context : Context = holder.itemView.context
         val note = notes[position]
         holder.titleTextView.text = note.noteTitle
         holder.descriptionTextView.text = note.noteContent
@@ -148,13 +153,13 @@ class NotesAdapter(private val notes: MutableList<Notes_DataFiles>, private val 
         holder.itemView.isSelected = position == selectedItemPosition
 
         if (selectedItemPosition == position) {
-            holder.itemView.setBackgroundResource(R.color.deepPurple)
-            holder.titleTextView.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.gold))
+            holder.itemView.setBackgroundResource(getToolbarColor(context))
+            changeAccountColour(context, holder.titleTextView) // Set text color if selected
             holder.deleteIcon.visibility = View.VISIBLE
             holder.editIcon.visibility = View.VISIBLE
         } else {
-            holder.itemView.setBackgroundResource(R.color.backgroundIndigo)
-            holder.titleTextView.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.white))
+            holder.itemView.setBackgroundResource(getColorResource(holder.itemView.context))
+            changeTextColors(context,holder.titleTextView)
             holder.deleteIcon.visibility = View.GONE
             holder.editIcon.visibility = View.GONE
         }

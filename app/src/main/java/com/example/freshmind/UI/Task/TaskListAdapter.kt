@@ -11,8 +11,12 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.freshmind.Database.DBHelper
 import com.example.freshmind.Database.Task_DataFiles
+import com.example.freshmind.Extras.changeAccountColour
 import com.example.freshmind.Extras.changeAdapterTextColors
+import com.example.freshmind.Extras.changeTextAdapter
 import com.example.freshmind.Extras.changeTextColors
+import com.example.freshmind.Extras.getColorResource
+import com.example.freshmind.Extras.getToolbarColor
 import com.example.freshmind.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -111,6 +115,7 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>, private val ed
         val editIcon: ImageView = itemView.findViewById(R.id.icon_EditTask)
         val startDate : TextView = itemView.findViewById(R.id.txtTask_StartDate)
         val endDate : TextView = itemView.findViewById(R.id.txtTask_EndDate)
+        val separator : TextView = itemView.findViewById(R.id.txtTask_Seperator)
         var currentTaskID: Int = -1
         init {
             dbHelper = DBHelper(itemView.context)
@@ -164,6 +169,7 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>, private val ed
         val formattedEndDate = task.endTime.format(dateFormatter)
         holder.startDate.text = formattedStartDate
         holder.endDate.text = formattedEndDate
+        changeTextAdapter(context,holder.startDate, holder.endDate, holder.descriptionTextView, holder.separator)
 
         // Set text color based on date
         val currentDate = LocalDate.now()
@@ -172,7 +178,7 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>, private val ed
             holder.endDate.setTextColor(ContextCompat.getColor(context, R.color.red))
         } else {
             // Task end date is today or in the future, set text color to default
-            holder.endDate.setTextColor(ContextCompat.getColor(context, R.color.lightGray))
+            changeTextAdapter(context,holder.endDate)
         }
 
         holder.currentTaskID = task.taskID
@@ -181,13 +187,13 @@ class TaskAdapter(private val tasks: MutableList<Task_DataFiles>, private val ed
         holder.itemView.isSelected = position == selectedItemPosition
         // Change background color and text color when item is selected
         if (selectedItemPosition == position) {
-            holder.itemView.setBackgroundResource(R.color.deepPurple)
-            holder.titleTextView.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.gold))
+            holder.itemView.setBackgroundResource(getToolbarColor(context)) // Set background color if selected
+            changeAccountColour(context, holder.titleTextView) // Set text color if selected
             holder.deleteIcon.visibility = View.VISIBLE // Show delete icon
             holder.editIcon.visibility = View.VISIBLE // Show edit icon
         } else {
-            holder.itemView.setBackgroundResource(R.color.backgroundIndigo)
-            changeTextColors(holder.itemView.context,holder.titleTextView)
+            holder.itemView.setBackgroundResource(getColorResource(holder.itemView.context)) // Set background color
+            changeTextColors(context,holder.titleTextView)
             holder.deleteIcon.visibility = View.GONE // Hide delete icon
             holder.editIcon.visibility = View.GONE // Hide edit icon
         }

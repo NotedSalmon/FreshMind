@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.recreate
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
@@ -19,6 +20,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.freshmind.Extras.changeTextColors
+import com.example.freshmind.Extras.getButtonColor
 import com.example.freshmind.Extras.getDrawableResource
 import com.example.freshmind.UI.Calendar.Utils.makeGone
 import com.example.freshmind.UI.Calendar.Utils.makeVisible
@@ -57,6 +59,7 @@ class Starter : AppCompatActivity() {
         globalUser = intent.getStringExtra("user")
             .toString() //This extra is how the global customer will be sent between activities
         floatingFab = binding.appBarWelcome.fab
+        floatingFab.backgroundTintList = ContextCompat.getColorStateList(this, getButtonColor(this))
 
         binding.appBarWelcome.fab.setOnClickListener {
             sendFeedback()
@@ -160,6 +163,7 @@ class Starter : AppCompatActivity() {
         val toolbarView = binding.appBarWelcome.toolbar
         //changeTextColors(this, toolbarView)
         toolbarView.setBackgroundColor(resources.getColor(getToolbarColor(this)))
+        floatingFab.backgroundTintList = ContextCompat.getColorStateList(this, getButtonColor(this))
     }
 }
 
