@@ -1,6 +1,12 @@
-# FreshMind (WORK IN PROGRESS)
+# FreshMind
 Intro:
 A productivity mobile application that allows users to create/edit/delete tasks and notes. The tasks get inserted into a calendar from which the user can see which tasks/events they have in each day.
+
+How to run:
+Download the source code from the main branch and open in Android Studio as you will need the built-in emulator. Build the project and run the program. The program will then start and you can create an account and have a look around.
+
+In the case of an error:
+Cleaning and rebuilding the app will work again. This only happens if accessing the code from Onedrive/GoogleDrive
 
 Tech:
 - Android Studio IDE
